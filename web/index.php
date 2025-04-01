@@ -17,14 +17,12 @@ $twig = new Environment(
 
 $twig->addExtension(new Util\TwigExtensions());
 
-echo $twig->render('home.html.twig', ['name' => 'World']);
-
 $loader = new FilesystemLoader('../app/Views/templates/');
 $twig = new Environment($loader, ['cache' => false, 'debug' => true]);
 $twig->addExtension(new Util\TwigExtensions());
 
 // Set up the FastRoute dispatcher
-$dispatcher = simpleDispatcher(
+$dispatcher = FastRoute\simpleDispatcher(
     function (FastRoute\RouteCollector $r) use ($twig) {
         $r->get(
             '/', function () use ($twig) {
