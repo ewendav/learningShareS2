@@ -12,7 +12,7 @@ try {
     $pdo = $container->get(PDO::class);
 
     // Vérifier la connexion avec une requête simple
-    $result = $pdo->query('SELECT 1')->fetchColumn();
+    $result = $pdo->query('SELECT mail FROM app_user')->fetchColumn();
 
     echo "<h2 style='color: green;'>✅ Connexion réussie à la base de données !</h2>";
     echo "<p>Test requête : $result</p>";
