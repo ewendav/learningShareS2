@@ -9,6 +9,7 @@
   },
   "require": {
     "twig/twig": "^3.0",
-    "symfony/ux-twig-component": "^2.23"
+    "symfony/ux-twig-component": "^2.23",
+    "delight-im/auth": "^8.3"
   }
 }
