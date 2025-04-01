@@ -7,79 +7,63 @@ use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
 $loader = new FilesystemLoader('../app/Views/templates/');
-
 $twig = new Environment($loader, [
     'cache' => false,
     'debug' => true,
 ]);
 
+$twig->addExtension(new Util\TwigExtensions());
 
-// Charger le container
-$container = require __DIR__ . '/../config/container.php';
+echo $twig->render('home.html.twig', ['name' => 'World']);
 
-//echo $twig->render('home.html.twig', ['name' => 'World']);
+$loader = new FilesystemLoader('../app/Views/templates/');
+$twig = new Environment($loader, ['cache' => false, 'debug' => true]);
+$twig->addExtension(new Util\TwigExtensions());
 
-try {
-    // Récupérer PDO depuis le container
-    $pdo = $container->get(PDO::class);
-
-    // Vérifier la connexion avec une requête simple
-    $result = $pdo->query('SELECT mail FROM app_user')->fetchColumn();
-
-    echo "<h2 style='color: green;'>✅ Connexion réussie à la base de données !</h2>";
-    echo "<p>Test requête : $result</p>";
-
-} catch (Exception $e) {
-    echo "<h2 style='color: red;'>❌ Erreur de connexion</h2>";
-    echo "<p>" . $e->getMessage() . "</p>";
-}
-
-//$twig->addExtension(new Util\TwigExtensions());
-
-// Initialiser le système d'authentification
-$auth = new \Delight\Auth\Auth($pdo);
-
-// INSCRIPTION UTILISATEUR
-try {
-    $userId = $auth->register('email@example.com', 'mot_de_passe', 'nom_utilisateur', function ($selector, $token) {
-        // Envoi d'un email de confirmation avec $selector et $token
+// Set up the FastRoute dispatcher
+$dispatcher = simpleDispatcher(function (FastRoute\RouteCollector $r) use ($twig) {
+    $r->get('/', function () use ($twig) {
+        echo $twig->render('home.html.twig', ['name' => 'World']);
     });
-}
-catch (\Delight\Auth\InvalidEmailException $e) {
-    // Email invalide
-}
-catch (\Delight\Auth\InvalidPasswordException $e) {
-    // Mot de passe invalide
-}
-catch (\Delight\Auth\UserAlreadyExistsException $e) {
-    // Utilisateur déjà existant
+
+    $r->addRoute(['GET', 'POST'], '/web/users', 'getUsers');
+    $r->addRoute('GET', '/web/hello', ['Hello', 'sayHello']);
+    $r->get('/web/books/{id}', function ($args) {
+        echo "Book #" . $args['id'];
+    });
+    $r->addRoute('GET', '/web/user/{id:\d+}', function ($args) {
+        echo "User #" . $args['id'];
+    });
+    $r->addRoute('GET', '/web/articles/{id:\d+}[/{title}]', function ($args) {
+        echo "User #" . $args['id'];
+        echo "<br>Title: " . $args['title'];
+    });
+});
+
+// Fetch method and URI from the request
+$httpMethod = $_SERVER['REQUEST_METHOD'];
+$uri = $_SERVER['REQUEST_URI'];
+
+// Dispatch the request through FastRoute
+$routeInfo = $dispatcher->dispatch($httpMethod, $uri);
+
+switch ($routeInfo[0]) {
+    case FastRoute\Dispatcher::NOT_FOUND:
+        // 404 Not Found
+        http_response_code(404);
+        echo '404 Not Found';
+        break;
+    case FastRoute\Dispatcher::METHOD_NOT_ALLOWED:
+        // 405 Method Not Allowed
+        http_response_code(405);
+        echo '405 Method Not Allowed';
+        break;
+    case FastRoute\Dispatcher::FOUND:
+        $handler = $routeInfo[1];
+        $vars = $routeInfo[2];
+
+        // Call the handler (which is a closure in this case)
+        $handler($vars);
+        break;
 }
 
-// CONNEXION UTILISATEUR
-try {
-    $auth->login('email@example.com', 'mot_de_passe');
-
-    // L'utilisateur est maintenant connecté
-}
-catch (\Delight\Auth\InvalidEmailException $e) {
-    // Email incorrect
-}
-catch (\Delight\Auth\InvalidPasswordException $e) {
-    // Mot de passe incorrect
-}
-catch (\Delight\Auth\EmailNotVerifiedException $e) {
-    // Email non vérifié
-}
-catch (\Delight\Auth\TooManyRequestsException $e) {
-    // Trop de tentatives (protection contre les attaques par force brute)
-}
-
-// Si l'utilisateur est connecté
-if ($auth->isLoggedIn()) {
-    // L'utilisateur est connecté
-    $userId = $auth->getUserId();
-    $email = $auth->getEmail();
-}
-
-// Déconnexion
-$auth->logOut();
