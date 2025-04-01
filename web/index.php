@@ -7,14 +7,34 @@ use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
 $loader = new FilesystemLoader('../app/Views/templates/');
+
 $twig = new Environment($loader, [
     'cache' => false,
     'debug' => true,
 ]);
 
-$twig->addExtension(new Util\TwigExtensions());
 
-echo $twig->render('home.html.twig', ['name' => 'World']);
+// Charger le container
+$container = require __DIR__ . '/../config/container.php';
+
+//echo $twig->render('home.html.twig', ['name' => 'World']);
+
+try {
+    // Récupérer PDO depuis le container
+    $pdo = $container->get(PDO::class);
+
+    // Vérifier la connexion avec une requête simple
+    $result = $pdo->query('SELECT mail FROM app_user')->fetchColumn();
+
+    echo "<h2 style='color: green;'>✅ Connexion réussie à la base de données !</h2>";
+    echo "<p>Test requête : $result</p>";
+
+} catch (Exception $e) {
+    echo "<h2 style='color: red;'>❌ Erreur de connexion</h2>";
+    echo "<p>" . $e->getMessage() . "</p>";
+}
+
+//$twig->addExtension(new Util\TwigExtensions());
 
 // Initialiser le système d'authentification
 $auth = new \Delight\Auth\Auth($pdo);
