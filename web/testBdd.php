@@ -5,8 +5,6 @@ require_once __DIR__ . '/../vendor/autoload.php';
 // Charger le container
 $container = require __DIR__ . '/../config/container.php';
 
-use PDO;
-
 try {
     // Récupérer PDO depuis le container
     $pdo = $container->get(PDO::class);
