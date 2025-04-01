@@ -1,0 +1,77 @@
+#navbar,
+.nav-icon-center {
+    width: 4rem;
+    gap: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: column;
+    overflow: visible;
+}
+
+.nav-anchor {
+    position: relative;
+    width: 2rem;
+    height: 2rem;
+    cursor: pointer;
+}
+
+.nav-anchor > svg {
+    width: 2rem;
+    height: 2rem;
+    transition: background-image 400ms;
+    fill: var(--main-black);
+    transition: fill 300ms;
+}
+
+/*custom tooltip*/
+.nav-anchor::before {
+    content: "" attr(text-tooltip) "";
+    text-wrap: nowrap;
+    background-color: var(--main-black);
+    opacity: 0;
+    transition: opacity 400ms;
+    position: absolute;
+    top: 0;
+    left: 3rem;
+    width: fit-content;
+    height: fit-content;
+    color: white;
+    border-radius: 12px;
+    line-height: 2em;
+    padding-inline: 0.5em;
+    pointer-events: none;
+}
+
+.nav-anchor:hover::before {
+    opacity: 1;
+}
+
+.nav-anchor > svg:hover,
+.nav-anchor.chosen > svg {
+    fill: var(--main-green);
+}
+
+.hamburger-sidebar-button {
+    display: none;
+}
+
+/*responsive handling */
+@media all and (max-width: 991px) {
+    #navbar,
+    .nav-icon-center {
+        flex-direction: row;
+        width: 100%;
+        justify-content: space-evenly;
+        height: 1rem;
+    }
+    .hamburger-sidebar-button {
+        display: block;
+    }
+
+    .nav-anchor::before {
+        top: -3rem;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+}

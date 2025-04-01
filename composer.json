@@ -1,5 +1,14 @@
 {
-    "require": {
-        "twig/twig": "^3.0"
+  "autoload": {
+    "psr-4": {
+      "Controllers\\": "app\\Controllers",
+      "Models\\": "app\\Models",
+      "Entity\\": "app\\Entity",
+      "Util\\": "util"
     }
+  },
+  "require": {
+    "twig/twig": "^3.0",
+    "symfony/ux-twig-component": "^2.23"
+  }
 }

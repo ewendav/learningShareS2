@@ -1,0 +1,13 @@
+:root {
+    /*colors vars */
+    --main-white: #ffffff;
+    --main-black: #374f48;
+    --main-green: #4db49d;
+    --main-grey: #eaede5;
+
+    /* responsive text  */
+    --txt-lg: clamp(1.4em, 4vw, 2em);
+
+    /*responsive breakpoints*/
+    --breakpoint-md: 991px;
+}
