@@ -53,3 +53,7 @@
 
 
 .env
+.nvimrc
+.php-cs-fixer.cache
+.phpactor.json
+

@@ -10,9 +10,17 @@
   "require": {
     "twig/twig": "^3.0",
     "symfony/ux-twig-component": "^2.23",
+<<<<<<< HEAD
     "delight-im/auth": "^8.3"
   },
   "require-dev": {
     "squizlabs/php_codesniffer": "^3.12"
+=======
+    "delight-im/auth": "^8.3",
+    "php-di/php-di": "^7.0",
+    "vlucas/phpdotenv": "^5.6",
+    "ext-pdo": "*",
+    "nikic/fast-route": "^1.3"
+>>>>>>> 43e924b776cfb1a2cb91e48eec3e0e3e046c8c4f
   }
 }
