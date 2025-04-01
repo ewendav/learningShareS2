@@ -16,6 +16,6 @@ class TwigExtensions extends AbstractExtension
 
     public function asset($path)
     {
-        return '/util/assets/' . ltrim($path, '/');
+        return '/assets/' . ltrim($path, '/');
     }
 }
