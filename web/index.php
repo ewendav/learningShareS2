@@ -5,7 +5,7 @@ require_once '../vendor/autoload.php';
 
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
-use FastRoute\simpleDispatcher;
+use FastRoute;
 
 $loader = new FilesystemLoader('../app/Views/templates/');
 $twig = new Environment(
