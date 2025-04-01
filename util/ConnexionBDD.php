@@ -1,7 +1,6 @@
 <?php
-namespace Util;
 
-use Dotenv\Dotenv;
+namespace util;
 
 class ConnexionBDD
 {
@@ -30,7 +29,10 @@ class ConnexionBDD
 
         try {
             $this->pdo = new PDO(
-                $db_co, $user, $password, [
+                $db_co,
+                $user,
+                $password,
+                [
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
                 ]
