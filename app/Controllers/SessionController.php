@@ -1,24 +1,41 @@
 <?php
-namespace Controller;
+namespace Controllers;
 
 use Entity\Session;
 use Model\SessionModel;
 use PDO;
 
-class SessionController {
+class SessionController
+{
     private $sessionModel;
 
     /**
      * Constructeur
      */
-    public function __construct(PDO $pdo) {
+    public function __construct(PDO $pdo)
+    {
         $this->sessionModel = new SessionModel($pdo);
+    }
+
+
+
+    // affiche la page de creation de session et recuperer toutes les categories
+    // afin de pouvoir les utiliséés dans les listes déroulantes 
+    public function display($twig)
+    {
+        echo $twig->render(
+            'ecrans/createSession.html.twig', [
+              'title' => 'Creation d\'un partage ou d\'un échange',
+              'fileToInclude' => 'components/CreateSession.html.twig'
+              ]
+        );
     }
 
     /**
      * Affiche la liste des sessions
      */
-    public function index() {
+    public function index()
+    {
         $sessions = $this->sessionModel->getAll();
 
         // En fonction de votre système de rendu de vue
@@ -34,7 +51,8 @@ class SessionController {
     /**
      * Affiche les détails d'une session
      */
-    public function show($session_id) {
+    public function show($session_id)
+    {
         $session = $this->sessionModel->getById($session_id);
 
         if (!$session) {
@@ -55,7 +73,8 @@ class SessionController {
     /**
      * Affiche le formulaire de création d'une session
      */
-    public function create() {
+    public function create()
+    {
         // return view('sessions/create');
         return [
             'status' => 'success',
@@ -66,7 +85,8 @@ class SessionController {
     /**
      * Stocke une nouvelle session
      */
-    public function store($request) {
+    public function store($request)
+    {
         // Validation des données
         // ...
 
@@ -99,7 +119,8 @@ class SessionController {
     /**
      * Affiche le formulaire d'édition d'une session
      */
-    public function edit($session_id) {
+    public function edit($session_id)
+    {
         $session = $this->sessionModel->getById($session_id);
 
         if (!$session) {
@@ -120,7 +141,8 @@ class SessionController {
     /**
      * Met à jour une session
      */
-    public function update($session_id, $request) {
+    public function update($session_id, $request)
+    {
         $session = $this->sessionModel->getById($session_id);
 
         if (!$session) {
@@ -158,7 +180,8 @@ class SessionController {
     /**
      * Supprime une session
      */
-    public function destroy($session_id) {
+    public function destroy($session_id)
+    {
         $session = $this->sessionModel->getById($session_id);
 
         if (!$session) {

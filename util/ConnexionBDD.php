@@ -1,5 +1,7 @@
 <?php
-namespace util;
+namespace Util;
+
+use Dotenv\Dotenv;
 
 class ConnexionBDD
 {

@@ -1,6 +1,5 @@
 <?php
 
-
 require_once '../vendor/autoload.php';
 
 use Twig\Environment;
@@ -24,17 +23,20 @@ $twig->addExtension(new Util\TwigExtensions());
 // Set up the FastRoute dispatcher
 $dispatcher = FastRoute\simpleDispatcher(
     function (FastRoute\RouteCollector $r) use ($twig) {
+
+        // route home
         $r->get(
             '/', function () use ($twig) {
-                echo $twig->render('home.html.twig');
+                echo $twig->render('base.html.twig');
             }
         );
 
+        // route création de session
         $r->get(
             '/createSession', function () use ($twig) {
                 echo $twig->render(
-                    'home.html.twig', [
-                    'title' => 'test title',
+                    'ecrans/createSession.html.twig', [
+                    'title' => 'Creation d\'un partage ou d\'un échange',
                     'fileToInclude' => 'components/CreateSession.html.twig'
                     ]
                 );
@@ -65,7 +67,6 @@ $dispatcher = FastRoute\simpleDispatcher(
 // Fetch method and URI from the request
 $httpMethod = $_SERVER['REQUEST_METHOD'];
 $uri = $_SERVER['REQUEST_URI'];
-
 
 
 // Dispatch the request through FastRoute

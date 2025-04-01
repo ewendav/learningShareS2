@@ -5,33 +5,40 @@ use Entity\Session;
 use PDO;
 use PDOException;
 
-class SessionModel {
+class SessionModel
+{
     private $pdo;
 
     /**
      * Constructeur
      */
-    public function __construct(PDO $pdo) {
+    public function __construct(PDO $pdo)
+    {
         $this->pdo = $pdo;
     }
 
     /**
      * Sauvegarde une session dans la base de données
      */
-    public function save(Session $session) {
+    public function save(Session $session)
+    {
         try {
             if ($session->getSessionId()) {
                 $sessionID = $session->getSessionId();
                 // Mise à jour d'une session existante
-                $stmt = $this->pdo->prepare("UPDATE SESSION SET start_time = :start_time, end_time = :end_time, 
+                $stmt = $this->pdo->prepare(
+                    "UPDATE SESSION SET start_time = :start_time, end_time = :end_time, 
                                       date_session = :date_session, description = :description, rate_id = :rate_id, 
-                                      skill_taught_id = :skill_taught_id WHERE session_id = :session_id");
+                                      skill_taught_id = :skill_taught_id WHERE session_id = :session_id"
+                );
                 $stmt->bindParam(':session_id', $sessionID);
             } else {
                 // Création d'une nouvelle session
-                $stmt = $this->pdo->prepare("INSERT INTO SESSION (start_time, end_time, date_session, description, 
+                $stmt = $this->pdo->prepare(
+                    "INSERT INTO SESSION (start_time, end_time, date_session, description, 
                                       rate_id, skill_taught_id) VALUES (:start_time, :end_time, :date_session, 
-                                      :description, :rate_id, :skill_taught_id)");
+                                      :description, :rate_id, :skill_taught_id)"
+                );
             }
 
             // Stocker les valeurs dans des variables intermédiaires
@@ -65,7 +72,8 @@ class SessionModel {
     /**
      * Récupérer une session par son ID
      */
-    public function getById($session_id) {
+    public function getById($session_id)
+    {
         try {
             $stmt = $this->pdo->prepare("SELECT * FROM SESSION WHERE session_id = :session_id");
             $stmt->bindParam(':session_id', $session_id);
@@ -92,7 +100,8 @@ class SessionModel {
     /**
      * Supprimer une session
      */
-    public function delete(Session $session) {
+    public function delete(Session $session)
+    {
         try {
             $sessionID = $session->getSessionId();
             $stmt = $this->pdo->prepare("DELETE FROM SESSION WHERE session_id = :session_id");
@@ -107,7 +116,8 @@ class SessionModel {
     /**
      * Récupérer toutes les sessions
      */
-    public function getAll() {
+    public function getAll()
+    {
         try {
             $stmt = $this->pdo->query("SELECT * FROM SESSION");
             $sessions = [];
