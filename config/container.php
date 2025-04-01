@@ -13,7 +13,8 @@ $dotenv->safeLoad();
 $containerBuilder = new ContainerBuilder();
 
 // Connexion à la BDD via PDO
-$containerBuilder->addDefinitions([
+$containerBuilder->addDefinitions(
+    [
     PDO::class => function () {
         $sgbd = $_ENV['DB_SGBD'] ?? 'pgsql';
         $host = $_ENV['DB_HOST'];
@@ -28,12 +29,15 @@ $containerBuilder->addDefinitions([
             default => throw new Exception("SGBD non supporté : $sgbd"),
         };
 
-        return new PDO($dsn, $user, $pass, [
+        return new PDO(
+            $dsn, $user, $pass, [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-        ]);
+            ]
+        );
     },
-]);
+    ]
+);
 
 $container = $containerBuilder->build();
 

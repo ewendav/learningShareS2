@@ -3,7 +3,7 @@
 require_once __DIR__ . '/../vendor/autoload.php';
 
 // Charger le container
-$container = require __DIR__ . '/../config/container.php';
+$container = include __DIR__ . '/../config/container.php';
 
 use PDO;
 

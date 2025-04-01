@@ -27,10 +27,12 @@ class ConnexionBDD
         };
 
         try {
-            $this->pdo = new PDO($db_co, $user, $password, [
+            $this->pdo = new PDO(
+                $db_co, $user, $password, [
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
-            ]);
+                ]
+            );
         } catch (PDOException $e) {
             error_log($e->getMessage());
             die("Erreur de connexion à la base de données.");
