@@ -68,11 +68,16 @@ $dispatcher = FastRoute\simpleDispatcher(
 
 // Fetch method and URI from the request
 $httpMethod = $_SERVER['REQUEST_METHOD'];
-$uri = $_SERVER['REQUEST_URI'];
 
+// méthode qui n'accepte pas les parametre get
+// $uri = $_SERVER['REQUEST_URI'];
+// // Dispatch the request through FastRoute
+// $routeInfo = $dispatcher->dispatch($httpMethod, $uri);
 
-// Dispatch the request through FastRoute
+// méthode qui accepte les parametre get
+$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $routeInfo = $dispatcher->dispatch($httpMethod, $uri);
+
 
 switch ($routeInfo[0]) {
     case FastRoute\Dispatcher::NOT_FOUND:

@@ -1,10 +1,20 @@
 <div class="session-card">
 
-  <div class="horizontal-display">
+  <div class="horizontal-display header-session-card">
     
-    <img src="{{ avatarPath }}" class="avatar" >
+    <div class="flex" style="gap:.5rem;" >
+      <img src="{{ avatarPath }}" class="avatar" >
+      <p>{{userName}}</p>
 
-    <h3>{{ traduction('echange') }}</h3>
+    </div>
+
+    <h3>{{ traduction('lesson') }}</h3>
+
+    <div class="flex" style="gap:.5rem; opacity : 0;" >
+      <img src="{{ avatarPath }}" class="avatar" >
+      <p>{{userName}}</p>
+
+    </div>
 
   </div>
 
@@ -12,8 +22,6 @@
   <div class="horizontal-display">
     
     <div class="vertical-display">
-      
-      <p>{{traduction('teachYou')}}</p>
 
       <p>{{traduction('categorie')}} : {{ categoryLearned }}</p>
 
@@ -23,22 +31,20 @@
 
 
     <div>
-
     </div>
+
 
     <div class="vertical-display">
       
-      <p>{{traduction('want2learn')}}</p>
+      <p>{{traduction('lieu')}} : {{ adresse }}</p>
 
-      <p>{{traduction('categorie')}} : {{ categoryWanted }}</p>
-
-      <p>{{traduction('competence')}} : {{ skillWanted }}</p>
+      <p>{{traduction('date')}} : {{ date }}</p>
 
     </div>
 
   </div>
 
 
-
+        <button class="form-button green-bg" type="submit">{{traduction('rejoindreCours')}}</button>
 
 </div>

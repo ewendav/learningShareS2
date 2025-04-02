@@ -1,17 +1,20 @@
 <?php
+
 namespace Controllers;
 
 use Entity\Partage;
 use Models\PartageModel;
 use PDO;
 
-class PartageController {
+class PartageController
+{
     private $partageModel;
 
     /**
      * Constructeur
      */
-    public function __construct(PDO $pdo = null) {
+    public function __construct(PDO $pdo = null)
+    {
         if ($pdo === null) {
             $container = \Util\Container::getContainer();
             $pdo = $container->get(PDO::class);
@@ -22,7 +25,8 @@ class PartageController {
     /**
      * Affiche la liste des partages
      */
-    public function index() {
+    public function index()
+    {
         $partages = $this->partageModel->getAll();
 
         // En fonction de votre système de rendu de vue
@@ -38,7 +42,8 @@ class PartageController {
     /**
      * Affiche les partages d'un utilisateur (comme demandeur)
      */
-    public function userRequests($user_id) {
+    public function userRequests($user_id)
+    {
         $partages = $this->partageModel->getByRequesterId($user_id);
 
         // return view('partages/user-requests', ['partages' => $partages]);
@@ -51,7 +56,8 @@ class PartageController {
     /**
      * Affiche les partages d'un utilisateur (comme accepteur)
      */
-    public function userAccepts($user_id) {
+    public function userAccepts($user_id)
+    {
         $partages = $this->partageModel->getByAccepterId($user_id);
 
         // return view('partages/user-accepts', ['partages' => $partages]);
@@ -64,7 +70,8 @@ class PartageController {
     /**
      * Affiche les détails d'un partage
      */
-    public function show($session_id) {
+    public function show($session_id)
+    {
         $partage = $this->partageModel->getById($session_id);
 
         if (!$partage) {
@@ -85,7 +92,8 @@ class PartageController {
     /**
      * Affiche le formulaire de création d'un partage
      */
-    public function create() {
+    public function create()
+    {
         // return view('partages/create');
         return [
             'status' => 'success',
@@ -96,19 +104,20 @@ class PartageController {
     /**
      * Stocke un nouveau partage
      */
-    public static function store() {
+    public static function store()
+    {
         // Récupération du container
         $container = \Util\Container::getContainer();
         $twig = $container->get(\Twig\Environment::class);
-        
+
         // Création du contrôleur
         $controller = new self();
-        
+
         // Récupération des données du formulaire
         $request = $_POST;
-        
+
         // Validation des données (à implémenter)
-        
+
         // Création de l'objet Partage
         $partage = new Partage(
             null,
@@ -146,7 +155,8 @@ class PartageController {
     /**
      * Affiche le formulaire d'édition d'un partage
      */
-    public function edit($session_id) {
+    public function edit($session_id)
+    {
         $partage = $this->partageModel->getById($session_id);
 
         if (!$partage) {
@@ -167,7 +177,8 @@ class PartageController {
     /**
      * Met à jour un partage
      */
-    public function update($session_id, $request) {
+    public function update($session_id, $request)
+    {
         $partage = $this->partageModel->getById($session_id);
 
         if (!$partage) {
@@ -210,7 +221,8 @@ class PartageController {
     /**
      * Supprime un partage
      */
-    public function destroy($session_id) {
+    public function destroy($session_id)
+    {
         $partage = $this->partageModel->getById($session_id);
 
         if (!$partage) {
@@ -239,7 +251,8 @@ class PartageController {
     /**
      * Accepte un partage (ajoute l'ID de l'accepteur)
      */
-    public function accept($session_id, $user_id) {
+    public function accept($session_id, $user_id)
+    {
         $partage = $this->partageModel->getById($session_id);
 
         if (!$partage) {
@@ -273,3 +286,4 @@ class PartageController {
         }
     }
 }
+

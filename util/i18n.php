@@ -49,6 +49,9 @@ return [
         "want2learn" => "Veux apprendre",
 "teachYou" => "Vous apprends",
 
+"rejoindrePartage" => "Rejoindre le partage",
+"rejoindreCours" => "Rejoindre le cours",
+
 
 "consulterSession" => "Consulter les échanges et les cours",
     ],
@@ -102,5 +105,8 @@ return [
     "entrezVille" => "Enter the city",
     "want2learn" => "Want to learn",
     "teachYou" => "Teach you",
+    "rejoindrePartage" => "Join the exchange",
+
+    "rejoindreCours" => "Join the lesson",
     ]
 ];

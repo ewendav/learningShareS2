@@ -45,11 +45,19 @@ class SessionController
         $container = \Util\Container::getContainer();
         $twig = $container->get(\Twig\Environment::class);
 
+        if (($_GET['type'] ?? "") == "cours") {
+        } else {
+            $partageModel = new \Models\PartageModel($container->get(PDO::class));
+            $sessions = $partageModel->getDemandeDePartage(true);
+        }
+
         echo $twig->render(
             'ecrans/displaySessions.html.twig',
             [
             'title' => 'Consulter les cours et les sessions',
-              'categories' => \Models\CategorieModel::getAll(),
+            'getParams' => $_GET,
+            'sessions' => $sessions,
+            'categories' => \Models\CategorieModel::getAll()
             ]
         );
     }

@@ -10,31 +10,23 @@
 
   <div class="horizontal-display">
 
-      <label class="toggle-switch-container">
-        <input class="toggle-switch-input" type="checkbox"
-          onChange="
-            document.getElementById('section-cours').style.display = this.checked ? 'block' : 'none';
-            document.getElementById('section-echange').style.display = this.checked ? 'none' : 'block';
-          "
-        >
-        <span class="toggle-switch-slider">
-          <p>{{traduction('echange')}}</p>
-          <p>{{traduction('cours')}}</p>
-          <span class="slider-container">
-            <span class="slider">
-            </span>
-          </span>
+<label class="toggle-switch-container">
+    <input class="toggle-switch-input" type="checkbox"
+           {% if getParams.type == 'cours' %} checked {% endif %}
+           onClick="
+               window.location.href = this.checked ? 'http://localhost:3000/sessions?type=cours' : 'http://localhost:3000/sessions?type=echange';
+           "
+           id="yourCheckboxId">
+    <span class="toggle-switch-slider">
+        <p>{{ traduction('echange') }}</p>
+        <p>{{ traduction('cours') }}</p>
+        <span class="slider-container">
+            <span class="slider"></span>
         </span>
-      </label>
-      <script>
-      document.addEventListener('DOMContentLoaded', ()=>{
+    </span>
+</label>
 
-    let checked = document.querySelector('.toggle-switch-input').checked;
-            document.getElementById('section-cours').style.display = checked ? 'block' : 'none';
-            document.getElementById('section-echange').style.display = checked ? 'none' : 'block';
-        })
 
-      </script>
 
       <input placeholder="{{traduction('rechercherSession')}}" class="input-goofy" type="text" id="recherche" name="rechercheSession">
 
@@ -46,139 +38,41 @@
 
   </div>
 
-<div id="section-echange">
-  <h1 class="page-title">{{traduction('echange')}}</h1>
+
+{% if getParams.type == "cours" %}
 
 
-  {% include 'components/exchangeCard.html.twig' with {'avatar_path' : '', 'categoryLearned': '', 'skillLearned' : '', 'categoryWanted' : '', 'skillWanted' : ''} %}
+<div id="section-cours-display">
 
 
+  {% include 'components/lessonCard.html.twig' with {'avatar_path' : '', 'userName' : 'Delphine', 'categoryLearned': 'category aprise', 'skillLearned' : ' compétance aprise', 'adresse' : 'adresse', 'date' : 'Mercredi 29 Janvier 2025, 19h00 '} %}
 
 
-  <form class="form-creation-session">
-
-    <div class="horizontal-display">
-      <div class="input-label-display">
-        <label for="categorie-enseignee">{{ traduction('categorie') }}</label>
-        <select required class="input-goofy" id="categorie-echange-2" name="categorie-enseignee">
-            <option value="" disabled selected>{{ traduction('selectCategorie') }}</option>
-            {% for category in categories %}
-                <option value="{{ category[0] }}">{{ category[1] }}</option>
-            {% endfor %}
-        </select>
-      </div>
-
-      <div class="input-label-display">
-        <label for="competence-echange">{{traduction('competence')}}</label>
-        <input required class="input-goofy" id="competence-echange" name="competence-enseignee" placeholder="{{traduction('selectCompetence')}}">
-      </div>
-    </div>
-
-    <div class="horizontal-display">
-      <div class="input-label-display">
-        <label for="categorie-demandee">{{traduction('categorie')}}</label>
-        <select class="input-goofy" id="categorie-demandee" name="categorie-enseignee">
-            <option value="" disabled selected>{{ traduction('selectCategorie') }}</option>
-            {% for category in categories %}
-                <option value="{{ category[0] }}">{{ category[1] }}</option>
-            {% endfor %}
-        </select>
-      </div>
-
-      <div class="input-label-display">
-        <label for="competence-echange-2">{{traduction('competence')}}</label>
-        <input class="input-goofy" id="competence-echange-2" name="competence-echange-2" placeholder="{{traduction('selectCompetence')}}">
-      </div>
-    </div>
-
-
-
-      <div style="margin-top: 1rem;" class="horizontal-display">
-        <button class="form-button dark-grey-bg">{{traduction('annuler')}}</button>
-        <button class="form-button green-bg" type="submit">{{traduction('creerEchange')}}</button>
-      </div>
-
-  </form>
 </div>
 
-  <div id="section-cours">
+{% else %}
 
-    <h1 class="page-title">{{traduction('creationCours')}}</h1>
-
-    <form class="form-creation-session">
-
-      <div class="horizontal-display">
-
-        <div class="input-label-display">
-          <label for="categorie-cours">{{traduction('categorie')}}</label>
-          <select required class="input-goofy" id="categorie-echange-2" name="categorie-cours">
-              <option value="" disabled selected>{{ traduction('selectCategorie') }}</option>
-              {% for category in categories %}
-                  <option value="{{ category[0] }}">{{ category[1] }}</option>
-              {% endfor %}
-          </select>
-        </div>
-
-        <div class="input-label-display">
-          <label for="competence">{{traduction('competence')}}</label>
-          <input required class="input-goofy" class="input-googy" id="competence" name="competence" placeholder="{{traduction('selectCompetence')}}">
-        </div>
-
-      </div>
-
-      <div class="horizontal-display">
-
-          <div class="input-label-display">
-              <label for="date">{{traduction('date')}}</label>
-              <input required class="input-goofy" type="date" id="date" name="date">
-          </div>
-
-          <div class="input-label-display">
-              <label for="heureDebut">{{traduction('heureDebut')}}</label>
-              <input required class="input-goofy" type="time" id="heureDebut" name="heureDebut" onchange="validateTimes()">
-          </div>
-
-          <div class="input-label-display">
-              <label for="heureFin">{{traduction('heureFin')}}</label>
-              <input required class="input-goofy" type="time" id="heureFin" name="heureFin" onchange="validateTimes()">
-          </div>
-      <script>
-      function validateTimes() {
-          const heureDebut = document.getElementById('heureDebut').value;
-          const heureFin = document.getElementById('heureFin').value;
-          if (heureDebut && heureFin) {
-              if (heureDebut >= heureFin) {
-                  alert("L'heure de début ne peut pas être après l'heure de fin.");
-                  document.getElementById('heureFin').value = '';
-              }
-          }
-      }
-      </script>
-      </div>
+<div id="section-echange-display">
 
 
-      <div class="horizontal-display">
-          <div class="input-label-display">
-              <label for="lieuxCours">{{traduction('lieuxCours')}}</label>
-              <input required class="input-goofy" type="text" id="lieuxCours" name="lieuxCours" placeholder="{{traduction('selectLieuCours')}}">
-          </div>
-      </div>
-
-      <div class="horizontal-display">
-          <div class="input-label-display">
-              <label for="maxParticipants">{{traduction('maximumParticipants')}}</label>
-              <input required class="input-goofy" type="number" id="maxParticipants" name="maxParticipants" placeholder="{{traduction('selectNbMaxParticipants')}}">
-          </div>
-      </div>
-
-      <div style="margin-top: 1rem;" class="horizontal-display">
-        <button class="form-button dark-grey-bg">{{traduction('annuler')}}</button>
-        <button class="form-button green-bg" type="submit">{{traduction('creerCours')}}</button>
-      </div>
+{% for session in sessions %}
+    {% include 'components/exchangeCard.html.twig' with {
+        'avatar_path': session.requester_avatar is not empty ? session.requester_avatar : '',
+        'userName': session.requester_first_name ~ ' ' ~ session.requester_last_name,
+        'categoryLearned': categories[session.skill_taught_category_id - 1] is defined ? categories[session.skill_taught_category_id - 1][1] : '',
+        'skillLearned': session.skill_taught_name is not empty ? session.skill_taught_name : '',
+        'categoryWanted': categories[session.skill_requested_category_id -1] is defined ? categories[session.skill_requested_category_id - 1][1] : '',
+        'skillWanted': session.skill_requested_name is not empty ? session.skill_requested_name : ''
+    } %}
+{% endfor %}
 
 
-    </form>
-  </div>
+</div>
+
+
+{% endif %}
+
+
 
 </section>
 
