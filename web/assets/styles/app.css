@@ -192,5 +192,5 @@ input.toggle-switch-input:checked + .toggle-switch-slider .slider {
   box-shadow: 3px 3px 2px 0px #00000040;
   border: none;
   outline: none;
-  cursor: poinert;
+  cursor: pointer;
 }
