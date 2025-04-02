@@ -1,8 +1,8 @@
 <?php
-namespace Controller;
+namespace Controllers;
 
 use Entity\Cours;
-use Model\CoursModel;
+use Models\CoursModel;
 use PDO;
 
 class CoursController {
@@ -11,7 +11,11 @@ class CoursController {
     /**
      * Constructeur
      */
-    public function __construct(PDO $pdo) {
+    public function __construct(PDO $pdo = null) {
+        if ($pdo === null) {
+            $container = \Util\Container::getContainer();
+            $pdo = $container->get(PDO::class);
+        }
         $this->coursModel = new CoursModel($pdo);
     }
 
@@ -84,10 +88,20 @@ class CoursController {
     /**
      * Stocke un nouveau cours
      */
-    public function store($request) {
-        // Validation des données
-        // ...
-
+    public static function store() {
+        // Récupération du container
+        $container = \Util\Container::getContainer();
+        $twig = $container->get(\Twig\Environment::class);
+        
+        // Création du contrôleur
+        $controller = new self();
+        
+        // Récupération des données du formulaire
+        $request = $_POST;
+        
+        // Validation des données (à implémenter)
+        
+        // Création de l'objet Cours
         $cours = new Cours(
             null,
             $request['start_time'],
@@ -98,22 +112,26 @@ class CoursController {
             $request['skill_taught_id'],
             $request['location_id'],
             $request['lesson_host_id'],
-            $request['max_attendees']
+            (int)$request['max_attendees']
         );
 
-        if ($this->coursModel->save($cours)) {
-            // redirect('cours/' . $cours->getSessionId());
-            return [
-                'status' => 'success',
+        // Sauvegarde dans la base de données
+        if ($controller->coursModel->save($cours)) {
+            // Redirection ou affichage d'un message de succès
+            echo $twig->render('ecrans/createSession.html.twig', [
+                'title' => 'Création d\'un cours',
                 'message' => 'Cours créé avec succès',
-                'data' => $cours
-            ];
+                'success' => true,
+                'categories' => \Models\CategorieModel::getAll()
+            ]);
         } else {
-            // return view('cours/create', ['error' => 'Erreur lors de la création du cours']);
-            return [
-                'status' => 'error',
-                'message' => 'Erreur lors de la création du cours'
-            ];
+            // Affichage d'un message d'erreur
+            echo $twig->render('ecrans/createSession.html.twig', [
+                'title' => 'Création d\'un cours',
+                'message' => 'Erreur lors de la création du cours',
+                'success' => false,
+                'categories' => \Models\CategorieModel::getAll()
+            ]);
         }
     }
 

@@ -1,5 +1,5 @@
 <?php
-namespace Model;
+namespace Models;
 
 use Entity\Cours;
 use PDO;
@@ -24,6 +24,7 @@ class CoursModel {
         try {
             // Commencer une transaction
             $this->pdo->beginTransaction();
+
 
             // Sauvegarder la session parent
             if (!$this->sessionModel->save($cours)) {
@@ -62,15 +63,18 @@ class CoursModel {
             $stmt->bindParam(':location_id', $location_id);
             $stmt->bindParam(':lesson_host_id', $lesson_host_id);
             $stmt->bindParam(':max_attendees', $max_attendees);
+
             $stmt->execute();
 
             // Valider la transaction
             $this->pdo->commit();
+            error_log("CoursModel::save - Cours sauvegardé avec succès");
             return true;
         } catch (PDOException $e) {
             // Annuler la transaction en cas d'erreur
             $this->pdo->rollBack();
             error_log("Erreur lors de la sauvegarde du cours: " . $e->getMessage());
+            error_log("CoursModel::save - Trace: " . $e->getTraceAsString());
             return false;
         }
     }

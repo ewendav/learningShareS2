@@ -28,8 +28,11 @@ class SessionModel
     public function save(Session $session)
     {
         try {
+            error_log("SessionModel::save - Début de la sauvegarde");
+            
             if ($session->getSessionId()) {
                 $sessionID = $session->getSessionId();
+                error_log("SessionModel::save - Mise à jour de la session existante ID=" . $sessionID);
                 // Mise à jour d'une session existante
                 $stmt = $this->pdo->prepare(
                     "UPDATE SESSION SET start_time = :start_time, end_time = :end_time, 
@@ -38,6 +41,7 @@ class SessionModel
                 );
                 $stmt->bindParam(':session_id', $sessionID);
             } else {
+                error_log("SessionModel::save - Création d'une nouvelle session");
                 // Création d'une nouvelle session
                 $stmt = $this->pdo->prepare(
                     "INSERT INTO SESSION (start_time, end_time, date_session, description, 
@@ -54,6 +58,8 @@ class SessionModel
             $rate_id = $session->getRateId();
             $skill_taught_id = $session->getSkillTaughtId();
 
+            error_log("SessionModel::save - Paramètres: start_time=$start_time, end_time=$end_time, date_session=$date_session, description=$description, rate_id=$rate_id, skill_taught_id=$skill_taught_id");
+
             // Utiliser les variables pour bindParam
             $stmt->bindParam(':start_time', $start_time);
             $stmt->bindParam(':end_time', $end_time);
@@ -61,15 +67,27 @@ class SessionModel
             $stmt->bindParam(':description', $description);
             $stmt->bindParam(':rate_id', $rate_id);
             $stmt->bindParam(':skill_taught_id', $skill_taught_id);
-            $stmt->execute();
-
-            if (!$session->getSessionId()) {
-                $session->setSessionId($this->pdo->lastInsertId());
+            
+            error_log("SessionModel::save - Exécution de la requête SQL");
+            $result = $stmt->execute();
+            
+            if (!$result) {
+                $errorInfo = $stmt->errorInfo();
+                error_log("SessionModel::save - Erreur SQL: " . $errorInfo[2]);
+                return false;
             }
 
+            if (!$session->getSessionId()) {
+                $lastId = $this->pdo->lastInsertId();
+                error_log("SessionModel::save - Nouvelle session créée avec ID=" . $lastId);
+                $session->setSessionId($lastId);
+            }
+
+            error_log("SessionModel::save - Session sauvegardée avec succès");
             return true;
         } catch (PDOException $e) {
             error_log("Erreur lors de la sauvegarde de la session: " . $e->getMessage());
+            error_log("SessionModel::save - Trace: " . $e->getTraceAsString());
             return false;
         }
     }

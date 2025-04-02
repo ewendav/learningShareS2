@@ -1,8 +1,8 @@
 <?php
-namespace Controller;
+namespace Controllers;
 
 use Entity\Partage;
-use Model\PartageModel;
+use Models\PartageModel;
 use PDO;
 
 class PartageController {
@@ -11,7 +11,11 @@ class PartageController {
     /**
      * Constructeur
      */
-    public function __construct(PDO $pdo) {
+    public function __construct(PDO $pdo = null) {
+        if ($pdo === null) {
+            $container = \Util\Container::getContainer();
+            $pdo = $container->get(PDO::class);
+        }
         $this->partageModel = new PartageModel($pdo);
     }
 
@@ -92,10 +96,20 @@ class PartageController {
     /**
      * Stocke un nouveau partage
      */
-    public function store($request) {
-        // Validation des données
-        // ...
-
+    public static function store() {
+        // Récupération du container
+        $container = \Util\Container::getContainer();
+        $twig = $container->get(\Twig\Environment::class);
+        
+        // Création du contrôleur
+        $controller = new self();
+        
+        // Récupération des données du formulaire
+        $request = $_POST;
+        
+        // Validation des données (à implémenter)
+        
+        // Création de l'objet Partage
         $partage = new Partage(
             null,
             $request['start_time'],
@@ -106,22 +120,26 @@ class PartageController {
             $request['skill_taught_id'],
             $request['skill_requested_id'],
             $request['exchange_requester_id'],
-            $request['exchange_accepter_id']
+            null // exchange_accepter_id est null au début
         );
 
-        if ($this->partageModel->save($partage)) {
-            // redirect('partages/' . $partage->getSessionId());
-            return [
-                'status' => 'success',
-                'message' => 'Partage créé avec succès',
-                'data' => $partage
-            ];
+        // Sauvegarde dans la base de données
+        if ($controller->partageModel->save($partage)) {
+            // Redirection ou affichage d'un message de succès
+            echo $twig->render('ecrans/createSession.html.twig', [
+                'title' => 'Création d\'un échange',
+                'message' => 'Échange créé avec succès',
+                'success' => true,
+                'categories' => \Models\CategorieModel::getAll()
+            ]);
         } else {
-            // return view('partages/create', ['error' => 'Erreur lors de la création du partage']);
-            return [
-                'status' => 'error',
-                'message' => 'Erreur lors de la création du partage'
-            ];
+            // Affichage d'un message d'erreur
+            echo $twig->render('ecrans/createSession.html.twig', [
+                'title' => 'Création d\'un échange',
+                'message' => 'Erreur lors de la création de l\'échange',
+                'success' => false,
+                'categories' => \Models\CategorieModel::getAll()
+            ]);
         }
     }
 

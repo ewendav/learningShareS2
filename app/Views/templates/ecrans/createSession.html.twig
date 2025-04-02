@@ -35,12 +35,12 @@ let checked = document.querySelector('.toggle-switch-input').checked;
 
 <div id="section-echange">
   <h1 class="page-title">{{traduction('echange')}}</h1>
-  <form class="form-creation-session">
+  <form class="form-creation-session" action="/createPartage" method="POST">
 
     <div class="horizontal-display">
       <div class="input-label-display">
-        <label for="categorie-enseignee">{{ traduction('categorie') }}</label>
-        <select required class="input-goofy" id="categorie-echange-2" name="categorie-enseignee">
+        <label for="skill_taught_id">{{ traduction('categorie') }}</label>
+        <select required class="input-goofy" id="skill_taught_id" name="skill_taught_id">
             <option value="" disabled selected>{{ traduction('selectCategorie') }}</option>
             {% for category in categories %}
                 <option value="{{ category[0] }}">{{ category[1] }}</option>
@@ -49,15 +49,15 @@ let checked = document.querySelector('.toggle-switch-input').checked;
       </div>
 
       <div class="input-label-display">
-        <label for="competence-echange">{{traduction('competence')}}</label>
-        <input required class="input-goofy" id="competence-echange" name="competence-enseignee" placeholder="{{traduction('selectCompetence')}}">
+        <label for="description">{{traduction('competence')}}</label>
+        <input required class="input-goofy" id="description" name="description" placeholder="{{traduction('selectCompetence')}}">
       </div>
     </div>
 
     <div class="horizontal-display">
       <div class="input-label-display">
-        <label for="categorie-demandee">{{traduction('categorie')}}</label>
-        <select class="input-goofy" id="categorie-demandee" name="categorie-enseignee">
+        <label for="skill_requested_id">{{traduction('categorie')}}</label>
+        <select required class="input-goofy" id="skill_requested_id" name="skill_requested_id">
             <option value="" disabled selected>{{ traduction('selectCategorie') }}</option>
             {% for category in categories %}
                 <option value="{{ category[0] }}">{{ category[1] }}</option>
@@ -67,16 +67,35 @@ let checked = document.querySelector('.toggle-switch-input').checked;
 
       <div class="input-label-display">
         <label for="competence-echange-2">{{traduction('competence')}}</label>
-        <input class="input-goofy" id="competence-echange-2" name="competence-echange-2" placeholder="{{traduction('selectCompetence')}}">
+        <input class="input-goofy" id="competence-echange-2" name="competence_requested" placeholder="{{traduction('selectCompetence')}}">
       </div>
     </div>
 
-
-
-      <div style="margin-top: 1rem;" class="horizontal-display">
-        <button class="form-button dark-grey-bg">{{traduction('annuler')}}</button>
-        <button class="form-button green-bg" type="submit">{{traduction('creerEchange')}}</button>
+    <div class="horizontal-display">
+      <div class="input-label-display">
+        <label for="date_session">{{traduction('date')}}</label>
+        <input required class="input-goofy" type="date" id="date_session" name="date_session">
       </div>
+
+      <div class="input-label-display">
+        <label for="start_time">{{traduction('heureDebut')}}</label>
+        <input required class="input-goofy" type="time" id="start_time" name="start_time">
+      </div>
+
+      <div class="input-label-display">
+        <label for="end_time">{{traduction('heureFin')}}</label>
+        <input required class="input-goofy" type="time" id="end_time" name="end_time">
+      </div>
+    </div>
+
+    <!-- Champs cachés nécessaires -->
+    <input type="hidden" name="exchange_requester_id" value="1">
+    <input type="hidden" name="rate_id" value="1">
+
+    <div style="margin-top: 1rem;" class="horizontal-display">
+      <button type="button" class="form-button dark-grey-bg">{{traduction('annuler')}}</button>
+      <button class="form-button green-bg" type="submit">{{traduction('creerEchange')}}</button>
+    </div>
 
   </form>
 </div>
@@ -85,13 +104,13 @@ let checked = document.querySelector('.toggle-switch-input').checked;
 
     <h1 class="page-title">{{traduction('creationCours')}}</h1>
 
-    <form class="form-creation-session">
+    <form class="form-creation-session" action="/createCours" method="POST">
 
       <div class="horizontal-display">
 
         <div class="input-label-display">
-          <label for="categorie-cours">{{traduction('categorie')}}</label>
-          <select required class="input-goofy" id="categorie-echange-2" name="categorie-cours">
+          <label for="skill_taught_id_cours">{{traduction('categorie')}}</label>
+          <select required class="input-goofy" id="skill_taught_id_cours" name="skill_taught_id">
               <option value="" disabled selected>{{ traduction('selectCategorie') }}</option>
               {% for category in categories %}
                   <option value="{{ category[0] }}">{{ category[1] }}</option>
@@ -100,8 +119,8 @@ let checked = document.querySelector('.toggle-switch-input').checked;
         </div>
 
         <div class="input-label-display">
-          <label for="competence">{{traduction('competence')}}</label>
-          <input required class="input-goofy" class="input-googy" id="competence" name="competence" placeholder="{{traduction('selectCompetence')}}">
+          <label for="description_cours">{{traduction('competence')}}</label>
+          <input required class="input-goofy" id="description_cours" name="description" placeholder="{{traduction('selectCompetence')}}">
         </div>
 
       </div>
@@ -109,27 +128,27 @@ let checked = document.querySelector('.toggle-switch-input').checked;
       <div class="horizontal-display">
 
           <div class="input-label-display">
-              <label for="date">{{traduction('date')}}</label>
-              <input required class="input-goofy" type="date" id="date" name="date">
+              <label for="date_session_cours">{{traduction('date')}}</label>
+              <input required class="input-goofy" type="date" id="date_session_cours" name="date_session">
           </div>
 
           <div class="input-label-display">
-              <label for="heureDebut">{{traduction('heureDebut')}}</label>
-              <input required class="input-goofy" type="time" id="heureDebut" name="heureDebut" onchange="validateTimes()">
+              <label for="start_time_cours">{{traduction('heureDebut')}}</label>
+              <input required class="input-goofy" type="time" id="start_time_cours" name="start_time" onchange="validateTimes()">
           </div>
 
           <div class="input-label-display">
-              <label for="heureFin">{{traduction('heureFin')}}</label>
-              <input required class="input-goofy" type="time" id="heureFin" name="heureFin" onchange="validateTimes()">
+              <label for="end_time_cours">{{traduction('heureFin')}}</label>
+              <input required class="input-goofy" type="time" id="end_time_cours" name="end_time" onchange="validateTimes()">
           </div>
       <script>
       function validateTimes() {
-          const heureDebut = document.getElementById('heureDebut').value;
-          const heureFin = document.getElementById('heureFin').value;
+          const heureDebut = document.getElementById('start_time_cours').value;
+          const heureFin = document.getElementById('end_time_cours').value;
           if (heureDebut && heureFin) {
               if (heureDebut >= heureFin) {
                   alert("L'heure de début ne peut pas être après l'heure de fin.");
-                  document.getElementById('heureFin').value = '';
+                  document.getElementById('end_time_cours').value = '';
               }
           }
       }
@@ -139,20 +158,24 @@ let checked = document.querySelector('.toggle-switch-input').checked;
 
       <div class="horizontal-display">
           <div class="input-label-display">
-              <label for="lieuxCours">{{traduction('lieuxCours')}}</label>
-              <input required class="input-goofy" type="text" id="lieuxCours" name="lieuxCours" placeholder="{{traduction('selectLieuCours')}}">
+              <label for="location_id">{{traduction('lieuxCours')}}</label>
+              <input required class="input-goofy" type="text" id="location_id" name="location_id" placeholder="{{traduction('selectLieuCours')}}">
           </div>
       </div>
 
       <div class="horizontal-display">
           <div class="input-label-display">
-              <label for="maxParticipants">{{traduction('maximumParticipants')}}</label>
-              <input required class="input-goofy" type="number" id="maxParticipants" name="maxParticipants" placeholder="{{traduction('selectNbMaxParticipants')}}">
+              <label for="max_attendees">{{traduction('maximumParticipants')}}</label>
+              <input required class="input-goofy" type="number" id="max_attendees" name="max_attendees" placeholder="{{traduction('selectNbMaxParticipants')}}">
           </div>
       </div>
 
+      <!-- Champs cachés nécessaires -->
+      <input type="hidden" name="lesson_host_id" value="1">
+      <input type="hidden" name="rate_id" value="1">
+
       <div style="margin-top: 1rem;" class="horizontal-display">
-        <button class="form-button dark-grey-bg">{{traduction('annuler')}}</button>
+        <button type="button" class="form-button dark-grey-bg">{{traduction('annuler')}}</button>
         <button class="form-button green-bg" type="submit">{{traduction('creerCours')}}</button>
       </div>
 

@@ -1,5 +1,5 @@
 <?php
-namespace Model;
+namespace Models;
 
 use Entity\Partage;
 use PDO;
