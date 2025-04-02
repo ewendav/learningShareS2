@@ -156,12 +156,24 @@ let checked = document.querySelector('.toggle-switch-input').checked;
       </div>
 
 
-      <div class="horizontal-display">
-          <div class="input-label-display">
-              <label for="location_id">{{traduction('lieuxCours')}}</label>
-              <input required class="input-goofy" type="text" id="location_id" name="location_id" placeholder="{{traduction('selectLieuCours')}}">
-          </div>
-      </div>
+<div class="horizontal-display">
+    <div class="input-label-display">
+        <label for="address">{{ traduction('adresse') }}</label>
+        <input required class="input-goofy" type="text" id="address" name="address" placeholder="{{ traduction('entrezAdresse') }}">
+    </div>
+</div>
+
+<div class="horizontal-display">
+    <div class="input-label-display">
+        <label for="city">{{ traduction('ville') }}</label>
+        <input required class="input-goofy" type="text" id="city" name="city" placeholder="{{ traduction('entrezVille') }}">
+    </div>
+
+    <div class="input-label-display">
+        <label for="zip_code">{{ traduction('codePostal') }}</label>
+        <input required class="input-goofy" type="text" id="zip_code" name="zip_code" placeholder="{{ traduction('entrezCodePostal') }}">
+    </div>
+</div>
 
       <div class="horizontal-display">
           <div class="input-label-display">

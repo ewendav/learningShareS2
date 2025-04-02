@@ -34,7 +34,7 @@ $dispatcher = FastRoute\simpleDispatcher(
         // ROUTES POST
         // creation d'un échange
 
-        
+
         // routes pour créer un cours ou un partage
         $r->addRoute('POST', '/createCours', [Controllers\CoursController::class, 'store']);
         $r->addRoute('POST', '/createPartage', [Controllers\PartageController::class, 'store']);

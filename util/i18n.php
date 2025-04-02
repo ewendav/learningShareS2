@@ -40,6 +40,12 @@ return [
         "enterPassword" => "Entrez votre mot de passe",
         "alreadyHaveAccount" => "Vous avez déjà un compte ?",
 "rechercherSession" => "Rechercher un échange ou un cours",
+"adresse" => "Adresse",
+"entrezAdresse" => "Entrez l'adresse",
+"codePostal" => "Code Postal",
+"entrezCodePostal" => "Entrez le code postal",
+"ville" => "Ville",
+"entrezVille" => "Entrez la ville",
 
 
 "consulterSession" => "Consulter les échanges et les cours",
@@ -85,5 +91,12 @@ return [
     "consulterSession" => "Consult exchanges and lessons",
 
     "rechercherSession" => "Search for an exchange or a lesson",
+
+    "adresse" => "Address",
+    "entrezAdresse" => "Enter the address",
+    "codePostal" => "Zip Code",
+    "entrezCodePostal" => "Enter the zip code",
+    "ville" => "City",
+    "entrezVille" => "Enter the city",
     ]
 ];
