@@ -4,17 +4,20 @@ namespace Models;
 use Entity\Cours;
 use PDO;
 use PDOException;
+use Psr\Log\LoggerInterface;
 
 class CoursModel {
     private $pdo;
     private $sessionModel;
+    private $logger;
 
     /**
      * Constructeur
      */
-    public function __construct(PDO $pdo) {
+    public function __construct(PDO $pdo, LoggerInterface $logger) {
         $this->pdo = $pdo;
         $this->sessionModel = new SessionModel($pdo);
+        $this->logger = $logger;
     }
 
     /**
@@ -68,13 +71,12 @@ class CoursModel {
 
             // Valider la transaction
             $this->pdo->commit();
-            error_log("CoursModel::save - Cours sauvegardé avec succès");
+            $this->logger->info("Cours sauvegardé avec succès", ['session_id' => $session_id]);
             return true;
         } catch (PDOException $e) {
             // Annuler la transaction en cas d'erreur
             $this->pdo->rollBack();
-            error_log("Erreur lors de la sauvegarde du cours: " . $e->getMessage());
-            error_log("CoursModel::save - Trace: " . $e->getTraceAsString());
+            $this->logger->error("Erreur lors de la sauvegarde du cours: " . $e->getMessage(), ['exception' => $e]);
             return false;
         }
     }
@@ -112,7 +114,7 @@ class CoursModel {
             }
             return null;
         } catch (PDOException $e) {
-            error_log("Erreur lors de la récupération du cours: " . $e->getMessage());
+            $this->logger->error("Erreur lors de la récupération du cours: " . $e->getMessage(), ['exception' => $e]);
             return null;
         }
     }
@@ -150,7 +152,7 @@ class CoursModel {
         } catch (PDOException $e) {
             // Annuler la transaction en cas d'erreur
             $this->pdo->rollBack();
-            error_log("Erreur lors de la suppression du cours: " . $e->getMessage());
+            $this->logger->error("Erreur lors de la suppression du cours: " . $e->getMessage(), ['exception' => $e]);
             return false;
         }
     }
@@ -181,7 +183,7 @@ class CoursModel {
             }
             return $cours;
         } catch (PDOException $e) {
-            error_log("Erreur lors de la récupération des cours: " . $e->getMessage());
+            $this->logger->error("Erreur lors de la récupération des cours: " . $e->getMessage(), ['exception' => $e]);
             return [];
         }
     }
@@ -216,7 +218,7 @@ class CoursModel {
             }
             return $cours;
         } catch (PDOException $e) {
-            error_log("Erreur lors de la récupération des cours par hôte: " . $e->getMessage());
+            $this->logger->error("Erreur lors de la récupération des cours par hôte: " . $e->getMessage(), ['exception' => $e]);
             return [];
         }
     }
@@ -241,7 +243,8 @@ class CoursModel {
             }
             return $attendees;
         } catch (PDOException $e) {
-            error_log("Erreur lors de la récupération des participants: " . $e->getMessage());
+            $this->logger->error("Erreur lors de la récupération des participants: " . $e->getMessage(), ['exception' => $e]);
+            return [];
             return [];
         }
     }
@@ -286,7 +289,7 @@ class CoursModel {
             $stmt->bindParam(':user_id', $user_id);
             return $stmt->execute();
         } catch (PDOException $e) {
-            error_log("Erreur lors de l'ajout d'un participant: " . $e->getMessage());
+            $this->logger->error("Erreur lors de l'ajout d'un participant: " . $e->getMessage(), ['exception' => $e]);
             return false;
         }
     }
@@ -301,7 +304,7 @@ class CoursModel {
             $stmt->bindParam(':user_id', $user_id);
             return $stmt->execute();
         } catch (PDOException $e) {
-            error_log("Erreur lors de la suppression d'un participant: " . $e->getMessage());
+            $this->logger->error("Erreur lors de la suppression d'un participant: " . $e->getMessage(), ['exception' => $e]);
             return false;
         }
     }
@@ -318,7 +321,7 @@ class CoursModel {
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
             return $result['count'];
         } catch (PDOException $e) {
-            error_log("Erreur lors du comptage des participants: " . $e->getMessage());
+            $this->logger->error("Erreur lors du comptage des participants: " . $e->getMessage(), ['exception' => $e]);
             return 0;
         }
     }
@@ -336,7 +339,7 @@ class CoursModel {
             $count = $this->countAttendees($cours_id);
             return $count >= $cours->getMaxAttendees();
         } catch (PDOException $e) {
-            error_log("Erreur lors de la vérification si le cours est complet: " . $e->getMessage());
+            $this->logger->error("Erreur lors de la vérification si le cours est complet: " . $e->getMessage(), ['exception' => $e]);
             return false;
         }
     }
@@ -372,7 +375,7 @@ class CoursModel {
             }
             return $cours;
         } catch (PDOException $e) {
-            error_log("Erreur lors de la récupération des cours par participant: " . $e->getMessage());
+            $this->logger->error("Erreur lors de la récupération des cours par participant: " . $e->getMessage(), ['exception' => $e]);
             return [];
         }
     }
@@ -389,7 +392,7 @@ class CoursModel {
 
             return $stmt->fetch() !== false;
         } catch (PDOException $e) {
-            error_log("Erreur lors de la vérification de l'inscription: " . $e->getMessage());
+            $this->logger->error("Erreur lors de la vérification de l'inscription: " . $e->getMessage(), ['exception' => $e]);
             return false;
         }
     }

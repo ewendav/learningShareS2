@@ -5,3 +5,7 @@
 [2025-04-02T16:20:58.577848+00:00] app.INFO: ✅ Test de log réussi. [] []
 [2025-04-02T16:21:04.211141+00:00] app.INFO: ✅ Test de log réussi. [] []
 [2025-04-02T16:21:24.667468+00:00] app.INFO: ✅ Test de log réussi. [] []
+[2025-04-02T20:01:17.548830+00:00] app.INFO: Début de récupération des catégories [] []
+[2025-04-02T20:01:17.628556+00:00] app.INFO: Récupération des catégories réussie {"count":6} []
+[2025-04-02T20:14:30.506775+00:00] app.INFO: Début de récupération des catégories [] []
+[2025-04-02T20:14:30.581720+00:00] app.INFO: Récupération des catégories réussie {"count":6} []

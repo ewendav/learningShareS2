@@ -5,17 +5,20 @@ namespace Models;
 use Entity\Session;
 use PDO;
 use PDOException;
+use Psr\Log\LoggerInterface;
 
 class SessionModel
 {
     private $pdo;
+    private $logger;
 
     /**
      * Constructeur
      */
-    public function __construct(PDO $pdo)
+    public function __construct(PDO $pdo, LoggerInterface $logger)
     {
         $this->pdo = $pdo;
+        $this->logger = $logger;
     }
 
 
@@ -28,11 +31,11 @@ class SessionModel
     public function save(Session $session)
     {
         try {
-            error_log("SessionModel::save - Début de la sauvegarde");
-            
+            $this->logger->info("SessionModel::save - Début de la sauvegarde");
+
             if ($session->getSessionId()) {
                 $sessionID = $session->getSessionId();
-                error_log("SessionModel::save - Mise à jour de la session existante ID=" . $sessionID);
+                $this->logger->info("SessionModel::save - Mise à jour de la session existante ID=" . $sessionID);
                 // Mise à jour d'une session existante
                 $stmt = $this->pdo->prepare(
                     "UPDATE SESSION SET start_time = :start_time, end_time = :end_time, 
@@ -41,7 +44,7 @@ class SessionModel
                 );
                 $stmt->bindParam(':session_id', $sessionID);
             } else {
-                error_log("SessionModel::save - Création d'une nouvelle session");
+                $this->logger->info("SessionModel::save - Création d'une nouvelle session");
                 // Création d'une nouvelle session
                 $stmt = $this->pdo->prepare(
                     "INSERT INTO SESSION (start_time, end_time, date_session, description, 
@@ -58,7 +61,7 @@ class SessionModel
             $rate_id = $session->getRateId();
             $skill_taught_id = $session->getSkillTaughtId();
 
-            error_log("SessionModel::save - Paramètres: start_time=$start_time, end_time=$end_time, date_session=$date_session, description=$description, rate_id=$rate_id, skill_taught_id=$skill_taught_id");
+            $this->logger->info("SessionModel::save - Paramètres: start_time=$start_time, end_time=$end_time, date_session=$date_session, description=$description, rate_id=$rate_id, skill_taught_id=$skill_taught_id");
 
             // Utiliser les variables pour bindParam
             $stmt->bindParam(':start_time', $start_time);
@@ -67,8 +70,8 @@ class SessionModel
             $stmt->bindParam(':description', $description);
             $stmt->bindParam(':rate_id', $rate_id);
             $stmt->bindParam(':skill_taught_id', $skill_taught_id);
-            
-            error_log("SessionModel::save - Exécution de la requête SQL");
+
+            $this->logger->info("SessionModel::save - Exécution de la requête SQL");
             $result = $stmt->execute();
             
             if (!$result) {
@@ -79,15 +82,15 @@ class SessionModel
 
             if (!$session->getSessionId()) {
                 $lastId = $this->pdo->lastInsertId();
-                error_log("SessionModel::save - Nouvelle session créée avec ID=" . $lastId);
+                $this->logger->info("SessionModel::save - Nouvelle session créée avec ID=" . $lastId);
                 $session->setSessionId($lastId);
             }
 
-            error_log("SessionModel::save - Session sauvegardée avec succès");
+            $this->logger->info("SessionModel::save - Session sauvegardée avec succès");
             return true;
         } catch (PDOException $e) {
-            error_log("Erreur lors de la sauvegarde de la session: " . $e->getMessage());
-            error_log("SessionModel::save - Trace: " . $e->getTraceAsString());
+            $this->logger->error("Erreur lors de la sauvegarde de la session: " . $e->getMessage());
+            $this->logger->error("SessionModel::save - Trace: " . $e->getTraceAsString());
             return false;
         }
     }
@@ -113,9 +116,10 @@ class SessionModel
                     $row['skill_taught_id']
                 );
             }
+            $this->logger->info("Session récuprée ID =" . $session_id);
             return null;
         } catch (PDOException $e) {
-            error_log("Erreur lors de la récupération de la session: " . $e->getMessage());
+            $this->logger->error("Erreur lors de la récupération de la session: " . $e->getMessage());
             return null;
         }
     }
@@ -129,9 +133,18 @@ class SessionModel
             $sessionID = $session->getSessionId();
             $stmt = $this->pdo->prepare("DELETE FROM SESSION WHERE session_id = :session_id");
             $stmt->bindParam(':session_id', $sessionID);
-            return $stmt->execute();
+
+            $result = $stmt->execute();
+
+            if ($result) {
+                $this->logger->info("SessionModel::delete - Session ID={$sessionID} supprimée avec succès");
+            } else {
+                $this->logger->error("SessionModel::delete - Impossible de supprimer la session ID={$sessionID}");
+            }
+
+            return $result;
         } catch (PDOException $e) {
-            error_log("Erreur lors de la suppression de la session: " . $e->getMessage());
+            $this->logger->error("Erreur lors de la suppression de la session: " . $e->getMessage());
             return false;
         }
     }
@@ -156,9 +169,10 @@ class SessionModel
                     $row['skill_taught_id']
                 );
             }
+            $this->logger->info("SessionModel::getAll - Nombre total de sessions récupérées: " . count($sessions));
             return $sessions;
         } catch (PDOException $e) {
-            error_log("Erreur lors de la récupération des sessions: " . $e->getMessage());
+            $this->logger->error("Erreur lors de la récupération des sessions: " . $e->getMessage());
             return [];
         }
     }
