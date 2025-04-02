@@ -4,23 +4,22 @@
 
 Ce projet repose principalement sur une architecture MVC (Modèle-Vue-Contrôleur) pour gérer les différentes entités du système (sessions, partages, utilisateurs, etc.). Cependant, certaines contraintes ne sont pas prises en compte dans le code actuel, notamment la gestion des conflits de participation à un cours pour un utilisateur déjà impliqué dans une autre session à ce moment-là. Ce type de gestion sera implémenté dans la base de données à l’aide de **triggers** (qui n’ont pas encore été définis, car ils seront abordés ultérieurement dans le cadre du cours Admin des BD).
 
----
-📌 Politique de Logging dans l’Application
-1. Ce qui est loggé ✅
-Actions importantes : Connexion d’un utilisateur, création, modification, suppression de données.
+## 📌 Politique de Logging dans l’Application
+### 1. Ce qui est loggé ✅
+- Actions importantes : Connexion d’un utilisateur, création, modification, suppression de données.
 
-Erreurs et exceptions : Erreurs SQL, accès refusé, échecs d’authentification.
+- Erreurs et exceptions : Erreurs SQL, accès refusé, échecs d’authentification.
 
-Requêtes critiques : Accès à des ressources sensibles ou tentatives d’intrusion.
+- Requêtes critiques : Accès à des ressources sensibles ou tentatives d’intrusion.
 
-2. Ce qui n’est pas loggé ❌
-Les entités (Entity/) : Elles ne contiennent que des données et ne doivent pas dépendre du logger.
+### 2. Ce qui n’est pas loggé ❌
+- Les entités (Entity/) : Elles ne contiennent que des données et ne doivent pas dépendre du logger.
 
-Les requêtes non critiques : Simple affichage de pages sans impact sur les données.
+- Les requêtes non critiques : Simple affichage de pages sans impact sur les données.
 
-Les logs excessifs : Éviter le spam en ne loggant pas chaque action utilisateur basique (ex : clics).
+- Les logs excessifs : Éviter le spam en ne loggant pas chaque action utilisateur basique (ex : clics).
 
-👉 Pourquoi ?
+### 👉 Pourquoi ?
 Les logs doivent être utiles pour suivre l’activité critique, détecter les erreurs et sécuriser l’application sans surcharger inutilement les fichiers logs. 🚀
 
 ---
