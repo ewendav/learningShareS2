@@ -1,5 +1,6 @@
 <?php
-namespace Model;
+
+namespace Models;
 
 use Entity\Session;
 use PDO;
@@ -16,6 +17,10 @@ class SessionModel
     {
         $this->pdo = $pdo;
     }
+
+
+
+
 
     /**
      * Sauvegarde une session dans la base de données

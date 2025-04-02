@@ -1,33 +1,40 @@
 <?php
+
 namespace Controllers;
 
 use Entity\Session;
-use Model\SessionModel;
+use Models\SessionModel;
 use PDO;
 
 class SessionController
 {
     private $sessionModel;
+    private $twig;
 
     /**
      * Constructeur
      */
-    public function __construct(PDO $pdo)
+    public function __construct()
     {
-        $this->sessionModel = new SessionModel($pdo);
+        // a terme le contneu du controler sera surement supprimé pour avoir tout les méhtodes ens tatic
+        $container = \Util\Container::getContainer();
+        $this->sessionModel = new SessionModel($container->get(PDO::class));
+        $this->twig = $container->get(\Twig\Environment::class);
     }
 
-
-
     // affiche la page de creation de session et recuperer toutes les categories
-    // afin de pouvoir les utiliséés dans les listes déroulantes 
-    public function display($twig)
+    // afin de pouvoir les utiliséés dans les listes déroulantes
+    public static function display(): void
     {
+        $container = \Util\Container::getContainer();
+        $twig = $container->get(\Twig\Environment::class);
+
         echo $twig->render(
-            'ecrans/createSession.html.twig', [
+            'ecrans/createSession.html.twig',
+            [
               'title' => 'Creation d\'un partage ou d\'un échange',
-              'fileToInclude' => 'components/CreateSession.html.twig'
-              ]
+              'categories' => \Models\CategorieModel::getAll()
+            ]
         );
     }
 

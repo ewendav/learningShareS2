@@ -1,17 +1,18 @@
 <?php
 
 require_once '../vendor/autoload.php';
-use FastRoute;
 
-// recupère et instancie le contenur d'outils
-// via l'injection de dépendance
+// recupère et instancie le conteneur
+// qui utilise l'injection de dépendance
 $container = Util\Container::getContainer();
 // recupération de l'outil twig du container de dependances
 $twig = $container->get(Twig\Environment::class);
 
+$sessionController = new Controllers\SessionController($container->get(PDO::class));
+
 // création des routes
 $dispatcher = FastRoute\simpleDispatcher(
-    function (FastRoute\RouteCollector $r) use ($twig) {
+    function (FastRoute\RouteCollector $r) use ($twig, $container) {
 
         // route home
         $r->get(
@@ -22,18 +23,8 @@ $dispatcher = FastRoute\simpleDispatcher(
         );
 
         // route création de session
-        $r->get(
-            '/createSession',
-            function () use ($twig) {
-                echo $twig->render(
-                    'ecrans/createSession.html.twig',
-                    [
-                    'title' => 'Creation d\'un partage ou d\'un échange',
-                    'fileToInclude' => 'components/CreateSession.html.twig'
-                    ]
-                );
-            }
-        );
+        $r->addRoute('GET', '/createSession', [Controllers\SessionController::class, 'display']);
+
 
         // route de base non utilisées :
         $r->addRoute(['GET', 'POST'], '/web/users', 'getUsers');

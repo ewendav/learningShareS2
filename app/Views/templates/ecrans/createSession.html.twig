@@ -39,33 +39,29 @@ let checked = document.querySelector('.toggle-switch-input').checked;
 
     <div class="horizontal-display">
       <div class="input-label-display">
-        <label for="categorie-echange">{{traduction('categorie')}}</label>
-        <select class="input-goofy" id="categorie-echange" name="categorie-echange">
-          <option value="" disabled selected>{{traduction('selectCategorie')}}</option>
-          <option value="skill1">Skill 1</option>
-          <option value="skill2">Skill 2</option>
-          <option value="skill3">Skill 3</option>
-          <option value="skill4">Skill 4</option>
-          <option value="skill5">Skill 5</option>
+        <label for="categorie-enseignee">{{ traduction('categorie') }}</label>
+        <select class="input-goofy" id="categorie-echange-2" name="categorie-enseignee">
+            <option value="" disabled selected>{{ traduction('selectCategorie') }}</option>
+            {% for category in categories %}
+                <option value="{{ category[0] }}">{{ category[1] }}</option>
+            {% endfor %}
         </select>
       </div>
 
       <div class="input-label-display">
         <label for="competence-echange">{{traduction('competence')}}</label>
-        <input class="input-goofy" id="competence-echange" name="competence-echange" placeholder="{{traduction('selectCompetence')}}">
+        <input class="input-goofy" id="competence-echange" name="competence-enseignee" placeholder="{{traduction('selectCompetence')}}">
       </div>
     </div>
 
     <div class="horizontal-display">
       <div class="input-label-display">
-        <label for="categorie-echange-2">{{traduction('categorie')}}</label>
-        <select class="input-goofy" id="categorie-echange-2" name="categorie-echange-2">
-          <option value="" disabled selected>{{traduction('selectCategorie')}}</option>
-          <option value="skill1">Skill 1</option>
-          <option value="skill2">Skill 2</option>
-          <option value="skill3">Skill 3</option>
-          <option value="skill4">Skill 4</option>
-          <option value="skill5">Skill 5</option>
+        <label for="categorie-demandee">{{traduction('categorie')}}</label>
+        <select class="input-goofy" id="categorie-demandee" name="categorie-enseignee">
+            <option value="" disabled selected>{{ traduction('selectCategorie') }}</option>
+            {% for category in categories %}
+                <option value="{{ category[0] }}">{{ category[1] }}</option>
+            {% endfor %}
         </select>
       </div>
 
@@ -87,14 +83,12 @@ let checked = document.querySelector('.toggle-switch-input').checked;
       <div class="horizontal-display">
 
         <div class="input-label-display">
-          <label for="categorie">{{traduction('categorie')}}</label>
-          <select class="input-goofy" id="categorie" name="categorie">
-              <option value="" disabled selected>{{traduction('selectCategorie')}}</option>
-              <option value="apple">Apple</option>
-              <option value="banana">Banana</option>
-              <option value="orange">Orange</option>
-              <option value="grape">Grape</option>
-              <option value="mango">Mango</option>
+          <label for="categorie-cours">{{traduction('categorie')}}</label>
+          <select class="input-goofy" id="categorie-echange-2" name="categorie-cours">
+              <option value="" disabled selected>{{ traduction('selectCategorie') }}</option>
+              {% for category in categories %}
+                  <option value="{{ category[0] }}">{{ category[1] }}</option>
+              {% endfor %}
           </select>
         </div>
 
