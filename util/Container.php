@@ -1,0 +1,90 @@
+<?php
+
+namespace Util;
+
+use PDO;
+use Exception;
+use Dotenv\Dotenv;
+use DI\ContainerBuilder;
+use Twig\Environment;
+use Twig\Loader\FilesystemLoader;
+
+class Container
+{
+    protected static $container = null;
+
+    public static function setContainer(): void
+    {
+        $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
+        $dotenv->safeLoad();
+
+        $containerBuilder = new ContainerBuilder();
+
+        $containerBuilder->addDefinitions(
+            [
+                // ajout du pdo
+                PDO::class => function () {
+                    $sgbd = $_ENV['DB_SGBD'] ?? 'pgsql';
+                    $host = $_ENV['DB_HOST'];
+                    $port = $_ENV['DB_PORT'];
+                    $dbname = $_ENV['DB_NAME'];
+                    $user = $_ENV['DB_USER'];
+                    $pass = $_ENV['DB_PASS'];
+
+                    $dsn = match ($sgbd) {
+                        'pgsql' => "pgsql:host=$host;port=$port;dbname=$dbname",
+                        'mysql' => "mysql:host=$host;port=$port;charset=utf8mb4",
+                        default => throw new Exception("Unsupported SGBD: $sgbd"),
+                    };
+
+                    return new PDO(
+                        $dsn,
+                        $user,
+                        $pass,
+                        [
+                            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                        ]
+                    );
+                },
+
+                // ajout de twig
+                Environment::class => function () {
+                    $loader = new FilesystemLoader('../app/Views/templates/');
+
+                    $twig = new Environment($loader, [
+                        'cache' => false,
+                        'debug' => true,
+                    ]);
+
+                    $twig->addExtension(new TwigExtensions());
+
+                    return $twig;
+                }
+            ]
+        );
+
+        self::$container = $containerBuilder->build();
+    }
+
+    public static function getContainer(): \DI\Container
+    {
+        if (self::$container === null) {
+            self::setContainer();
+        }
+        return self::$container;
+    }
+}
+
+
+// exemple d'utilisation :
+// le patern singleton permet d'isnancier qu'une seule fois
+// le container et ya voir acces partout
+//
+//  $container = Container::getContainer();
+//
+// exemple d'usage des elemnts du container
+//
+// $twig = $container->get(Twig\Environment::class);
+// Récupérer PDO depuis le container
+// $pdo = $container->get(PDO::class);

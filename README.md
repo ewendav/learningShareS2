@@ -8,7 +8,9 @@ commande a lancer régulièrement pour installer les packages ajouté par les au
 composer install
 ```
 
-# browser-sync start --proxy "localhost:8000" --files "**/\*.php,**/_.css, \*\*/_.js, **/\*.html,**/_.twig, \*\*/_.yaml, **/\*.env, var/cache/**/_, var/logs/\*\*/_"
+```
+browser-sync start --proxy "localhost:8000" --files "**/*.php, **/*.css, **/*.js, **/*.html, **/*.twig, **/*.yaml, **/*.env, var/cache/**, var/logs/**"
+```
 
 ## Checker les normes PSR-12 (car 2 obsolète)
 
