@@ -5,28 +5,39 @@ use Entity\Cours;
 use Models\CoursModel;
 use Models\LocationModel;
 use PDO;
+use Monolog\Logger;
+use Psr\Log\LoggerInterface;
 
 class CoursController {
     private $coursModel;
 
     private $locationModel;
 
+    private $logger;
+
     /**
      * Constructeur
      */
-    public function __construct(PDO $pdo = null) {
+    public function __construct(PDO $pdo = null, Logger $logger = null) {
         if ($pdo === null) {
             $container = \Util\Container::getContainer();
             $pdo = $container->get(PDO::class);
         }
+        if ($logger === null) {
+            $container = \Util\Container::getContainer();
+            $logger = $container->get(LoggerInterface::class);
+        }
         $this->coursModel = new CoursModel($pdo);
         $this->locationModel = new LocationModel($pdo);
+        $this->logger = $logger;
     }
 
     /**
      * Affiche la liste des cours
      */
     public function index() {
+        $this->logger->info("Récupération de tous les cours");
+
         $cours = $this->coursModel->getAll();
 
         // En fonction de votre système de rendu de vue
@@ -60,11 +71,14 @@ class CoursController {
 
         if (!$cours) {
             // return view('errors/404', ['message' => 'Cours non trouvé']);
+            $this->logger->error("Cours non trouvé", ['session_id' => $session_id]);
             return [
                 'status' => 'error',
                 'message' => 'Cours non trouvé'
             ];
         }
+
+        $this->logger->info("Affichage du cours", ['session_id' => $session_id]);
 
         $attendees = $this->coursModel->getAttendees($session_id);
 
@@ -96,12 +110,15 @@ class CoursController {
         // Récupération du container
         $container = \Util\Container::getContainer();
         $twig = $container->get(\Twig\Environment::class);
+        $logger = $container->get(Logger::class);
         
         // Création du contrôleur
         $controller = new self();
         
         // Récupération des données du formulaire
         $request = $_POST;
+
+        $logger->info("Tentative de création d'un cours", ['request' => $request]);
         
         // Validation des données (à implémenter)
         
@@ -115,6 +132,7 @@ class CoursController {
         
         if (!$locationId) {
             // Erreur lors de la création de la localisation
+            $logger->error("Échec de la création de la localisation", ['request' => $request]);
             echo $twig->render('ecrans/createSession.html.twig', [
                 'title' => 'Création d\'un cours',
                 'message' => 'Erreur lors de la création de la localisation',
@@ -141,6 +159,8 @@ class CoursController {
         // Sauvegarde dans la base de données
         if ($controller->coursModel->save($cours)) {
             // Redirection ou affichage d'un message de succès
+            $logger->info("Cours créé avec succès", ['cours' => $cours]);
+
             echo $twig->render('ecrans/createSession.html.twig', [
                 'title' => 'Création d\'un cours',
                 'message' => 'Cours créé avec succès',
@@ -149,6 +169,8 @@ class CoursController {
             ]);
         } else {
             // Affichage d'un message d'erreur
+            $logger->error("Erreur lors de l'enregistrement du cours", ['cours' => $cours]);
+
             echo $twig->render('ecrans/createSession.html.twig', [
                 'title' => 'Création d\'un cours',
                 'message' => 'Erreur lors de la création du cours',
@@ -187,6 +209,8 @@ class CoursController {
 
         if (!$cours) {
             // return view('errors/404', ['message' => 'Cours non trouvé']);
+            $this->logger->warning("Cours non trouvé pour modification", ['session_id' => $session_id]);
+
             return [
                 'status' => 'error',
                 'message' => 'Cours non trouvé'
@@ -223,6 +247,8 @@ class CoursController {
 
         if ($this->coursModel->save($cours)) {
             // redirect('cours/' . $cours->getSessionId());
+            $this->logger->info("Cours mis à jour", ['session_id' => $session_id]);
+
             return [
                 'status' => 'success',
                 'message' => 'Cours mis à jour avec succès',
@@ -245,6 +271,8 @@ class CoursController {
 
         if (!$cours) {
             // return view('errors/404', ['message' => 'Cours non trouvé']);
+            $this->logger->warning("Tentative de suppression d'un cours introuvable", ['session_id' => $session_id]);
+
             return [
                 'status' => 'error',
                 'message' => 'Cours non trouvé'
@@ -253,12 +281,16 @@ class CoursController {
 
         if ($this->coursModel->delete($cours)) {
             // redirect('cours');
+            $this->logger->info("Cours supprimé", ['session_id' => $session_id]);
+
             return [
                 'status' => 'success',
                 'message' => 'Cours supprimé avec succès'
             ];
         } else {
             // return view('cours/show', ['cours' => $cours, 'error' => 'Erreur lors de la suppression du cours']);
+            $this->logger->error("Échec de la suppression du cours", ['session_id' => $session_id]);
+
             return [
                 'status' => 'error',
                 'message' => 'Erreur lors de la suppression du cours'
@@ -272,12 +304,16 @@ class CoursController {
     public function register($session_id, $user_id) {
         if ($this->coursModel->addAttendee($session_id, $user_id)) {
             // redirect('cours/' . $session_id);
+            $this->logger->info("Inscription de l'utilisateur au cours", ['session_id' => $session_id]);
+
             return [
                 'status' => 'success',
                 'message' => 'Inscription au cours réussie'
             ];
         } else {
             // redirect('cours/' . $session_id, ['error' => 'Erreur lors de l\'inscription au cours']);
+            $this->logger->error("Échec de l'inscription de l'utilisateur au cours", ['session_id' => $session_id]);
+
             return [
                 'status' => 'error',
                 'message' => 'Erreur lors de l\'inscription au cours'

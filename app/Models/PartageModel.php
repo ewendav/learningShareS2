@@ -5,19 +5,22 @@ namespace Models;
 use Entity\Partage;
 use PDO;
 use PDOException;
+use Psr\Log\LoggerInterface;
 
 class PartageModel
 {
     private $pdo;
     private $sessionModel;
+    private $logger;
 
     /**
      * Constructeur
      */
-    public function __construct(PDO $pdo)
+    public function __construct(PDO $pdo, LoggerInterface $logger)
     {
         $this->pdo = $pdo;
-        $this->sessionModel = new SessionModel($pdo);
+        $this->sessionModel = new SessionModel($pdo, $logger);
+        $this->logger = $logger;
     }
 
     /**
@@ -32,6 +35,7 @@ class PartageModel
             // Sauvegarder la session parent
             if (!$this->sessionModel->save($partage)) {
                 $this->pdo->rollBack();
+                $this->logger->warning("Échec de la sauvegarde de la session parent", ['session_id' => $partage->getSessionId()]);
                 return false;
             }
 
@@ -48,12 +52,14 @@ class PartageModel
                                        exchange_requester_id = :exchange_requester_id, 
                                        exchange_accepter_id = :exchange_accepter_id 
                                        WHERE exchange_session_id = :session_id");
+                $this->logger->info("Mise à jour du partage existant", ['session_id' => $session_id]);
             } else {
                 // Création d'un nouveau partage
                 $stmt = $this->pdo->prepare("INSERT INTO EXCHANGE (exchange_session_id, skill_requested_id, 
                                        exchange_requester_id, exchange_accepter_id) 
                                        VALUES (:session_id, :skill_requested_id, 
                                        :exchange_requester_id, :exchange_accepter_id)");
+                $this->logger->info("Création d'un nouveau partage", ['session_id' => $session_id]);
             }
 
             // Stocker les valeurs dans des variables intermédiaires
@@ -70,11 +76,12 @@ class PartageModel
 
             // Valider la transaction
             $this->pdo->commit();
+            $this->logger->info("Partage sauvegardé avec succès", ['session_id' => $session_id]);
             return true;
         } catch (PDOException $e) {
             // Annuler la transaction en cas d'erreur
             $this->pdo->rollBack();
-            error_log("Erreur lors de la sauvegarde du partage: " . $e->getMessage());
+            $this->logger->error("Erreur lors de la sauvegarde du partage", ['exception' => $e, 'session_id' => $partage->getSessionId()]);
             return false;
         }
     }
@@ -89,6 +96,7 @@ class PartageModel
             $session = $this->sessionModel->getById($session_id);
 
             if (!$session) {
+                $this->logger->warning("Session non trouvée pour le partage", ['session_id' => $session_id]);
                 return null;
             }
 
@@ -98,6 +106,7 @@ class PartageModel
             $stmt->execute();
 
             if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                $this->logger->info("Partage récupéré", ['session_id' => $session_id]);
                 return new Partage(
                     $session->getSessionId(),
                     $session->getStartTime(),
@@ -111,9 +120,10 @@ class PartageModel
                     $row['exchange_accepter_id']
                 );
             }
+            $this->logger->warning("Partage non trouvé", ['session_id' => $session_id]);
             return null;
         } catch (PDOException $e) {
-            error_log("Erreur lors de la récupération du partage: " . $e->getMessage());
+            $this->logger->error("Erreur lors de la récupération du partage", ['exception' => $e, 'session_id' => $session_id]);
             return null;
         }
     }
@@ -136,16 +146,18 @@ class PartageModel
             // Supprimer la session parent
             if (!$this->sessionModel->delete($partage)) {
                 $this->pdo->rollBack();
+                $this->logger->warning("Échec de la suppression de la session parent", ['session_id' => $sessionID]);
                 return false;
             }
 
             // Valider la transaction
             $this->pdo->commit();
+            $this->logger->info("Partage supprimé avec succès", ['session_id' => $sessionID]);
             return true;
         } catch (PDOException $e) {
             // Annuler la transaction en cas d'erreur
             $this->pdo->rollBack();
-            error_log("Erreur lors de la suppression du partage: " . $e->getMessage());
+            $this->logger->error("Erreur lors de la suppression du partage", ['exception' => $e, 'session_id' => $partage->getSessionId()]);
             return false;
         }
     }
@@ -234,9 +246,10 @@ class PartageModel
                     );
                 }
             }
+            $this->logger->info("Récupération de tous les partages", ['partages_count' => count($partages)]);
             return $partages;
         } catch (PDOException $e) {
-            error_log("Erreur lors de la récupération des partages: " . $e->getMessage());
+            $this->logger->error("Erreur lors de la récupération des partages", ['exception' => $e]);
             return [];
         }
     }
@@ -270,9 +283,10 @@ class PartageModel
                     $row['exchange_accepter_id']
                 );
             }
+            $this->logger->info("Récupération des partages par demandeur", ['user_id' => $user_id, 'partages_count' => count($partages)]);
             return $partages;
         } catch (PDOException $e) {
-            error_log("Erreur lors de la récupération des partages par demandeur: " . $e->getMessage());
+            $this->logger->error("Erreur lors de la récupération des partages par demandeur", ['exception' => $e, 'user_id' => $user_id]);
             return [];
         }
     }
@@ -306,11 +320,11 @@ class PartageModel
                     $row['exchange_accepter_id']
                 );
             }
+            $this->logger->info("Récupération des partages par accepteur", ['user_id' => $user_id, 'partages_count' => count($partages)]);
             return $partages;
         } catch (PDOException $e) {
-            error_log("Erreur lors de la récupération des partages par accepteur: " . $e->getMessage());
+            $this->logger->error("Erreur lors de la récupération des partages par accepteur", ['exception' => $e, 'user_id' => $user_id]);
             return [];
         }
     }
 }
-

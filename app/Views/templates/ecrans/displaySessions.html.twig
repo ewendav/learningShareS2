@@ -45,7 +45,16 @@
 <div id="section-cours-display">
 
 
-  {% include 'components/lessonCard.html.twig' with {'avatar_path' : '', 'userName' : 'Delphine', 'categoryLearned': 'category aprise', 'skillLearned' : ' compétance aprise', 'adresse' : 'adresse', 'date' : 'Mercredi 29 Janvier 2025, 19h00 '} %}
+{% for lesson in lessons %}
+    {% include 'components/lessonCard.html.twig' with {
+        'avatar_path': lesson.host_avatar,
+        'userName': lesson.host_first_name ~ ' ' ~ lesson.host_last_name,
+        'categoryLearned': lesson.skill_taught_category_id,
+        'skillLearned': lesson.skill_taught_name,
+        'adresse': lesson.location_id,
+        'date': lesson.date_session ~ ', ' ~ lesson.start_time|date('H:i')
+    } %}
+{% endfor %}
 
 
 </div>

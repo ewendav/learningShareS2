@@ -1,26 +1,33 @@
 <?php
+
 namespace Models;
 
 use Entity\Cours;
 use PDO;
 use PDOException;
+use Psr\Log\LoggerInterface;
 
-class CoursModel {
+class CoursModel
+{
     private $pdo;
     private $sessionModel;
+    private $logger;
 
     /**
      * Constructeur
      */
-    public function __construct(PDO $pdo) {
+    public function __construct(PDO $pdo, LoggerInterface $logger)
+    {
         $this->pdo = $pdo;
-        $this->sessionModel = new SessionModel($pdo);
+        $this->sessionModel = new SessionModel($pdo, $logger);
+        $this->logger = $logger;
     }
 
     /**
      * Sauvegarde un cours dans la base de données
      */
-    public function save(Cours $cours) {
+    public function save(Cours $cours)
+    {
         try {
             // Commencer une transaction
             $this->pdo->beginTransaction();
@@ -68,13 +75,12 @@ class CoursModel {
 
             // Valider la transaction
             $this->pdo->commit();
-            error_log("CoursModel::save - Cours sauvegardé avec succès");
+            $this->logger->info("Cours sauvegardé avec succès", ['session_id' => $session_id]);
             return true;
         } catch (PDOException $e) {
             // Annuler la transaction en cas d'erreur
             $this->pdo->rollBack();
-            error_log("Erreur lors de la sauvegarde du cours: " . $e->getMessage());
-            error_log("CoursModel::save - Trace: " . $e->getTraceAsString());
+            $this->logger->error("Erreur lors de la sauvegarde du cours: " . $e->getMessage(), ['exception' => $e]);
             return false;
         }
     }
@@ -82,7 +88,8 @@ class CoursModel {
     /**
      * Récupérer un cours par son ID de session
      */
-    public function getById($session_id) {
+    public function getById($session_id)
+    {
         try {
             // Récupérer d'abord la session
             $session = $this->sessionModel->getById($session_id);
@@ -112,7 +119,7 @@ class CoursModel {
             }
             return null;
         } catch (PDOException $e) {
-            error_log("Erreur lors de la récupération du cours: " . $e->getMessage());
+            $this->logger->error("Erreur lors de la récupération du cours: " . $e->getMessage(), ['exception' => $e]);
             return null;
         }
     }
@@ -120,7 +127,8 @@ class CoursModel {
     /**
      * Supprimer un cours
      */
-    public function delete(Cours $cours) {
+    public function delete(Cours $cours)
+    {
         try {
             // Commencer une transaction
             $this->pdo->beginTransaction();
@@ -150,7 +158,7 @@ class CoursModel {
         } catch (PDOException $e) {
             // Annuler la transaction en cas d'erreur
             $this->pdo->rollBack();
-            error_log("Erreur lors de la suppression du cours: " . $e->getMessage());
+            $this->logger->error("Erreur lors de la suppression du cours: " . $e->getMessage(), ['exception' => $e]);
             return false;
         }
     }
@@ -158,30 +166,72 @@ class CoursModel {
     /**
      * Récupérer tous les cours
      */
-    public function getAll() {
+/**
+ * Récupérer toutes les leçons qui ont encore de la place pour des participants et dont la date de fin n'est pas expirée
+ */
+    public function getLessonDispo(bool $retourneJson = false)
+    {
         try {
-            $stmt = $this->pdo->query("SELECT s.*, l.location_id, l.lesson_host_id, l.max_attendees 
-                                FROM SESSION s 
-                                JOIN LESSON l ON s.session_id = l.lesson_session_id");
-            $cours = [];
+            $currentDateTime = date('Y-m-d H:i:s'); // Get the current date and time
+            $stmt = $this->pdo->query("
+        SELECT 
+            l.lesson_session_id,
+            s.start_time,
+            s.end_time,
+            s.date_session,
+            s.description,
+            s.rate_id,
+            l.max_attendees,
+            COUNT(a.attend_user_id) AS current_attendees,
+            taught_skill.skill_id AS skill_taught_id,
+            taught_skill.category_id AS skill_taught_category_id,
+            req_user.user_first_name AS host_first_name,
+            req_user.user_last_name AS host_last_name,
+            req_user.avatar_path AS host_avatar,
+            taught_skill.skill_name AS skill_taught_name
+        FROM 
+            LESSON l
+        JOIN 
+            SESSION s ON l.lesson_session_id = s.session_id
+        JOIN 
+            APP_USER req_user ON l.lesson_host_id = req_user.user_id
+        LEFT JOIN 
+            ATTEND a ON l.lesson_session_id = a.attend_lesson_id
+        JOIN 
+            SKILL taught_skill ON s.skill_taught_id = taught_skill.skill_id
+        WHERE 
+            (l.max_attendees > COUNT(a.attend_user_id) OR a.attend_user_id IS NULL) 
+            AND s.end_time > NOW() 
+        GROUP BY 
+            l.lesson_session_id, s.start_time, s.end_time, s.date_session, s.description, s.rate_id, l.max_attendees, req_user.user_first_name, req_user.user_last_name, req_user.avatar_path, taught_skill.skill_id, taught_skill.category_id, taught_skill.skill_name
+        ");
+
+            $lessons = [];
 
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                $cours[] = new Cours(
-                    $row['session_id'],
-                    $row['start_time'],
-                    $row['end_time'],
-                    $row['date_session'],
-                    $row['description'],
-                    $row['rate_id'],
-                    $row['skill_taught_id'],
-                    $row['location_id'],
-                    $row['lesson_host_id'],
-                    $row['max_attendees']
-                );
+                if ($retourneJson) {
+                    $lessons[] = [
+                        'lesson_session_id' => $row['lesson_session_id'],
+                        'start_time' => $row['start_time'],
+                        'end_time' => $row['end_time'],
+                        'date_session' => $row['date_session'],
+                        'description' => $row['description'],
+                        'rate_id' => $row['rate_id'],
+                        'max_attendees' => $row['max_attendees'],
+                        'current_attendees' => $row['current_attendees'],
+                        'host_first_name' => $row['host_first_name'],
+                        'host_last_name' => $row['host_last_name'],
+                        'host_avatar' => $row['host_avatar'],
+                        'skill_taught_id' => $row['skill_taught_id'],
+                        'skill_taught_category_id' => $row['skill_taught_category_id'],
+                        'skill_taught_name' => $row['skill_taught_name']
+                    ];
+                }
             }
-            return $cours;
+            $this->logger->info("Récupération de toutes les leçons disponibles", ['lessons_count' => count($lessons)]);
+            return $lessons;
         } catch (PDOException $e) {
-            error_log("Erreur lors de la récupération des cours: " . $e->getMessage());
+            $this->logger->error("Erreur lors de la récupération des leçons disponibles", ['exception' => $e]);
             return [];
         }
     }
@@ -189,7 +239,8 @@ class CoursModel {
     /**
      * Récupérer les cours par hôte
      */
-    public function getByHostId($host_id) {
+    public function getByHostId($host_id)
+    {
         try {
             $stmt = $this->pdo->prepare("SELECT s.*, l.location_id, l.lesson_host_id, l.max_attendees 
                                   FROM SESSION s 
@@ -216,7 +267,7 @@ class CoursModel {
             }
             return $cours;
         } catch (PDOException $e) {
-            error_log("Erreur lors de la récupération des cours par hôte: " . $e->getMessage());
+            $this->logger->error("Erreur lors de la récupération des cours par hôte: " . $e->getMessage(), ['exception' => $e]);
             return [];
         }
     }
@@ -224,7 +275,8 @@ class CoursModel {
     /**
      * Récupérer les participants à un cours
      */
-    public function getAttendees($cours_id) {
+    public function getAttendees($cours_id)
+    {
         try {
             $stmt = $this->pdo->prepare("SELECT u.* FROM APP_USER u 
                                   JOIN ATTEND a ON u.user_id = a.attend_user_id 
@@ -241,7 +293,8 @@ class CoursModel {
             }
             return $attendees;
         } catch (PDOException $e) {
-            error_log("Erreur lors de la récupération des participants: " . $e->getMessage());
+            $this->logger->error("Erreur lors de la récupération des participants: " . $e->getMessage(), ['exception' => $e]);
+            return [];
             return [];
         }
     }
@@ -249,7 +302,8 @@ class CoursModel {
     /**
      * Ajouter un participant à un cours
      */
-    public function addAttendee($cours_id, $user_id) {
+    public function addAttendee($cours_id, $user_id)
+    {
         try {
             // Récupérer le cours pour vérifier s'il n'est pas déjà complet
             $cours = $this->getById($cours_id);
@@ -286,7 +340,7 @@ class CoursModel {
             $stmt->bindParam(':user_id', $user_id);
             return $stmt->execute();
         } catch (PDOException $e) {
-            error_log("Erreur lors de l'ajout d'un participant: " . $e->getMessage());
+            $this->logger->error("Erreur lors de l'ajout d'un participant: " . $e->getMessage(), ['exception' => $e]);
             return false;
         }
     }
@@ -294,14 +348,15 @@ class CoursModel {
     /**
      * Supprimer un participant d'un cours
      */
-    public function removeAttendee($cours_id, $user_id) {
+    public function removeAttendee($cours_id, $user_id)
+    {
         try {
             $stmt = $this->pdo->prepare("DELETE FROM ATTEND WHERE attend_lesson_id = :cours_id AND attend_user_id = :user_id");
             $stmt->bindParam(':cours_id', $cours_id);
             $stmt->bindParam(':user_id', $user_id);
             return $stmt->execute();
         } catch (PDOException $e) {
-            error_log("Erreur lors de la suppression d'un participant: " . $e->getMessage());
+            $this->logger->error("Erreur lors de la suppression d'un participant: " . $e->getMessage(), ['exception' => $e]);
             return false;
         }
     }
@@ -309,7 +364,8 @@ class CoursModel {
     /**
      * Compter le nombre de participants à un cours
      */
-    public function countAttendees($cours_id) {
+    public function countAttendees($cours_id)
+    {
         try {
             $stmt = $this->pdo->prepare("SELECT COUNT(*) as count FROM ATTEND WHERE attend_lesson_id = :cours_id");
             $stmt->bindParam(':cours_id', $cours_id);
@@ -318,7 +374,7 @@ class CoursModel {
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
             return $result['count'];
         } catch (PDOException $e) {
-            error_log("Erreur lors du comptage des participants: " . $e->getMessage());
+            $this->logger->error("Erreur lors du comptage des participants: " . $e->getMessage(), ['exception' => $e]);
             return 0;
         }
     }
@@ -326,7 +382,8 @@ class CoursModel {
     /**
      * Vérifier si un cours est complet
      */
-    public function isFull($cours_id) {
+    public function isFull($cours_id)
+    {
         try {
             $cours = $this->getById($cours_id);
             if (!$cours) {
@@ -336,7 +393,7 @@ class CoursModel {
             $count = $this->countAttendees($cours_id);
             return $count >= $cours->getMaxAttendees();
         } catch (PDOException $e) {
-            error_log("Erreur lors de la vérification si le cours est complet: " . $e->getMessage());
+            $this->logger->error("Erreur lors de la vérification si le cours est complet: " . $e->getMessage(), ['exception' => $e]);
             return false;
         }
     }
@@ -344,7 +401,8 @@ class CoursModel {
     /**
      * Récupérer les cours auxquels un utilisateur participe
      */
-    public function getByAttendeeId($user_id) {
+    public function getByAttendeeId($user_id)
+    {
         try {
             $stmt = $this->pdo->prepare("SELECT s.*, l.location_id, l.lesson_host_id, l.max_attendees 
                                   FROM SESSION s 
@@ -372,7 +430,7 @@ class CoursModel {
             }
             return $cours;
         } catch (PDOException $e) {
-            error_log("Erreur lors de la récupération des cours par participant: " . $e->getMessage());
+            $this->logger->error("Erreur lors de la récupération des cours par participant: " . $e->getMessage(), ['exception' => $e]);
             return [];
         }
     }
@@ -380,7 +438,8 @@ class CoursModel {
     /**
      * Vérifier si un utilisateur est déjà inscrit à un cours
      */
-    public function isUserRegistered($cours_id, $user_id) {
+    public function isUserRegistered($cours_id, $user_id)
+    {
         try {
             $stmt = $this->pdo->prepare("SELECT * FROM ATTEND WHERE attend_lesson_id = :cours_id AND attend_user_id = :user_id");
             $stmt->bindParam(':cours_id', $cours_id);
@@ -389,8 +448,9 @@ class CoursModel {
 
             return $stmt->fetch() !== false;
         } catch (PDOException $e) {
-            error_log("Erreur lors de la vérification de l'inscription: " . $e->getMessage());
+            $this->logger->error("Erreur lors de la vérification de l'inscription: " . $e->getMessage(), ['exception' => $e]);
             return false;
         }
     }
 }
+

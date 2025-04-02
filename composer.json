@@ -10,7 +10,8 @@
   "require": {
     "twig/twig": "^3.0",
     "symfony/ux-twig-component": "^2.23",
-    "delight-im/auth": "^8.3"
+    "delight-im/auth": "^8.3",
+    "monolog/monolog": "^3.9"
   },
   "require-dev": {
     "squizlabs/php_codesniffer": "^3.12",

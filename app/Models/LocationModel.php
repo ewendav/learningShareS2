@@ -3,15 +3,20 @@ namespace Models;
 
 use PDO;
 use PDOException;
+use Psr\Log\LoggerInterface;
+use Monolog\Logger;
 
 class LocationModel {
     private $pdo;
 
+    private $logger;
+
     /**
      * Constructeur
      */
-    public function __construct(PDO $pdo) {
+    public function __construct(PDO $pdo, LoggerInterface $logger) {
         $this->pdo = $pdo;
+        $this->logger = $logger;
     }
 
     /**
@@ -38,6 +43,7 @@ class LocationModel {
             
             // Si la localisation existe déjà, retourner son ID
             if ($existingLocation) {
+                $this->logger->info("Localisation déjà existante", ['location_id' => $existingLocation['location_id']]);
                 return $existingLocation['location_id'];
             }
             
@@ -49,12 +55,13 @@ class LocationModel {
             $stmt->bindParam(':city', $city);
             
             if ($stmt->execute()) {
+                $this->logger->info("Nouvelle localisation créée", ['address' => $address]);
                 return $this->pdo->lastInsertId();
             }
             
             return false;
         } catch (PDOException $e) {
-            error_log("Erreur lors de la création de la localisation: " . $e->getMessage());
+            $this->logger->error("Erreur lors de la création de la localisation: " . $e->getMessage(), ['exception' => $e]);
             return false;
         }
     }
@@ -70,10 +77,12 @@ class LocationModel {
             $stmt = $this->pdo->prepare("SELECT * FROM LOCATION WHERE location_id = :location_id");
             $stmt->bindParam(':location_id', $locationId);
             $stmt->execute();
-            
+
+            $this->logger->info("Localisation récupérée", ['location_id' => $locationId]);
+
             return $stmt->fetch(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            error_log("Erreur lors de la récupération de la localisation: " . $e->getMessage());
+            $this->logger->error("Erreur lors de la récupération de la localisation: " . $e->getMessage(), ['exception' => $e]);
             return null;
         }
     }
@@ -86,9 +95,10 @@ class LocationModel {
     public function getAll() {
         try {
             $stmt = $this->pdo->query("SELECT * FROM LOCATION ORDER BY city, zip_code");
+            $this->logger->info("Récupération de toutes les localisations", ['locations_count' => count($stmt->fetchAll(PDO::FETCH_ASSOC))]);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            error_log("Erreur lors de la récupération des localisations: " . $e->getMessage());
+            $this->logger->error("Erreur lors de la récupération des localisations: " . $e->getMessage(), ['exception' => $e]);
             return [];
         }
     }
@@ -103,9 +113,17 @@ class LocationModel {
         try {
             $stmt = $this->pdo->prepare("DELETE FROM LOCATION WHERE location_id = :location_id");
             $stmt->bindParam(':location_id', $locationId);
-            return $stmt->execute();
+
+            $result = $stmt->execute();
+
+            if ($result) {
+                $this->logger->info("Localisation supprimée", ['location_id' => $locationId]);
+            } else {
+                $this->logger->warning("Échec de la suppression de la localisation", ['location_id' => $locationId]);
+            }
+            return $result;
         } catch (PDOException $e) {
-            error_log("Erreur lors de la suppression de la localisation: " . $e->getMessage());
+            $this->logger->error("Erreur lors de la suppression de la localisation: " . $e->getMessage(), ['exception' => $e]);
             return false;
         }
     }

@@ -5,6 +5,8 @@ namespace Controllers;
 use Entity\Session;
 use Models\SessionModel;
 use PDO;
+use Monolog\Logger;
+use Psr\Log\LoggerInterface;
 
 class SessionController
 {
@@ -46,8 +48,10 @@ class SessionController
         $twig = $container->get(\Twig\Environment::class);
 
         if (($_GET['type'] ?? "") == "cours") {
+            $coursModel = new \Models\CoursModel($container->get(PDO::class), $container->get(LoggerInterface::class));
+            $sessions = $coursModel->getLessonDispo(true);
         } else {
-            $partageModel = new \Models\PartageModel($container->get(PDO::class));
+            $partageModel = new \Models\PartageModel($container->get(PDO::class), $container->get(LoggerInterface::class));
             $sessions = $partageModel->getDemandeDePartage(true);
         }
 

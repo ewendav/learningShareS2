@@ -4,6 +4,7 @@ namespace Models;
 
 use PDO;
 use PDOException;
+use Psr\Log\LoggerInterface;
 
 class CategorieModel
 {
@@ -22,8 +23,12 @@ class CategorieModel
     {
         $container = \Util\Container::getContainer();
         $pdo = $container->get(PDO::class);
+        $logger = $container->get(LoggerInterface::class);
+
 
         try {
+            $logger->info("Début de récupération des catégories");
+
             $stmt = $pdo->query("SELECT * FROM CATEGORY");
             $categories = [];
 
@@ -33,6 +38,7 @@ class CategorieModel
                     $row['category_name']
                 ];
             }
+            $logger->info("Récupération des catégories réussie", ['count' => count($categories)]);
             return $categories;
         } catch (PDOException $e) {
             error_log("Erreur lors de la récupération des categories: " . $e->getMessage());
