@@ -8,6 +8,9 @@ use Dotenv\Dotenv;
 use DI\ContainerBuilder;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
+use Psr\Log\LoggerInterface;
 
 class Container
 {
@@ -46,6 +49,17 @@ class Container
                             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
                         ]
                     );
+                },
+
+                // Logger PSR-3 avec Monolog
+                LoggerInterface::class => function () {
+                    $logger = new Logger('app');
+                    $logPath = __DIR__ . '/../logs/app.log';
+                    if (!file_exists(dirname($logPath))) {
+                        mkdir(dirname($logPath), 0777, true);
+                    }
+                    $logger->pushHandler(new StreamHandler($logPath, Logger::DEBUG));
+                    return $logger;
                 },
 
                 // ajout de twig
