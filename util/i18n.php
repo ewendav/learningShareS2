@@ -39,6 +39,10 @@ return [
         "password" => "Mot de passe",
         "enterPassword" => "Entrez votre mot de passe",
         "alreadyHaveAccount" => "Vous avez déjà un compte ?",
+"rechercherSession" => "Rechercher un échange ou un cours",
+
+
+"consulterSession" => "Consulter les échanges et les cours",
     ],
     "en" => [
         "cours" => "lesson",
@@ -77,6 +81,9 @@ return [
         "avatar" => "Avatar",
         "password" => "Password",
         "enterPassword" => "Enter your password",
-        "alreadyHaveAccount" => "Already have an account?"
+        "alreadyHaveAccount" => "Already have an account?",
+    "consulterSession" => "Consult exchanges and lessons",
+
+    "rechercherSession" => "Search for an exchange or a lesson",
     ]
 ];

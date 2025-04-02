@@ -203,3 +203,7 @@ input.toggle-switch-input:checked + .toggle-switch-slider .slider {
   outline: none;
   cursor: pointer;
 }
+
+.search-icon-input {
+  position: relative;
+}

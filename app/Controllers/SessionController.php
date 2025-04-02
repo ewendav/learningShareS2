@@ -24,7 +24,7 @@ class SessionController
 
     // affiche la page de creation de session et recuperer toutes les categories
     // afin de pouvoir les utiliséés dans les listes déroulantes
-    public static function display(): void
+    public static function displayCreateSession(): void
     {
         $container = \Util\Container::getContainer();
         $twig = $container->get(\Twig\Environment::class);
@@ -32,32 +32,32 @@ class SessionController
         echo $twig->render(
             'ecrans/createSession.html.twig',
             [
-              'title' => 'Creation d\'un partage ou d\'un échange',
-              'categories' => \Models\CategorieModel::getAll()
+            'title' => 'Creation d\'un partage ou d\'un échange',
+            'categories' => \Models\CategorieModel::getAll()
             ]
         );
     }
 
-    /**
-     * Affiche la liste des sessions
-     */
-    public function index()
+
+     // affiche toutes les cours et les échanges disponibles
+    public static function displaySessions(): void
     {
-        $sessions = $this->sessionModel->getAll();
+        $container = \Util\Container::getContainer();
+        $twig = $container->get(\Twig\Environment::class);
 
-        // En fonction de votre système de rendu de vue
-        // return view('sessions/index', ['sessions' => $sessions]);
-
-        // Pour l'exemple, retourne simplement les données
-        return [
-            'status' => 'success',
-            'data' => $sessions
-        ];
+        echo $twig->render(
+            'ecrans/displaySessions.html.twig',
+            [
+            'title' => 'Consulter les cours et les sessions',
+              'categories' => \Models\CategorieModel::getAll(),
+            ]
+        );
     }
+
 
     /**
      * Affiche les détails d'une session
-     */
+    *  /
     public function show($session_id)
     {
         $session = $this->sessionModel->getById($session_id);
