@@ -3,10 +3,13 @@ namespace Controllers;
 
 use Entity\Cours;
 use Models\CoursModel;
+use Models\LocationModel;
 use PDO;
 
 class CoursController {
     private $coursModel;
+
+    private $locationModel;
 
     /**
      * Constructeur
@@ -17,6 +20,7 @@ class CoursController {
             $pdo = $container->get(PDO::class);
         }
         $this->coursModel = new CoursModel($pdo);
+        $this->locationModel = new LocationModel($pdo);
     }
 
     /**
@@ -101,7 +105,26 @@ class CoursController {
         
         // Validation des données (à implémenter)
         
-        // Création de l'objet Cours
+        // Création d'une nouvelle location
+        $address = isset($request['address']) ? $request['address'] : '';
+        $zipCode = isset($request['zip_code']) ? $request['zip_code'] : '';
+        $city = isset($request['city']) ? $request['city'] : '';
+        
+        // Créer la localisation et récupérer son ID
+        $locationId = $controller->locationModel->create($address, $zipCode, $city);
+        
+        if (!$locationId) {
+            // Erreur lors de la création de la localisation
+            echo $twig->render('ecrans/createSession.html.twig', [
+                'title' => 'Création d\'un cours',
+                'message' => 'Erreur lors de la création de la localisation',
+                'success' => false,
+                'categories' => \Models\CategorieModel::getAll()
+            ]);
+            return;
+        }
+        
+        // Création de l'objet Cours avec la nouvelle location
         $cours = new Cours(
             null,
             $request['start_time'],
@@ -110,7 +133,7 @@ class CoursController {
             $request['description'],
             $request['rate_id'],
             $request['skill_taught_id'],
-            $request['location_id'],
+            $locationId,
             $request['lesson_host_id'],
             (int)$request['max_attendees']
         );
@@ -178,8 +201,23 @@ class CoursController {
         $cours->setRateId($request['rate_id']);
         $cours->setSkillTaughtId($request['skill_taught_id']);
 
-        // Mise à jour des données spécifiques au cours
-        $cours->setLocationId($request['location_id']);
+        // Gérer la mise à jour de la localisation
+        if (isset($request['address']) && isset($request['zip_code']) && isset($request['city'])) {
+            // Créer une nouvelle localisation ou récupérer l'existante
+            $locationId = $this->locationModel->create(
+                $request['address'],
+                $request['zip_code'],
+                $request['city']
+            );
+            
+            if ($locationId) {
+                $cours->setLocationId($locationId);
+            }
+        } else if (isset($request['location_id'])) {
+            // Si location_id est fourni directement (pour la compatibilité avec l'existant)
+            $cours->setLocationId($request['location_id']);
+        }
+
         $cours->setLessonHostId($request['lesson_host_id']);
         $cours->setMaxAttendees($request['max_attendees']);
 
