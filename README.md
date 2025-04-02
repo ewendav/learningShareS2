@@ -23,3 +23,5 @@ vendor/bin/phpcs .
 ```
 vendor/bin/phpcbf <fichier>
 ```
+
+ne pas oublier de parler de l'internationalisation faite manuellement

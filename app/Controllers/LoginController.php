@@ -32,7 +32,7 @@ class LoginController
         $twig = $container->get(\Twig\Environment::class);
 
         echo $twig->render(
-            'ecrans/login.html.twig',
+            'ecrans/register.html.twig',
             [
               'title' => 'Inscription',
             ]

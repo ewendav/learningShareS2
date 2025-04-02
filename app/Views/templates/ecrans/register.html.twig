@@ -1,0 +1,77 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block body %}
+
+
+<section class="registration-container">
+
+  <div id="section-registration">
+    <h1 class="page-title">{{traduction('register')}}</h1>
+
+
+
+    <form class="form-login" action="/register" method="POST" enctype="multipart/form-data">
+      <div style="margin-top:3rem;" class="vertical-display">
+        
+        <div class="horizontal-display">
+            <div class="input-label-display">
+              <label for="firstName">{{traduction('firstName')}}</label>
+              <input class="input-goofy" type="text" id="firstName" name="firstName" placeholder="{{traduction('enterFirstName')}}" required>
+            </div>
+
+            <div class="input-label-display">
+              <label for="lastName">{{traduction('lastName')}}</label>
+              <input class="input-goofy" type="text" id="lastName" name="lastName" placeholder="{{traduction('enterLastName')}}" required>
+            </div>
+        </div>
+
+        <div class="horizontal-display">
+
+          <div class="input-label-display">
+            <label for="email">{{traduction('email')}}</label>
+            <input class="input-goofy" type="email" id="email" name="email" placeholder="{{traduction('enterEmail')}}" required>
+          </div>
+
+          <div class="input-label-display">
+            <label for="phone">{{traduction('phone')}}</label>
+            <input class="input-goofy" type="tel" id="phone" name="phone" placeholder="{{traduction('enterPhone')}}" required>
+          </div>
+
+        </div>
+
+        <div class="input-label-display">
+          <label for="biography">{{traduction('biography')}}</label>
+          <textarea class="input-goofy" id="biography" name="biography" placeholder="{{traduction('enterBiography')}}" rows="3"></textarea>
+        </div>
+
+
+        <div class="input-label-display">
+          <label for="avatar">{{traduction('avatar')}}</label>
+          <input class="input-goofy" type="file" id="avatar" name="avatar" accept="image/*" required>
+        </div>
+
+        <div class="input-label-display">
+          <label for="password">{{traduction('password')}}</label>
+          <input class="input-goofy" type="password" id="password" name="password" placeholder="{{traduction('enterPassword')}}" required>
+        </div>
+
+        <div class="horizontal-display">
+          <button class="form-button green-bg" type="submit" class="btn-submit">{{traduction('register')}}</button>
+        </div>
+
+        <div class="create-account-prompt">
+          <p><a href="/login">{{traduction('alreadyHaveAccount')}}</a></p>
+        </div>
+
+      </div>
+
+    </form>
+
+  </div>
+
+</section>
+
+
+{% endblock %}

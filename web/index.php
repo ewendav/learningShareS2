@@ -8,7 +8,6 @@ $container = Util\Container::getContainer();
 // recupération de l'outil twig du container de dependances
 $twig = $container->get(Twig\Environment::class);
 
-$sessionController = new Controllers\SessionController($container->get(PDO::class));
 
 // création des routes
 $dispatcher = FastRoute\simpleDispatcher(
@@ -27,6 +26,7 @@ $dispatcher = FastRoute\simpleDispatcher(
         $r->addRoute('GET', '/createSession', [Controllers\SessionController::class, 'display']);
         // page de login et de register
         $r->addRoute('GET', '/login', [Controllers\LoginController::class, 'displayLogin']);
+        $r->addRoute('GET', '/register', [Controllers\LoginController::class, 'displayRegister']);
 
 
         // ROUTES POST

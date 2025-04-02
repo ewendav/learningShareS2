@@ -11,7 +11,7 @@
     <h1 class="page-title">{{traduction('login')}}</h1>
 
     <form class="form-login" action="/login" method="POST">
-      <div class="horizontal-display">
+      <div style="margin-top:3rem;" class="vertical-display">
         <div class="input-label-display">
           <label for="email">{{traduction('email')}}</label>
           <input class="input-goofy" type="email" id="email" name="email" placeholder="{{traduction('enterEmail')}}" required>
@@ -21,16 +21,19 @@
           <label for="password">{{traduction('password')}}</label>
           <input class="input-goofy" type="password" id="password" name="password" placeholder="{{traduction('enterPassword')}}" required>
         </div>
+
+        <div class="horizontal-display">
+          <button class="form-button green-bg" type="submit" class="btn-submit">{{traduction('login')}}</button>
+        </div>
+
+        <div class="create-account-prompt">
+          <p  ><a href="/register">{{traduction('createAccount')}}</a></p>
+        </div>
+
       </div>
 
-      <div class="horizontal-display">
-        <button type="submit" class="btn-submit">{{traduction('login')}}</button>
-      </div>
     </form>
 
-    <div class="create-account-prompt">
-      <p>{{traduction('noAccount')}} <a href="/create-account">{{traduction('createAccount')}}</a></p>
-    </div>
   </div>
 
 </section>
