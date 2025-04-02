@@ -22,8 +22,16 @@ $dispatcher = FastRoute\simpleDispatcher(
             }
         );
 
+        // ROUTES GET
         // route création de session
         $r->addRoute('GET', '/createSession', [Controllers\SessionController::class, 'display']);
+        // page de login et de register
+        $r->addRoute('GET', '/login', [Controllers\LoginController::class, 'displayLogin']);
+
+
+        // ROUTES POST
+        // creation d'un échange
+
 
 
         // route de base non utilisées :

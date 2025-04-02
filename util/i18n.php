@@ -16,13 +16,16 @@ return [
         "lieuxCours" => "Lieux du Cours",
         "selectLieuCours" => "Sélectionnez le lieu du cours",
         "maximumParticipants" => "Maximum de Participants",
-        "selectNbMaxParticipants" => "Nombre maximum de participants"
+        "selectNbMaxParticipants" => "Nombre maximum de participants",
+        "annuler" => "Annuler",
+        "creerCours" => "Créer un Cours",
+        "creerEchange" => "Créer un Échange"
     ],
     "en" => [
-        "cours" => "Course",
+        "cours" => "lesson",
         "echange" => "Exchange",
-        "creationCours" => "Course Creation",
-        "creationSession" => "Create an exchange or a course",
+        "creationCours" => "lesson Creation",
+        "creationSession" => "Create an exchange or a lesson",
         "categorie" => "Category",
         "selectCategorie" => "Select a category",
         "competence" => "Skill",
@@ -30,9 +33,12 @@ return [
         "date" => "Date",
         "heureDebut" => "Start Time",
         "heureFin" => "End Time",
-        "lieuxCours" => "Course Location",
-        "selectLieuCours" => "Select the course location",
+        "lieuxCours" => "lesson Location",
+        "selectLieuCours" => "Select the lesson location",
         "maximumParticipants" => "Maximum attendee",
-        "selectNbMaxParticipants" => "Enter the maximum number of attendee"
+        "selectNbMaxParticipants" => "Enter the maximum number of attendee",
+        "annuler" => "Cancel",
+        "creerCours" => "Create a lesson",
+        "creerEchange" => "Create an Exchange"
     ]
 ];

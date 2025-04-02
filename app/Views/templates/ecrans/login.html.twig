@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block body %}
+
+
+<section class="login-container">
+
+  <div id="section-login">
+    <h1 class="page-title">{{traduction('login')}}</h1>
+
+    <form class="form-login" action="/login" method="POST">
+      <div class="horizontal-display">
+        <div class="input-label-display">
+          <label for="email">{{traduction('email')}}</label>
+          <input class="input-goofy" type="email" id="email" name="email" placeholder="{{traduction('enterEmail')}}" required>
+        </div>
+
+        <div class="input-label-display">
+          <label for="password">{{traduction('password')}}</label>
+          <input class="input-goofy" type="password" id="password" name="password" placeholder="{{traduction('enterPassword')}}" required>
+        </div>
+      </div>
+
+      <div class="horizontal-display">
+        <button type="submit" class="btn-submit">{{traduction('login')}}</button>
+      </div>
+    </form>
+
+    <div class="create-account-prompt">
+      <p>{{traduction('noAccount')}} <a href="/create-account">{{traduction('createAccount')}}</a></p>
+    </div>
+  </div>
+
+</section>
+
+
+{% endblock %}
