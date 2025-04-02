@@ -46,6 +46,8 @@ return [
 "entrezCodePostal" => "Entrez le code postal",
 "ville" => "Ville",
 "entrezVille" => "Entrez la ville",
+        "want2learn" => "Veux apprendre",
+"teachYou" => "Vous apprends",
 
 
 "consulterSession" => "Consulter les échanges et les cours",
@@ -98,5 +100,7 @@ return [
     "entrezCodePostal" => "Enter the zip code",
     "ville" => "City",
     "entrezVille" => "Enter the city",
+    "want2learn" => "Want to learn",
+    "teachYou" => "Teach you",
     ]
 ];
