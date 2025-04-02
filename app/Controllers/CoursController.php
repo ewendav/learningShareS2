@@ -36,8 +36,6 @@ class CoursController {
      * Affiche la liste des cours
      */
     public function index() {
-        $this->logger->info("Récupération de tous les cours");
-
         $cours = $this->coursModel->getAll();
 
         // En fonction de votre système de rendu de vue
@@ -110,7 +108,7 @@ class CoursController {
         // Récupération du container
         $container = \Util\Container::getContainer();
         $twig = $container->get(\Twig\Environment::class);
-        $logger = $container->get(Logger::class);
+        $logger = $container->get(LoggerInterface::class);
         
         // Création du contrôleur
         $controller = new self();
