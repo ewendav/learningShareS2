@@ -64,23 +64,6 @@ Voici une liste des librairies utilisées dans ce projet, ainsi qu'une brève ex
 
 ---
 
-## Scripts utiles
-
-- **`lint`**  
-  Utilise PHP_CodeSniffer pour vérifier les violations de normes de codage.
-
-  ```bash
-  composer lint
-  ```
-
-- **`fix`**  
-  Utilise PHP_CodeSniffer pour tenter de corriger automatiquement les violations de normes de codage.
-
-  ```bash
-  composer fix
-  ```
----
-
 ## instructions
 
 commande a lancer régulièrement pour installer les packages ajouté par les autres
