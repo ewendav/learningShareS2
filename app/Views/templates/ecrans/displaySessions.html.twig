@@ -14,7 +14,7 @@
     <input class="toggle-switch-input" type="checkbox"
            {% if getParams.type == 'cours' %} checked {% endif %}
            onClick="
-               window.location.href = this.checked ? 'http://localhost:3000/sessions?type=cours' : 'http://localhost:3000/sessions?type=echange';
+               window.location.href = this.checked ? '/sessions?type=cours' : '/sessions?type=echange';
            "
            id="yourCheckboxId">
     <span class="toggle-switch-slider">
