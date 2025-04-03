@@ -57,4 +57,4 @@
 .php-cs-fixer.cache
 .phpactor.json
 .gitkeep
-
+/logs/app.log

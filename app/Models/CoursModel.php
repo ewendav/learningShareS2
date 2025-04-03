@@ -174,36 +174,40 @@ class CoursModel
         try {
             $currentDateTime = date('Y-m-d H:i:s'); // Get the current date and time
             $stmt = $this->pdo->query("
-        SELECT 
-            l.lesson_session_id,
-            s.start_time,
-            s.end_time,
-            s.date_session,
-            s.description,
-            s.rate_id,
-            l.max_attendees,
-            COUNT(a.attend_user_id) AS current_attendees,
-            taught_skill.skill_id AS skill_taught_id,
-            taught_skill.category_id AS skill_taught_category_id,
-            req_user.user_first_name AS host_first_name,
-            req_user.user_last_name AS host_last_name,
-            req_user.avatar_path AS host_avatar,
-            taught_skill.skill_name AS skill_taught_name
-        FROM 
-            LESSON l
-        JOIN 
-            SESSION s ON l.lesson_session_id = s.session_id
-        JOIN 
-            APP_USER req_user ON l.lesson_host_id = req_user.user_id
-        LEFT JOIN 
-            ATTEND a ON l.lesson_session_id = a.attend_lesson_id
-        JOIN 
-            SKILL taught_skill ON s.skill_taught_id = taught_skill.skill_id
-        WHERE 
-            (l.max_attendees > COUNT(a.attend_user_id) OR a.attend_user_id IS NULL) 
-            AND s.end_time > NOW() 
-        GROUP BY 
-            l.lesson_session_id, s.start_time, s.end_time, s.date_session, s.description, s.rate_id, l.max_attendees, req_user.user_first_name, req_user.user_last_name, req_user.avatar_path, taught_skill.skill_id, taught_skill.category_id, taught_skill.skill_name
+SELECT
+    l.lesson_session_id,
+    s.start_time,
+    s.end_time,
+    s.date_session,
+    s.description,
+    s.rate_id,
+    l.max_attendees,
+    COUNT(a.attend_user_id) AS current_attendees,
+    taught_skill.skill_id AS skill_taught_id,
+    taught_skill.category_id AS skill_taught_category_id,
+    req_user.user_first_name AS host_first_name,
+    req_user.user_last_name AS host_last_name,
+    req_user.avatar_path AS host_avatar,
+    taught_skill.skill_name AS skill_taught_name,
+    CONCAT(loc.address, ', ', loc.zip_code, ', ', loc.city) AS full_address
+FROM
+    LESSON l
+JOIN
+    SESSION s ON l.lesson_session_id = s.session_id
+JOIN
+    APP_USER req_user ON l.lesson_host_id = req_user.user_id
+LEFT JOIN
+    ATTEND a ON l.lesson_session_id = a.attend_lesson_id
+JOIN
+    SKILL taught_skill ON s.skill_taught_id = taught_skill.skill_id
+JOIN
+    LOCATION loc ON l.location_id = loc.location_id
+WHERE
+    (s.date_session + s.end_time) > NOW()
+GROUP BY
+    l.lesson_session_id, s.start_time, s.end_time, s.date_session, s.description, s.rate_id, l.max_attendees, req_user.user_first_name, req_user.user_last_name, req_user.avatar_path, taught_skill.skill_id, taught_skill.category_id, taught_skill.skill_name, loc.address, loc.zip_code, loc.city
+HAVING
+    l.max_attendees > COUNT(a.attend_user_id) OR COUNT(a.attend_user_id) IS NULL;
         ");
 
             $lessons = [];
@@ -211,20 +215,21 @@ class CoursModel
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 if ($retourneJson) {
                     $lessons[] = [
-                        'lesson_session_id' => $row['lesson_session_id'],
-                        'start_time' => $row['start_time'],
-                        'end_time' => $row['end_time'],
-                        'date_session' => $row['date_session'],
-                        'description' => $row['description'],
-                        'rate_id' => $row['rate_id'],
-                        'max_attendees' => $row['max_attendees'],
-                        'current_attendees' => $row['current_attendees'],
-                        'host_first_name' => $row['host_first_name'],
-                        'host_last_name' => $row['host_last_name'],
-                        'host_avatar' => $row['host_avatar'],
-                        'skill_taught_id' => $row['skill_taught_id'],
-                        'skill_taught_category_id' => $row['skill_taught_category_id'],
-                        'skill_taught_name' => $row['skill_taught_name']
+                    'lesson_session_id' => $row['lesson_session_id'],
+                    'start_time' => $row['start_time'],
+                    'end_time' => $row['end_time'],
+                    'date_session' => $row['date_session'],
+                    'description' => $row['description'],
+                    'rate_id' => $row['rate_id'],
+                    'max_attendees' => $row['max_attendees'],
+                    'current_attendees' => $row['current_attendees'],
+                    'host_first_name' => $row['host_first_name'],
+                    'host_last_name' => $row['host_last_name'],
+                    'host_avatar' => $row['host_avatar'],
+                    'skill_taught_id' => $row['skill_taught_id'],
+                    'skill_taught_category_id' => $row['skill_taught_category_id'],
+                    'skill_taught_name' => $row['skill_taught_name'],
+                    'full_address' => $row['full_address'],
                     ];
                 }
             }
@@ -453,4 +458,3 @@ class CoursModel
         }
     }
 }
-

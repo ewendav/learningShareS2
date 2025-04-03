@@ -5,6 +5,8 @@ namespace Controllers;
 use Entity\Partage;
 use Models\PartageModel;
 use PDO;
+use Monolog\Logger;
+use Psr\Log\LoggerInterface;
 
 class PartageController
 {
@@ -19,7 +21,13 @@ class PartageController
             $container = \Util\Container::getContainer();
             $pdo = $container->get(PDO::class);
         }
-        $this->partageModel = new PartageModel($pdo);
+
+        if ($logger === null) {
+            $container = \Util\Container::getContainer();
+            $logger = $container->get(LoggerInterface::class);
+        }
+
+        $this->partageModel = new PartageModel($pdo, $logger);
     }
 
     /**
@@ -286,4 +294,3 @@ class PartageController
         }
     }
 }
-

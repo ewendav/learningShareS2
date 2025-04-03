@@ -58,7 +58,7 @@ class Container
                     if (!file_exists(dirname($logPath))) {
                         mkdir(dirname($logPath), 0777, true);
                     }
-                    $logger->pushHandler(new StreamHandler($logPath, Logger::DEBUG));
+                    $logger->pushHandler(new StreamHandler($logPath, \Monolog\Level::Debug));
                     return $logger;
                 },
 

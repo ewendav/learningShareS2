@@ -1,4 +1,5 @@
 <?php
+
 namespace Controllers;
 
 use Entity\Cours;
@@ -8,7 +9,8 @@ use PDO;
 use Monolog\Logger;
 use Psr\Log\LoggerInterface;
 
-class CoursController {
+class CoursController
+{
     private $coursModel;
 
     private $locationModel;
@@ -18,7 +20,8 @@ class CoursController {
     /**
      * Constructeur
      */
-    public function __construct(PDO $pdo = null, Logger $logger = null) {
+    public function __construct(PDO $pdo = null, Logger $logger = null)
+    {
         if ($pdo === null) {
             $container = \Util\Container::getContainer();
             $pdo = $container->get(PDO::class);
@@ -27,15 +30,16 @@ class CoursController {
             $container = \Util\Container::getContainer();
             $logger = $container->get(LoggerInterface::class);
         }
-        $this->coursModel = new CoursModel($pdo);
-        $this->locationModel = new LocationModel($pdo);
+        $this->coursModel = new CoursModel($pdo, $logger);
+        $this->locationModel = new LocationModel($pdo, $logger);
         $this->logger = $logger;
     }
 
     /**
      * Affiche la liste des cours
      */
-    public function index() {
+    public function index()
+    {
         $cours = $this->coursModel->getAll();
 
         // En fonction de votre système de rendu de vue
@@ -51,7 +55,8 @@ class CoursController {
     /**
      * Affiche les cours hébergés par un utilisateur
      */
-    public function userHosted($host_id) {
+    public function userHosted($host_id)
+    {
         $cours = $this->coursModel->getByHostId($host_id);
 
         // return view('cours/user-hosted', ['cours' => $cours]);
@@ -64,7 +69,8 @@ class CoursController {
     /**
      * Affiche les détails d'un cours
      */
-    public function show($session_id) {
+    public function show($session_id)
+    {
         $cours = $this->coursModel->getById($session_id);
 
         if (!$cours) {
@@ -93,7 +99,8 @@ class CoursController {
     /**
      * Affiche le formulaire de création d'un cours
      */
-    public function create() {
+    public function create()
+    {
         // return view('cours/create');
         return [
             'status' => 'success',
@@ -104,30 +111,31 @@ class CoursController {
     /**
      * Stocke un nouveau cours
      */
-    public static function store() {
+    public static function store()
+    {
         // Récupération du container
         $container = \Util\Container::getContainer();
         $twig = $container->get(\Twig\Environment::class);
         $logger = $container->get(LoggerInterface::class);
-        
+
         // Création du contrôleur
         $controller = new self();
-        
+
         // Récupération des données du formulaire
         $request = $_POST;
 
         $logger->info("Tentative de création d'un cours", ['request' => $request]);
-        
+
         // Validation des données (à implémenter)
-        
+
         // Création d'une nouvelle location
         $address = isset($request['address']) ? $request['address'] : '';
         $zipCode = isset($request['zip_code']) ? $request['zip_code'] : '';
         $city = isset($request['city']) ? $request['city'] : '';
-        
+
         // Créer la localisation et récupérer son ID
         $locationId = $controller->locationModel->create($address, $zipCode, $city);
-        
+
         if (!$locationId) {
             // Erreur lors de la création de la localisation
             $logger->error("Échec de la création de la localisation", ['request' => $request]);
@@ -139,7 +147,7 @@ class CoursController {
             ]);
             return;
         }
-        
+
         // Création de l'objet Cours avec la nouvelle location
         $cours = new Cours(
             null,
@@ -181,7 +189,8 @@ class CoursController {
     /**
      * Affiche le formulaire d'édition d'un cours
      */
-    public function edit($session_id) {
+    public function edit($session_id)
+    {
         $cours = $this->coursModel->getById($session_id);
 
         if (!$cours) {
@@ -202,7 +211,8 @@ class CoursController {
     /**
      * Met à jour un cours
      */
-    public function update($session_id, $request) {
+    public function update($session_id, $request)
+    {
         $cours = $this->coursModel->getById($session_id);
 
         if (!$cours) {
@@ -231,11 +241,11 @@ class CoursController {
                 $request['zip_code'],
                 $request['city']
             );
-            
+
             if ($locationId) {
                 $cours->setLocationId($locationId);
             }
-        } else if (isset($request['location_id'])) {
+        } elseif (isset($request['location_id'])) {
             // Si location_id est fourni directement (pour la compatibilité avec l'existant)
             $cours->setLocationId($request['location_id']);
         }
@@ -264,7 +274,8 @@ class CoursController {
     /**
      * Supprime un cours
      */
-    public function destroy($session_id) {
+    public function destroy($session_id)
+    {
         $cours = $this->coursModel->getById($session_id);
 
         if (!$cours) {
@@ -299,7 +310,8 @@ class CoursController {
     /**
      * Inscrit un utilisateur à un cours
      */
-    public function register($session_id, $user_id) {
+    public function register($session_id, $user_id)
+    {
         if ($this->coursModel->addAttendee($session_id, $user_id)) {
             // redirect('cours/' . $session_id);
             $this->logger->info("Inscription de l'utilisateur au cours", ['session_id' => $session_id]);
@@ -322,7 +334,8 @@ class CoursController {
     /**
      * Désinscrit un utilisateur d'un cours
      */
-    public function unregister($session_id, $user_id) {
+    public function unregister($session_id, $user_id)
+    {
         if ($this->coursModel->removeAttendee($session_id, $user_id)) {
             // redirect('cours/' . $session_id);
             return [
@@ -338,3 +351,4 @@ class CoursController {
         }
     }
 }
+
