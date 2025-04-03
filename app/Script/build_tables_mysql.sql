@@ -1,0 +1,122 @@
+CREATE DATABASE IF NOT EXISTS l3_moeprojet;
+USE l3_moeprojet;
+
+DROP TABLE IF EXISTS review;
+DROP TABLE IF EXISTS report;
+DROP TABLE IF EXISTS attend;
+DROP TABLE IF EXISTS lesson;
+DROP TABLE IF EXISTS exchange;
+DROP TABLE IF EXISTS location;
+DROP TABLE IF EXISTS user_role;
+DROP TABLE IF EXISTS role;
+DROP TABLE IF EXISTS app_user;
+DROP TABLE IF EXISTS session;
+DROP TABLE IF EXISTS rate;
+DROP TABLE IF EXISTS skill;
+DROP TABLE IF EXISTS category;
+DROP TABLE IF EXISTS blacklist;
+
+CREATE TABLE CATEGORY(
+                         category_id INT AUTO_INCREMENT PRIMARY KEY,
+                         category_name VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE SKILL (
+                       skill_id INT AUTO_INCREMENT PRIMARY KEY,
+                       skill_name VARCHAR(50) NOT NULL,
+                       search_counter INT DEFAULT 0,
+                       category_id INT,
+                       CONSTRAINT fk_skill_category FOREIGN KEY (category_id) REFERENCES CATEGORY(category_id)
+);
+
+
+
+CREATE TABLE RATE(
+                     rate_id INT AUTO_INCREMENT PRIMARY KEY,
+                     rate_name VARCHAR(50) NOT NULL,
+                     rate_amount INTEGER NOT NULL
+);
+
+CREATE TABLE SESSION (
+                         session_id INT AUTO_INCREMENT PRIMARY KEY,
+                         start_time TIME NOT NULL ,
+                         end_time TIME NOT NULL ,
+                         date_session DATE NOT NULL,
+                         description VARCHAR(255),
+                         rate_id INTEGER REFERENCES RATE(rate_id),
+                         skill_taught_id INTEGER REFERENCES SKILL(skill_id)
+);
+
+CREATE TABLE APP_USER (
+                          user_id INT AUTO_INCREMENT PRIMARY KEY,
+                          mail VARCHAR(50) NOT NULL,
+                          user_first_name VARCHAR(50) NOT NULL,
+                          user_last_name VARCHAR(50) NOT NULL,
+                          biography VARCHAR(250),
+                          avatar_path VARCHAR(100),
+                          phone VARCHAR(50) NOT NULL,
+                          password VARCHAR(255) NOT NULL,
+                          balance INT DEFAULT 100
+);
+
+CREATE TABLE ROLE(
+                     role_id INT AUTO_INCREMENT PRIMARY KEY,
+                     role_name VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE USER_ROLE (
+                           role_id INT,
+                           user_id INT,
+                           PRIMARY KEY (role_id, user_id),
+                           CONSTRAINT fk_userrole_role FOREIGN KEY (role_id) REFERENCES ROLE(role_id),
+                           CONSTRAINT fk_userrole_user FOREIGN KEY (user_id) REFERENCES APP_USER(user_id)
+);
+
+
+CREATE TABLE LOCATION (
+                          location_id INT AUTO_INCREMENT PRIMARY KEY,
+                          address VARCHAR(255) NOT NULL,
+                          zip_code VARCHAR(50) NOT NULL,
+                          city VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE LESSON (
+                        lesson_session_id INTEGER PRIMARY KEY REFERENCES SESSION(session_id),
+                        location_id INTEGER REFERENCES LOCATION(location_id),
+                        lesson_host_id INTEGER REFERENCES APP_USER(user_id),
+                        max_attendees INTEGER NOT NULL
+);
+
+CREATE TABLE EXCHANGE (
+                          exchange_session_id INTEGER PRIMARY KEY REFERENCES SESSION(session_id),
+                          skill_requested_id INTEGER REFERENCES SKILL(skill_id),
+                          exchange_requester_id INTEGER REFERENCES APP_USER(user_id),
+                          exchange_accepter_id INTEGER REFERENCES APP_USER(user_id)
+);
+
+CREATE TABLE ATTEND (
+                        attend_id INTEGER PRIMARY KEY,
+                        attend_lesson_id INTEGER REFERENCES LESSON(lesson_session_id),
+                        attend_user_id INTEGER REFERENCES APP_USER(user_id)
+);
+
+CREATE TABLE REPORT (
+                        report_id INT AUTO_INCREMENT PRIMARY KEY,
+                        report_content VARCHAR(500) NOT NULL,
+                        report_giver_id INTEGER REFERENCES APP_USER(user_id),
+                        report_receiver_id INTEGER REFERENCES APP_USER(user_id)
+);
+
+CREATE TABLE REVIEW (
+                        review_id INT AUTO_INCREMENT PRIMARY KEY,
+                        review_content VARCHAR(500),
+                        review_giver_id INTEGER REFERENCES APP_USER(user_id),
+                        review_receiver_id INTEGER REFERENCES APP_USER(user_id),
+                        review_session_id INTEGER REFERENCES SESSION(session_id),
+                        rating INTEGER  NOT NULL
+);
+
+CREATE TABLE BLACKLIST(
+                          blacklist_id INT AUTO_INCREMENT PRIMARY KEY,
+                          badword_array JSON
+);
