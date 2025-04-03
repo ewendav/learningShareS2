@@ -139,13 +139,9 @@ class CoursController
         if (!$locationId) {
             // Erreur lors de la création de la localisation
             $logger->error("Échec de la création de la localisation", ['request' => $request]);
-            echo $twig->render('ecrans/createSession.html.twig', [
-                'title' => 'Création d\'un cours',
-                'message' => 'Erreur lors de la création de la localisation',
-                'success' => false,
-                'categories' => \Models\CategorieModel::getAll()
-            ]);
-            return;
+            // Redirection avec message d'erreur
+            header('Location: /createSession?error=location_error');
+            exit;
         }
 
         // Création de l'objet Cours avec la nouvelle location
@@ -167,22 +163,16 @@ class CoursController
             // Redirection ou affichage d'un message de succès
             $logger->info("Cours créé avec succès", ['cours' => $cours]);
 
-            echo $twig->render('ecrans/createSession.html.twig', [
-                'title' => 'Création d\'un cours',
-                'message' => 'Cours créé avec succès',
-                'success' => true,
-                'categories' => \Models\CategorieModel::getAll()
-            ]);
+            // Redirection vers les sessions pour préserver l'état de session
+            header('Location: /sessions?success=cours_cree');
+            exit;
         } else {
             // Affichage d'un message d'erreur
             $logger->error("Erreur lors de l'enregistrement du cours", ['cours' => $cours]);
 
-            echo $twig->render('ecrans/createSession.html.twig', [
-                'title' => 'Création d\'un cours',
-                'message' => 'Erreur lors de la création du cours',
-                'success' => false,
-                'categories' => \Models\CategorieModel::getAll()
-            ]);
+            // Redirection avec message d'erreur
+            header('Location: /createSession?error=cours_error');
+            exit;
         }
     }
 

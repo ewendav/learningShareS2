@@ -6,7 +6,7 @@ class AuthMiddleware
 {
     public static function isAuthenticated(): bool
     {
-        session_start();
+        // La session est déjà démarrée dans index.php
         return isset($_SESSION['user_id']);
     }
 

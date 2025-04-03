@@ -32,22 +32,6 @@ class PartageController
         $this->partageModel = new PartageModel($pdo, $logger);
     }
 
-    /**
-     * Affiche la liste des partages
-     */
-    public function index()
-    {
-        $partages = $this->partageModel->getAll();
-
-        // En fonction de votre système de rendu de vue
-        // return view('partages/index', ['partages' => $partages]);
-
-        // Pour l'exemple, retourne simplement les données
-        return [
-            'status' => 'success',
-            'data' => $partages
-        ];
-    }
 
     /**
      * Affiche les partages d'un utilisateur (comme demandeur)
@@ -145,20 +129,13 @@ class PartageController
         // Sauvegarde dans la base de données
         if ($controller->partageModel->save($partage)) {
             // Redirection ou affichage d'un message de succès
-            echo $twig->render('ecrans/createSession.html.twig', [
-                'title' => 'Création d\'un échange',
-                'message' => 'Échange créé avec succès',
-                'success' => true,
-                'categories' => \Models\CategorieModel::getAll()
-            ]);
+            // Redirection vers les sessions pour préserver l'état de session
+            header('Location: /sessions?success=partage_cree');
+            exit;
         } else {
-            // Affichage d'un message d'erreur
-            echo $twig->render('ecrans/createSession.html.twig', [
-                'title' => 'Création d\'un échange',
-                'message' => 'Erreur lors de la création de l\'échange',
-                'success' => false,
-                'categories' => \Models\CategorieModel::getAll()
-            ]);
+            // Redirection avec message d'erreur
+            header('Location: /createSession?error=partage_error');
+            exit;
         }
     }
 

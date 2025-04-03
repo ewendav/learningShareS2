@@ -2,6 +2,9 @@
 
 require_once '../vendor/autoload.php';
 
+// Démarre la session au début du script pour toute l'application
+session_start();
+
 // recupère et instancie le conteneur
 // qui utilise l'injection de dépendance
 $container = Util\Container::getContainer();

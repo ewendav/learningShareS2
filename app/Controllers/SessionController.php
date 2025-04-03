@@ -31,6 +31,9 @@ class SessionController
     {
         // Vérifier l'authentification
         \Util\AuthMiddleware::requireAuth();
+        
+        // Récupérer les paramètres d'erreur de l'URL
+        $error = isset($_GET['error']) ? $_GET['error'] : null;
 
         $container = \Util\Container::getContainer();
         $twig = $container->get(\Twig\Environment::class);
@@ -40,7 +43,8 @@ class SessionController
             [
                 'title' => 'Creation d\'un partage ou d\'un échange',
                 'categories' => \Models\CategorieModel::getAll(),
-                'user' => \Util\AuthMiddleware::getUser()
+                'user' => \Util\AuthMiddleware::getUser(),
+                'error' => $error ? 'Erreur lors de la création' : null
             ]
         );
     }
@@ -51,6 +55,9 @@ class SessionController
     {
         $container = \Util\Container::getContainer();
         $twig = $container->get(\Twig\Environment::class);
+        
+        // Récupération du message de succès
+        $success = isset($_GET['success']) ? $_GET['success'] : null;
 
             $sessionModel = new \Models\SessionModel($container->get(PDO::class), $container->get(LoggerInterface::class));
         $sessionModel->getAllAttendableUserSession();
@@ -70,7 +77,8 @@ class SessionController
                 'getParams' => $_GET,
                 'sessions' => $sessions,
                 'categories' => \Models\CategorieModel::getAll(),
-                'user' => \Util\AuthMiddleware::getUser()
+                'user' => \Util\AuthMiddleware::getUser(),
+                'success' => $success ? 'Création réussie' : null
             ]
         );
     }
