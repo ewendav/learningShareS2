@@ -13,17 +13,16 @@
 
     <body id="bg">
 
-        <!-- show the sidebar only when the user is loged -->
         {% include 'components/Navbar.html.twig' %}
 
         <main class="container">
             {% block body %}{% endblock %}
         </main>
 
-        <!-- show the sidebar only when the user is loged -->
-        {% if app.user %}
+        <!-- afficher la sidebar seuelemt si l'utilsiateur est loggé -->
+        {% if true %}
 
-            <twig:Sidebar />
+          {% include 'components/Sidebar.html.twig' %}
 
         {% endif %}
 

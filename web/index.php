@@ -15,12 +15,8 @@ $dispatcher = FastRoute\simpleDispatcher(
     function (FastRoute\RouteCollector $r) use ($twig, $container) {
 
         // route home
-        $r->get(
-            '/',
-            function () use ($twig) {
-                echo $twig->render('base.html.twig');
-            }
-        );
+
+        $r->addRoute('GET', '/', [Controllers\SessionController::class, 'displaySessions']);
 
         // ROUTES GET
         // route création de session

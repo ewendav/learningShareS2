@@ -55,6 +55,9 @@ return [
 
 "consulterSession" => "Consulter les échanges et les cours",
     "noData" => "Aucun résultats disponibles",
+
+    "aPropos" => "A propos",
+    "jetons" => "Jetons",
     ],
     "en" => [
         "cours" => "lesson",
@@ -110,5 +113,7 @@ return [
 
     "rejoindreCours" => "Join the lesson",
     "noData" => "No data avaialble",
+    "aPropos" => "About",
+    "jetons" => "Tokens",
     ]
 ];

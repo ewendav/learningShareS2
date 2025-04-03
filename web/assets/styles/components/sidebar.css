@@ -1,44 +1,47 @@
 #sidebar {
-    width: min(25rem, 25%);
-    z-index: 10;
-    will-change: transform;
-    overflow: hidden;
+  width: min(25rem, 25%);
+  z-index: 10;
+  will-change: transform;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 #sidebar-overlay {
-    opacity: 0;
-    z-index: 5;
-    cursor: pointer;
-    position: absolute;
-    top: 0;
-    left: 0;
-    transition: opacity 200ms;
-    width: 100vw;
-    height: 100vh;
-    visibility: hidden;
+  opacity: 0;
+  z-index: 5;
+  cursor: pointer;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: opacity 200ms;
+  width: 100vw;
+  height: 100vh;
+  visibility: hidden;
 }
 
 /*responsive handling */
 @media all and (max-width: 991px) {
-    #sidebar {
-        position: absolute;
-        right: 0;
-        transform: translateX(110%);
-        top: 0;
-        height: 100%;
-        width: min(40rem, 40%);
-        border-radius: 0;
-        transition: transform 200ms;
-    }
+  #sidebar {
+    position: absolute;
+    right: 0;
+    transform: translateX(110%);
+    top: 0;
+    height: 100%;
+    width: min(40rem, 40%);
+    border-radius: 0;
+    transition: transform 200ms;
+  }
 
-    #sidebar.open {
-        display: block;
-        transform: translateX(0%);
-    }
+  #sidebar.open {
+    display: block;
+    transform: translateX(0%);
+  }
 
-    #sidebar.open + #sidebar-overlay {
-        opacity: 1;
-        background-color: #80808080;
-        visibility: visible;
-    }
+  #sidebar.open + #sidebar-overlay {
+    opacity: 1;
+    background-color: #80808080;
+    visibility: visible;
+  }
 }

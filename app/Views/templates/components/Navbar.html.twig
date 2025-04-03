@@ -93,7 +93,7 @@
 
 
 <!-- show the sidebar hamburger icon onlyn when the user is loged -->
-        {% if app.user %}
+        {% if true %}
 
             <i class="nav-anchor hamburger-sidebar-button"
             onclick="
@@ -113,4 +113,21 @@
 
         {% endif %}
 
+<!-- <script> -->
+<!--     document.addEventListener("DOMContentLoaded", function() { -->
+<!--         var currentPath = window.location.pathname; -->
+<!---->
+<!--         var links = document.querySelectorAll(".nav-anchor"); -->
+<!---->
+<!--         for (var i = 0; i < links.length; i++) { -->
+<!--             var link = links[i]; -->
+<!---->
+<!--             if (currentPath === link.getAttribute("href")) { -->
+<!--                 link.classList.add("chosen-class"); -->
+<!--                 break; -->
+<!--             } -->
+<!--         } -->
+<!--     }); -->
+<!-- </script> -->
+<!---->
     </nav>

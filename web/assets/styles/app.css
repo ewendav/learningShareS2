@@ -255,3 +255,10 @@ input.toggle-switch-input:checked + .toggle-switch-slider .slider {
   justify-content: center;
   align-items: center;
 }
+
+.flex-vertical {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}

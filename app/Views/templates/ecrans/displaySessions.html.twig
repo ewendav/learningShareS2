@@ -38,19 +38,20 @@
 
 
   <div style="display:flex;gap:1rem;">
+  <a href="/login">
           <button class="form-button" style="background-color:white; color:black;">{{traduction('login')}}</button>
+  </a>
+
+  <a href="/register">
           <button class="form-button" style="background-color:black;" type="submit">{{traduction('register')}}</button>
+  </a>
   </div>
 
   </div>
-
 
 {% if getParams.type == "cours" %}
 
-
 <div id="section-cours-display">
-
-
     {% if sessions is empty %}
         <p>{{ traduction('noData') }}</p>
     {% else %}

@@ -1,7 +1,25 @@
-<aside class="container" id="sidebar">
+<aside id="sidebar">
+
+  
+  <div style="height:25%; gap:1rem;justify-content:start;" class="container flex-vertical">
+
+    <h4>{{traduction('aPropos')}}</h4>
+
+    <div class="session-card" style="flex-direction:row; width:80%;justify-content:space-between;">
+    <p style="font-weight:bold;">{{traduction('jetons')}} : </p>
+    <p>1000</p>
+    </div>
+
+
+
+  </div>
+  <div style="height:70%" class="container"></div>
+
+
+
 </aside>
 <div id="sidebar-overlay"
     onclick="
         let sidebarEl = document.getElementById('sidebar').classList.toggle('open');
-    "
+        "
 ></div>
