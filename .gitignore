@@ -58,3 +58,4 @@
 .phpactor.json
 .gitkeep
 /logs/app.log
+ logs/app.log
