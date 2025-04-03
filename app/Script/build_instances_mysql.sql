@@ -1,4 +1,5 @@
 -- Sélectionner la base de données où les données doivent être insérées
+
 USE l3_moeprojet;
 
 -- Insertion des catégories de compétences
