@@ -12,10 +12,12 @@ class PartageController
 {
     private $partageModel;
 
+    private $logger;
+
     /**
      * Constructeur
      */
-    public function __construct(?PDO $pdo = null)
+    public function __construct(?PDO $pdo = null, ?LoggerInterface $logger = null)
     {
         if ($pdo === null) {
             $container = \Util\Container::getContainer();
