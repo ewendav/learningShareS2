@@ -16,6 +16,7 @@ VALUES
     (10, 'Cuisine');
 
 -- Insertion des utilisateurs
+-- MDP des users : "pass"
 INSERT INTO APP_USER (user_id, mail, user_first_name, user_last_name, biography, phone, password, balance)
 VALUES
     (1, 'user1@example.com', 'Alice', 'Dupont', 'Développeuse Python passionnée.', '0101010101', $2y$10$PzrLrAzoR9garXQzFTyoxuYxHTNbUP3PKIHv2N6Oc4Cu85ZXqatZu, 100),
