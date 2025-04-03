@@ -15,7 +15,7 @@ class PartageController
     /**
      * Constructeur
      */
-    public function __construct(PDO $pdo = null)
+    public function __construct(?PDO $pdo = null)
     {
         if ($pdo === null) {
             $container = \Util\Container::getContainer();

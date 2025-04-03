@@ -20,7 +20,7 @@ class CoursController
     /**
      * Constructeur
      */
-    public function __construct(PDO $pdo = null, Logger $logger = null)
+    public function __construct(?PDO $pdo = null, ?Logger $logger = null)
     {
         if ($pdo === null) {
             $container = \Util\Container::getContainer();
@@ -351,4 +351,3 @@ class CoursController
         }
     }
 }
-
