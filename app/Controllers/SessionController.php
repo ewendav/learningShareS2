@@ -30,7 +30,7 @@ class SessionController
     {
         // Vérifier l'authentification
         \Util\AuthMiddleware::requireAuth();
-        
+
         $container = \Util\Container::getContainer();
         $twig = $container->get(\Twig\Environment::class);
 
@@ -48,9 +48,6 @@ class SessionController
      // affiche toutes les cours et les échanges disponibles
     public static function displaySessions(): void
     {
-        // Vérifier l'authentification
-        \Util\AuthMiddleware::requireAuth();
-        
         $container = \Util\Container::getContainer();
         $twig = $container->get(\Twig\Environment::class);
 
