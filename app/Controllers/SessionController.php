@@ -49,10 +49,10 @@ class SessionController
 
         if (($_GET['type'] ?? "") == "cours") {
             $coursModel = new \Models\CoursModel($container->get(PDO::class), $container->get(LoggerInterface::class));
-            $sessions = $coursModel->getLessonDispo(true);
+            $sessions = $coursModel->getLessonDispo(true, $_GET['q'] ?? "");
         } else {
             $partageModel = new \Models\PartageModel($container->get(PDO::class), $container->get(LoggerInterface::class));
-            $sessions = $partageModel->getDemandeDePartage(true);
+            $sessions = $partageModel->getDemandeDePartage(true, $_GET['q'] ?? "");
         }
 
         echo $twig->render(

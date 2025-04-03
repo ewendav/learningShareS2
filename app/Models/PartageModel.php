@@ -19,8 +19,8 @@ class PartageModel
     public function __construct(PDO $pdo, LoggerInterface $logger)
     {
         $this->pdo = $pdo;
-        $this->sessionModel = new SessionModel($pdo, $logger);
         $this->logger = $logger;
+        $this->sessionModel = new SessionModel($pdo, $logger);
     }
 
     /**
@@ -165,46 +165,58 @@ class PartageModel
     /**
      * Récupérer tous les partages qui nont pas été acepté
      */
-    public function getDemandeDePartage(bool $retourneJson = false)
+    public function getDemandeDePartage(bool $retourneJson = false, string $skillName = "")
     {
         try {
-            $stmt = $this->pdo->query("
-            SELECT 
-                s.session_id,
-                s.start_time,
-                s.end_time,
-                s.date_session,
-                s.description,
-                s.rate_id,
-                taught_skill.skill_id AS skill_taught_id,
-                taught_skill.category_id AS skill_taught_category_id,
-                e.skill_requested_id,
-                requested_skill.category_id AS skill_requested_category_id,
-                e.exchange_requester_id,
-                e.exchange_accepter_id,
-                req_user.user_first_name AS requester_first_name,
-                req_user.user_last_name AS requester_last_name,
-                req_user.avatar_path AS requester_avatar,
-                acc_user.user_first_name AS accepter_first_name,
-                acc_user.user_last_name AS accepter_last_name,
-                acc_user.avatar_path AS accepter_avatar,
-                taught_skill.skill_name AS skill_taught_name,
-                requested_skill.skill_name AS skill_requested_name
-            FROM 
-                SESSION s 
-            JOIN 
-                EXCHANGE e ON s.session_id = e.exchange_session_id
-            JOIN 
-                APP_USER req_user ON e.exchange_requester_id = req_user.user_id
-            LEFT JOIN 
-                APP_USER acc_user ON e.exchange_accepter_id = acc_user.user_id
-            JOIN 
-                SKILL taught_skill ON s.skill_taught_id = taught_skill.skill_id
-            JOIN 
-                SKILL requested_skill ON e.skill_requested_id = requested_skill.skill_id
-            WHERE 
-                e.exchange_accepter_id IS NULL
-        ");
+            $query = "
+        SELECT 
+            s.session_id,
+            s.start_time,
+            s.end_time,
+            s.date_session,
+            s.description,
+            s.rate_id,
+            taught_skill.skill_id AS skill_taught_id,
+            taught_skill.category_id AS skill_taught_category_id,
+            e.skill_requested_id,
+            requested_skill.category_id AS skill_requested_category_id,
+            e.exchange_requester_id,
+            e.exchange_accepter_id,
+            req_user.user_first_name AS requester_first_name,
+            req_user.user_last_name AS requester_last_name,
+            req_user.avatar_path AS requester_avatar,
+            acc_user.user_first_name AS accepter_first_name,
+            acc_user.user_last_name AS accepter_last_name,
+            acc_user.avatar_path AS accepter_avatar,
+            taught_skill.skill_name AS skill_taught_name,
+            requested_skill.skill_name AS skill_requested_name
+        FROM 
+            SESSION s 
+        JOIN 
+            EXCHANGE e ON s.session_id = e.exchange_session_id
+        JOIN 
+            APP_USER req_user ON e.exchange_requester_id = req_user.user_id
+        LEFT JOIN 
+            APP_USER acc_user ON e.exchange_accepter_id = acc_user.user_id
+        JOIN 
+            SKILL taught_skill ON s.skill_taught_id = taught_skill.skill_id
+        JOIN 
+            SKILL requested_skill ON e.skill_requested_id = requested_skill.skill_id
+        WHERE 
+            e.exchange_accepter_id IS NULL
+        ";
+
+            if (!empty($skillName)) {
+                $query .= " AND taught_skill.skill_name ILIKE :skillName";
+            }
+
+            $stmt = $this->pdo->prepare($query);
+
+            if (!empty($skillName)) {
+                $stmt->bindValue(':skillName', '%' . $skillName . '%');
+            }
+
+            $stmt->execute();
             $partages = [];
 
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {

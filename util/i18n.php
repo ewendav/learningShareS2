@@ -39,7 +39,7 @@ return [
         "password" => "Mot de passe",
         "enterPassword" => "Entrez votre mot de passe",
         "alreadyHaveAccount" => "Vous avez déjà un compte ?",
-"rechercherSession" => "Rechercher un échange ou un cours",
+"rechercherSkill" => "Rechercher une compétance",
 "adresse" => "Adresse",
 "entrezAdresse" => "Entrez l'adresse",
 "codePostal" => "Code Postal",
@@ -54,6 +54,7 @@ return [
 
 
 "consulterSession" => "Consulter les échanges et les cours",
+    "noData" => "Aucun résultats disponibles",
     ],
     "en" => [
         "cours" => "lesson",
@@ -95,7 +96,7 @@ return [
         "alreadyHaveAccount" => "Already have an account?",
     "consulterSession" => "Consult exchanges and lessons",
 
-    "rechercherSession" => "Search for an exchange or a lesson",
+    "rechercherSkill" => "Search for a skill",
 
     "adresse" => "Address",
     "entrezAdresse" => "Enter the address",
@@ -108,5 +109,6 @@ return [
     "rejoindrePartage" => "Join the exchange",
 
     "rejoindreCours" => "Join the lesson",
+    "noData" => "No data avaialble",
     ]
 ];

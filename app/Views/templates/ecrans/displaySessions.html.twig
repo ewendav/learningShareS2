@@ -27,8 +27,14 @@
 </label>
 
 
+<form method="get" action="/sessions">
+  <input placeholder="{{ traduction('rechercherSkill') }}" class="input-goofy" 
+         style="width:20rem;"
+         type="text" id="recherche" name="q">
 
-      <input placeholder="{{traduction('rechercherSession')}}" class="input-goofy" type="text" id="recherche" name="rechercheSession">
+  <input type="hidden" name="type" value="{{ (getParams.type == 'cours') ? 'cours' : 'echange' | trim }}">
+</form>
+
 
 
   <div style="display:flex;gap:1rem;">
@@ -45,42 +51,42 @@
 <div id="section-cours-display">
 
 
-{% for session in sessions %}
-    {% include 'components/lessonCard.html.twig' with {
-        'avatar_path': session.host_avatar is not empty ? session.host_avatar : '',
-        'userName': session.host_first_name ~ ' ' ~ session.host_last_name,
-        'categoryLearned': categories[session.skill_taught_category_id - 1] is defined ? categories[session.skill_taught_category_id - 1][1] : '',
-        'skillLearned': session.skill_taught_name is not empty ? session.skill_taught_name : '',
-        'adresse': session.full_address is not empty ? session.full_address : '',
-        'date': session.date_session ~ ', ' ~ session.start_time|date('H:i')
-    } %}
-{% endfor %}
-
-
+    {% if sessions is empty %}
+        <p>{{ traduction('noData') }}</p>
+    {% else %}
+        {% for session in sessions %}
+            {% include 'components/lessonCard.html.twig' with {
+                'avatar_path': session.host_avatar is not empty ? session.host_avatar : '',
+                'userName': session.host_first_name ~ ' ' ~ session.host_last_name,
+                'categoryLearned': categories[session.skill_taught_category_id - 1] is defined ? categories[session.skill_taught_category_id - 1][1] : '',
+                'skillLearned': session.skill_taught_name is not empty ? session.skill_taught_name : '',
+                'adresse': session.full_address is not empty ? session.full_address : '',
+                'date': session.date_session ~ ', ' ~ session.start_time|date('H:i')
+            } %}
+        {% endfor %}
+    {% endif %}
 </div>
 
 {% else %}
 
 <div id="section-echange-display">
-
-
-{% for session in sessions %}
-    {% include 'components/exchangeCard.html.twig' with {
-        'avatar_path': session.requester_avatar is not empty ? session.requester_avatar : '',
-        'userName': session.requester_first_name ~ ' ' ~ session.requester_last_name,
-        'categoryLearned': categories[session.skill_taught_category_id - 1] is defined ? categories[session.skill_taught_category_id - 1][1] : '',
-        'skillLearned': session.skill_taught_name is not empty ? session.skill_taught_name : '',
-        'categoryWanted': categories[session.skill_requested_category_id -1] is defined ? categories[session.skill_requested_category_id - 1][1] : '',
-        'skillWanted': session.skill_requested_name is not empty ? session.skill_requested_name : ''
-    } %}
-{% endfor %}
-
-
+    {% if sessions is empty %}
+        <p>{{ traduction('noData') }}</p>
+    {% else %}
+        {% for session in sessions %}
+            {% include 'components/exchangeCard.html.twig' with {
+                'avatar_path': session.requester_avatar is not empty ? session.requester_avatar : '',
+                'userName': session.requester_first_name ~ ' ' ~ session.requester_last_name,
+                'categoryLearned': categories[session.skill_taught_category_id - 1] is defined ? categories[session.skill_taught_category_id - 1][1] : '',
+                'skillLearned': session.skill_taught_name is not empty ? session.skill_taught_name : '',
+                'categoryWanted': categories[session.skill_requested_category_id - 1] is defined ? categories[session.skill_requested_category_id - 1][1] : '',
+                'skillWanted': session.skill_requested_name is not empty ? session.skill_requested_name : ''
+            } %}
+        {% endfor %}
+    {% endif %}
 </div>
 
-
 {% endif %}
-
 
 
 </section>
