@@ -340,4 +340,98 @@ class CoursController
             ];
         }
     }
+    
+    /**
+     * Méthode pour rejoindre un cours depuis l'interface utilisateur
+     * Tarifs : L'utilisateur perd 25 jetons, l'hôte en gagne 20
+     */
+    public static function joinCours($args)
+    {
+        // Vérifier l'authentification
+        if (!\Util\AuthMiddleware::isAuthenticated()) {
+            header('Location: /login');
+            exit;
+        }
+        
+        $container = \Util\Container::getContainer();
+        $logger = $container->get(\Psr\Log\LoggerInterface::class);
+        $userModel = $container->get(\Models\UserModel::class);
+        
+        // Création du contrôleur
+        $controller = new self();
+        
+        $session_id = $args['id'];
+        $user_id = $_SESSION['user_id'];
+        
+        $logger->info("Tentative de rejoindre le cours", ['session_id' => $session_id, 'user_id' => $user_id]);
+        
+        // Récupérer les informations du cours pour obtenir l'ID de l'hôte
+        $cours = $controller->coursModel->getById($session_id);
+        if (!$cours) {
+            $logger->error("Cours non trouvé", ['session_id' => $session_id]);
+            header('Location: /sessions?error=course_not_found');
+            exit;
+        }
+        
+        $hostId = $cours->getLessonHostId();
+        
+        // Vérifier si l'utilisateur a suffisamment de jetons (25 requis)
+        if (!$userModel->hasEnoughTokens($user_id, 25)) {
+            $logger->error("L'utilisateur n'a pas assez de jetons", ['user_id' => $user_id]);
+            header('Location: /sessions?error=not_enough_tokens');
+            exit;
+        }
+        
+        // Obtenir PDO une fois pour toutes les opérations
+        $pdo = $container->get(\PDO::class);
+        
+        try {
+            // Débuter une transaction pour s'assurer que toutes les opérations sont atomiques
+            $pdo->beginTransaction();
+            
+            // Ajouter l'utilisateur comme participant
+            if (!$controller->coursModel->addAttendee($session_id, $user_id)) {
+                throw new \Exception("Échec de l'ajout de l'utilisateur au cours");
+            }
+            
+            // Déduire 25 jetons de l'utilisateur
+            if (!$userModel->updateBalance($user_id, -25)) {
+                throw new \Exception("Échec de la déduction des jetons pour l'utilisateur");
+            }
+            
+            // Ajouter 20 jetons à l'hôte
+            if (!$userModel->updateBalance($hostId, 20)) {
+                throw new \Exception("Échec de l'ajout des jetons pour l'hôte");
+            }
+            
+            // Valider la transaction
+            $pdo->commit();
+            
+            $logger->info("Utilisateur a rejoint le cours avec succès", [
+                'session_id' => $session_id, 
+                'user_id' => $user_id,
+                'tokens_deducted' => 25,
+                'host_id' => $hostId,
+                'tokens_added_to_host' => 20
+            ]);
+            
+            header('Location: /sessions?success=joined_course');
+            exit;
+            
+        } catch (\Exception $e) {
+            // En cas d'erreur, annuler toutes les modifications seulement si une transaction est active
+            if ($pdo->inTransaction()) {
+                $pdo->rollBack();
+            }
+            
+            $logger->error("Échec pour rejoindre le cours: " . $e->getMessage(), [
+                'session_id' => $session_id, 
+                'user_id' => $user_id,
+                'exception' => $e
+            ]);
+            
+            header('Location: /sessions?error=cannot_join_course');
+            exit;
+        }
+    }
 }

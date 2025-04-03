@@ -28,13 +28,21 @@ class PartageModel
      */
     public function save(Partage $partage)
     {
+        $startedTransaction = false;
+        
         try {
-            // Commencer une transaction
-            $this->pdo->beginTransaction();
+            // Vérifier si une transaction est déjà en cours
+            if (!$this->pdo->inTransaction()) {
+                // Commencer une transaction seulement si une n'est pas déjà en cours
+                $this->pdo->beginTransaction();
+                $startedTransaction = true;
+            }
 
             // Sauvegarder la session parent
             if (!$this->sessionModel->save($partage)) {
-                $this->pdo->rollBack();
+                if ($startedTransaction) {
+                    $this->pdo->rollBack();
+                }
                 $this->logger->warning("Échec de la sauvegarde de la session parent", ['session_id' => $partage->getSessionId()]);
                 return false;
             }
@@ -74,13 +82,18 @@ class PartageModel
             $stmt->bindParam(':exchange_accepter_id', $exchange_accepter_id);
             $stmt->execute();
 
-            // Valider la transaction
-            $this->pdo->commit();
+            // Valider la transaction seulement si nous l'avons commencée
+            if ($startedTransaction) {
+                $this->pdo->commit();
+            }
+            
             $this->logger->info("Partage sauvegardé avec succès", ['session_id' => $session_id]);
             return true;
         } catch (PDOException $e) {
-            // Annuler la transaction en cas d'erreur
-            $this->pdo->rollBack();
+            // Annuler la transaction en cas d'erreur seulement si nous l'avons commencée
+            if ($startedTransaction && $this->pdo->inTransaction()) {
+                $this->pdo->rollBack();
+            }
             $this->logger->error("Erreur lors de la sauvegarde du partage", ['exception' => $e, 'session_id' => $partage->getSessionId()]);
             return false;
         }

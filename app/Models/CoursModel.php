@@ -28,14 +28,21 @@ class CoursModel
      */
     public function save(Cours $cours)
     {
+        $startedTransaction = false;
+        
         try {
-            // Commencer une transaction
-            $this->pdo->beginTransaction();
-
+            // Vérifier si une transaction est déjà en cours
+            if (!$this->pdo->inTransaction()) {
+                // Commencer une transaction seulement si une n'est pas déjà en cours
+                $this->pdo->beginTransaction();
+                $startedTransaction = true;
+            }
 
             // Sauvegarder la session parent
             if (!$this->sessionModel->save($cours)) {
-                $this->pdo->rollBack();
+                if ($startedTransaction) {
+                    $this->pdo->rollBack();
+                }
                 return false;
             }
 
@@ -73,13 +80,18 @@ class CoursModel
 
             $stmt->execute();
 
-            // Valider la transaction
-            $this->pdo->commit();
+            // Valider la transaction seulement si nous l'avons commencée
+            if ($startedTransaction) {
+                $this->pdo->commit();
+            }
+            
             $this->logger->info("Cours sauvegardé avec succès", ['session_id' => $session_id]);
             return true;
         } catch (PDOException $e) {
-            // Annuler la transaction en cas d'erreur
-            $this->pdo->rollBack();
+            // Annuler la transaction en cas d'erreur seulement si nous l'avons commencée
+            if ($startedTransaction && $this->pdo->inTransaction()) {
+                $this->pdo->rollBack();
+            }
             $this->logger->error("Erreur lors de la sauvegarde du cours: " . $e->getMessage(), ['exception' => $e]);
             return false;
         }
@@ -293,12 +305,14 @@ class CoursModel
             // Récupérer le cours pour vérifier s'il n'est pas déjà complet
             $cours = $this->getById($cours_id);
             if (!$cours) {
+                $this->logger->error("Cours non trouvé lors de l'ajout d'un participant", ['cours_id' => $cours_id]);
                 return false;
             }
 
             $currentAttendees = count($this->getAttendees($cours_id));
 
             if ($currentAttendees >= $cours->getMaxAttendees()) {
+                $this->logger->warning("Cours complet, impossible d'ajouter un participant", ['cours_id' => $cours_id, 'max_attendees' => $cours->getMaxAttendees()]);
                 return false; // Le cours est complet
             }
 
@@ -309,6 +323,7 @@ class CoursModel
             $stmt->execute();
 
             if ($stmt->fetch()) {
+                $this->logger->warning("L'utilisateur est déjà inscrit au cours", ['cours_id' => $cours_id, 'user_id' => $user_id]);
                 return false; // L'utilisateur est déjà inscrit
             }
 
@@ -317,13 +332,23 @@ class CoursModel
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             $new_attend_id = ($row['max_id'] ?? 0) + 1;
 
+            $this->logger->info("Ajout d'un participant au cours", ['cours_id' => $cours_id, 'user_id' => $user_id, 'attend_id' => $new_attend_id]);
+
             // Inscrire l'utilisateur au cours
             $stmt = $this->pdo->prepare("INSERT INTO ATTEND (attend_id, attend_lesson_id, attend_user_id) 
                                   VALUES (:attend_id, :cours_id, :user_id)");
             $stmt->bindParam(':attend_id', $new_attend_id);
             $stmt->bindParam(':cours_id', $cours_id);
             $stmt->bindParam(':user_id', $user_id);
-            return $stmt->execute();
+            $result = $stmt->execute();
+            
+            if ($result) {
+                $this->logger->info("Participant ajouté avec succès", ['cours_id' => $cours_id, 'user_id' => $user_id]);
+            } else {
+                $this->logger->error("Échec de l'ajout du participant", ['cours_id' => $cours_id, 'user_id' => $user_id]);
+            }
+            
+            return $result;
         } catch (PDOException $e) {
             $this->logger->error("Erreur lors de l'ajout d'un participant: " . $e->getMessage(), ['exception' => $e]);
             return false;

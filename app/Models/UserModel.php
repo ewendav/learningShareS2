@@ -80,5 +80,76 @@ class UserModel
     {
         return password_verify($password, $hash);
     }
+    
+    /**
+     * Récupérer le solde de jetons d'un utilisateur
+     */
+    public function getBalance(int $userId): int
+    {
+        try {
+            $stmt = $this->pdo->prepare('SELECT balance FROM app_user WHERE user_id = :userId');
+            $stmt->execute(['userId' => $userId]);
+            $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+            
+            if ($result) {
+                return (int)$result['balance'];
+            }
+            
+            return 0;
+        } catch (\PDOException $e) {
+            error_log('Erreur lors de la récupération du solde: ' . $e->getMessage());
+            throw $e;
+        }
+    }
+    
+    /**
+     * Mettre à jour le solde de jetons d'un utilisateur
+     */
+    public function updateBalance(int $userId, int $amount): bool
+    {
+        try {
+            // Vérifier que le solde ne devient pas négatif
+            $currentBalance = $this->getBalance($userId);
+            if ($currentBalance + $amount < 0) {
+                return false;
+            }
+            
+            // Ne pas gérer la transaction ici, elle sera gérée par l'appelant
+            $stmt = $this->pdo->prepare('UPDATE app_user SET balance = balance + :amount WHERE user_id = :userId');
+            $stmt->execute([
+                'amount' => $amount,
+                'userId' => $userId
+            ]);
+            
+            return true;
+        } catch (\PDOException $e) {
+            error_log('Erreur lors de la mise à jour du solde: ' . $e->getMessage());
+            throw $e;
+        }
+    }
+    
+    /**
+     * Vérifier si un utilisateur a suffisamment de jetons
+     */
+    public function hasEnoughTokens(int $userId, int $requiredAmount): bool
+    {
+        $balance = $this->getBalance($userId);
+        return $balance >= $requiredAmount;
+    }
+    
+    /**
+     * Récupérer un utilisateur par son ID
+     */
+    public function findById(int $userId)
+    {
+        try {
+            $stmt = $this->pdo->prepare('SELECT * FROM app_user WHERE user_id = :userId');
+            $stmt->execute(['userId' => $userId]);
+            return $stmt->fetch(\PDO::FETCH_ASSOC);
+        } catch (\PDOException $e) {
+            error_log('Erreur lors de la recherche par ID: ' . $e->getMessage());
+            throw $e;
+        }
+    }
 }
 

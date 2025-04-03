@@ -50,6 +50,14 @@
   </div>
 
 
-        <button class="form-button green-bg" type="submit">{{traduction('rejoindrePartage')}}</button>
+        {% if user %}
+        <form action="/rejoindrePartage/{{ session_id }}" method="POST">
+            <button class="form-button green-bg" type="submit">{{traduction('rejoindrePartage')}}</button>
+        </form>
+        {% else %}
+        <a href="/login">
+            <button class="form-button green-bg" type="button">{{traduction('rejoindrePartage')}}</button>
+        </a>
+        {% endif %}
 
 </div>

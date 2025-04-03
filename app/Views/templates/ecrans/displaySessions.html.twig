@@ -6,6 +6,18 @@
 
 
 <section class="create-course-container">
+  
+  {% if success %}
+    <div style="background-color: #4CAF50; color: white; padding: 10px; border-radius: 5px; margin-bottom: 20px;">
+        {{ success }}
+    </div>
+  {% endif %}
+  
+  {% if error %}
+    <div style="background-color: #f44336; color: white; padding: 10px; border-radius: 5px; margin-bottom: 20px;">
+        {{ error }}
+    </div>
+  {% endif %}
 
   <div class="horizontal-display">
 
@@ -76,7 +88,9 @@ opacity:0;
                 'categoryLearned': categories[session.skill_taught_category_id - 1] is defined ? categories[session.skill_taught_category_id - 1][1] : '',
                 'skillLearned': session.skill_taught_name is not empty ? session.skill_taught_name : '',
                 'adresse': session.full_address is not empty ? session.full_address : '',
-                'date': session.date_session ~ ', ' ~ session.start_time|date('H:i')
+                'date': session.date_session ~ ', ' ~ session.start_time|date('H:i'),
+                'session_id': session.lesson_session_id is defined ? session.lesson_session_id : session.session_id,
+                'user': user
             } %}
         {% endfor %}
     {% endif %}
@@ -95,7 +109,9 @@ opacity:0;
                 'categoryLearned': categories[session.skill_taught_category_id - 1] is defined ? categories[session.skill_taught_category_id - 1][1] : '',
                 'skillLearned': session.skill_taught_name is not empty ? session.skill_taught_name : '',
                 'categoryWanted': categories[session.skill_requested_category_id - 1] is defined ? categories[session.skill_requested_category_id - 1][1] : '',
-                'skillWanted': session.skill_requested_name is not empty ? session.skill_requested_name : ''
+                'skillWanted': session.skill_requested_name is not empty ? session.skill_requested_name : '',
+                'session_id': session.lesson_session_id is defined ? session.lesson_session_id : session.session_id,
+                'user': user
             } %}
         {% endfor %}
     {% endif %}

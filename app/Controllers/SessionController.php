@@ -56,8 +56,9 @@ class SessionController
         $container = \Util\Container::getContainer();
         $twig = $container->get(\Twig\Environment::class);
         
-        // Récupération du message de succès
+        // Récupération des messages
         $success = isset($_GET['success']) ? $_GET['success'] : null;
+        $error = isset($_GET['error']) ? $_GET['error'] : null;
 
             $sessionModel = new \Models\SessionModel($container->get(PDO::class), $container->get(LoggerInterface::class));
         $sessionModel->getAllAttendableUserSession();
@@ -78,7 +79,12 @@ class SessionController
                 'sessions' => $sessions,
                 'categories' => \Models\CategorieModel::getAll(),
                 'user' => \Util\AuthMiddleware::getUser(),
-                'success' => $success ? 'Création réussie' : null
+                'success' => $success ? ($success == 'joined_course' ? 'Vous avez rejoint le cours avec succès et payé 25 jetons' : 
+                                        ($success == 'joined_exchange' ? 'Vous avez rejoint l\'échange avec succès et gagné 40 jetons' : 
+                                        'Création réussie')) : null,
+                'error' => $error ? ($error == 'not_enough_tokens' ? 'Vous n\'avez pas assez de jetons pour rejoindre ce cours' :
+                                    ($error == 'exchange_already_accepted' ? 'Ce partage a déjà été accepté par quelqu\'un d\'autre' :
+                                    'Une erreur est survenue')) : null
             ]
         );
     }
