@@ -11,6 +11,7 @@ use Twig\Loader\FilesystemLoader;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 use Psr\Log\LoggerInterface;
+use Models\UserModel;
 
 class Container
 {
@@ -19,24 +20,34 @@ class Container
     public static function setContainer(): void
     {
         $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
-        $dotenv->safeLoad();
+        $dotenv->load();
 
         $containerBuilder = new ContainerBuilder();
 
         $containerBuilder->addDefinitions(
             [
+                // Modèle utilisateur
+                UserModel::class => function ($container) {
+                    return new UserModel($container->get(PDO::class));
+                },
+                
                 // ajout du pdo
                 PDO::class => function () {
                     $sgbd = $_ENV['DB_SGBD'] ?? 'pgsql';
-                    $host = $_ENV['DB_HOST'];
-                    $port = $_ENV['DB_PORT'];
-                    $dbname = $_ENV['DB_NAME'];
-                    $user = $_ENV['DB_USER'];
-                    $pass = $_ENV['DB_PASS'];
+                    $host = $_ENV['DB_HOST'] ?? '';
+                    $port = $_ENV['DB_PORT'] ?? '';
+                    $dbname = $_ENV['DB_NAME'] ?? '';
+                    $user = $_ENV['DB_USER'] ?? '';
+                    $pass = $_ENV['DB_PASS'] ?? '';
+                    
+                    // Vérifier si les variables sont définies
+                    if (empty($host) || empty($port) || empty($dbname) || empty($user)) {
+                        throw new Exception("Database configuration incomplete. Check your .env file.");
+                    }
 
                     $dsn = match ($sgbd) {
                         'pgsql' => "pgsql:host=$host;port=$port;dbname=$dbname",
-                        'mysql' => "mysql:host=$host;port=$port;charset=utf8mb4",
+                        'mysql' => "mysql:host=$host;port=$port;dbname=$dbname;charset=utf8mb4",
                         default => throw new Exception("Unsupported SGBD: $sgbd"),
                     };
 
