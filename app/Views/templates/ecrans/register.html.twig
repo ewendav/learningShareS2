@@ -9,8 +9,10 @@
 
   <div id="section-registration">
     <h1 class="page-title">{{traduction('register')}}</h1>
-
-
+    
+    {% if error %}
+    <div class="error-message">{{ error }}</div>
+    {% endif %}
 
     <form class="form-login" action="/register" method="POST" enctype="multipart/form-data">
       <div style="margin-top:3rem;" class="vertical-display">

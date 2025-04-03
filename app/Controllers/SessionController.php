@@ -28,14 +28,18 @@ class SessionController
     // afin de pouvoir les utiliséés dans les listes déroulantes
     public static function displayCreateSession(): void
     {
+        // Vérifier l'authentification
+        \Util\AuthMiddleware::requireAuth();
+        
         $container = \Util\Container::getContainer();
         $twig = $container->get(\Twig\Environment::class);
 
         echo $twig->render(
             'ecrans/createSession.html.twig',
             [
-            'title' => 'Creation d\'un partage ou d\'un échange',
-            'categories' => \Models\CategorieModel::getAll()
+                'title' => 'Creation d\'un partage ou d\'un échange',
+                'categories' => \Models\CategorieModel::getAll(),
+                'user' => \Util\AuthMiddleware::getUser()
             ]
         );
     }
@@ -44,6 +48,9 @@ class SessionController
      // affiche toutes les cours et les échanges disponibles
     public static function displaySessions(): void
     {
+        // Vérifier l'authentification
+        \Util\AuthMiddleware::requireAuth();
+        
         $container = \Util\Container::getContainer();
         $twig = $container->get(\Twig\Environment::class);
 
@@ -58,10 +65,11 @@ class SessionController
         echo $twig->render(
             'ecrans/displaySessions.html.twig',
             [
-            'title' => 'Consulter les cours et les sessions',
-            'getParams' => $_GET,
-            'sessions' => $sessions,
-            'categories' => \Models\CategorieModel::getAll()
+                'title' => 'Consulter les cours et les sessions',
+                'getParams' => $_GET,
+                'sessions' => $sessions,
+                'categories' => \Models\CategorieModel::getAll(),
+                'user' => \Util\AuthMiddleware::getUser()
             ]
         );
     }

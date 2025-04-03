@@ -9,6 +9,10 @@
 
   <div id="section-login">
     <h1 class="page-title">{{traduction('login')}}</h1>
+    
+    {% if error %}
+    <div class="error-message">{{ error }}</div>
+    {% endif %}
 
     <form class="form-login" action="/login" method="POST">
       <div style="margin-top:3rem;" class="vertical-display">

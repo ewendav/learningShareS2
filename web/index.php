@@ -14,9 +14,8 @@ $twig = $container->get(Twig\Environment::class);
 $dispatcher = FastRoute\simpleDispatcher(
     function (FastRoute\RouteCollector $r) use ($twig, $container) {
 
-        // route home
-
-        $r->addRoute('GET', '/', [Controllers\SessionController::class, 'displaySessions']);
+        // route home - redirection vers la page de login
+        $r->addRoute('GET', '/', [Controllers\LoginController::class, 'displayLogin']);
 
         // ROUTES GET
         // route création de session
@@ -24,13 +23,17 @@ $dispatcher = FastRoute\simpleDispatcher(
         // page de login et de register
         $r->addRoute('GET', '/login', [Controllers\LoginController::class, 'displayLogin']);
         $r->addRoute('GET', '/register', [Controllers\LoginController::class, 'displayRegister']);
+        $r->addRoute('GET', '/logout', [Controllers\LoginController::class, 'logout']);
         // page de consultation des cours et des échanges disponibles
         $r->addRoute('GET', '/sessions', [Controllers\SessionController::class, 'displaySessions']);
 
 
         // ROUTES POST
+        // routes d'authentification
+        $r->addRoute('POST', '/login', [Controllers\LoginController::class, 'login']);
+        $r->addRoute('POST', '/register', [Controllers\LoginController::class, 'register']);
+        
         // creation d'un échange
-
 
         // routes pour créer un cours ou un partage
         $r->addRoute('POST', '/createCours', [Controllers\CoursController::class, 'store']);

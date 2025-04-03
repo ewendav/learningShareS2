@@ -262,3 +262,19 @@ input.toggle-switch-input:checked + .toggle-switch-slider .slider {
   justify-content: space-between;
   align-items: center;
 }
+
+.error-message {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #f5c6cb;
+  border-radius: 5px;
+  text-align: center;
+}
+
+.login-container, .registration-container {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 20px;
+}
