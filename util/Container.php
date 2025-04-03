@@ -30,7 +30,7 @@ class Container
                 UserModel::class => function ($container) {
                     return new UserModel($container->get(PDO::class));
                 },
-                
+
                 // ajout du pdo
                 PDO::class => function () {
                     $sgbd = $_ENV['DB_SGBD'] ?? 'pgsql';
@@ -39,7 +39,7 @@ class Container
                     $dbname = $_ENV['DB_NAME'] ?? '';
                     $user = $_ENV['DB_USER'] ?? '';
                     $pass = $_ENV['DB_PASS'] ?? '';
-                    
+
                     // Vérifier si les variables sont définies
                     if (empty($host) || empty($port) || empty($dbname) || empty($user)) {
                         throw new Exception("Database configuration incomplete. Check your .env file.");

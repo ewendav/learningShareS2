@@ -20,8 +20,9 @@ class SessionController
     {
         // a terme le contneu du controler sera surement supprimé pour avoir tout les méhtodes ens tatic
         $container = \Util\Container::getContainer();
-        $this->sessionModel = new SessionModel($container->get(PDO::class));
         $this->twig = $container->get(\Twig\Environment::class);
+
+        $this->sessionModel = new SessionModel($container->get(PDO::class), $container->get(LoggerInterface::class));
     }
 
     // affiche la page de creation de session et recuperer toutes les categories
@@ -51,6 +52,9 @@ class SessionController
         $container = \Util\Container::getContainer();
         $twig = $container->get(\Twig\Environment::class);
 
+            $sessionModel = new \Models\SessionModel($container->get(PDO::class), $container->get(LoggerInterface::class));
+        $sessionModel->getAllAttendableUserSession();
+
         if (($_GET['type'] ?? "") == "cours") {
             $coursModel = new \Models\CoursModel($container->get(PDO::class), $container->get(LoggerInterface::class));
             $sessions = $coursModel->getLessonDispo(true, $_GET['q'] ?? "");
@@ -70,6 +74,8 @@ class SessionController
             ]
         );
     }
+
+
 
 
     /**

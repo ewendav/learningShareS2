@@ -17,17 +17,17 @@ class UserModel
             $stmt = $this->pdo->prepare('SELECT * FROM app_user WHERE mail = :email');
             $stmt->execute(['email' => $email]);
             $user = $stmt->fetch(\PDO::FETCH_ASSOC);
-            
+
             // Journaliser pour débogage
             if ($user) {
                 error_log('Utilisateur trouvé: ID=' . $user['user_id']);
-                
+
                 // Vérifier le type de données pour le mot de passe
                 if (is_resource($user['password'])) {
                     $user['password'] = stream_get_contents($user['password']);
                     error_log('Mot de passe converti de resource à string');
                 }
-                
+
                 // Si stocké avec des guillemets simples, enlever les
                 if (substr($user['password'], 0, 1) === "'" && substr($user['password'], -1) === "'") {
                     $user['password'] = substr($user['password'], 1, -1);
@@ -36,7 +36,7 @@ class UserModel
             } else {
                 error_log('Aucun utilisateur trouvé pour: ' . $email);
             }
-            
+
             return $user;
         } catch (\PDOException $e) {
             error_log('Erreur lors de la recherche par email: ' . $e->getMessage());
@@ -48,7 +48,7 @@ class UserModel
     {
         // Hasher le mot de passe
         $hashedPassword = password_hash($userData['password'], PASSWORD_DEFAULT);
-        
+
         try {
             // Utiliser la syntaxe non bytea pour la compatibilité
             $stmt = $this->pdo->prepare(
@@ -57,7 +57,7 @@ class UserModel
                 VALUES (:mail, :firstName, :lastName, :biography, :avatarPath, :phone, :password)
                 RETURNING user_id'
             );
-            
+
             $stmt->execute([
                 'mail' => $userData['email'],
                 'firstName' => $userData['firstName'],
@@ -67,7 +67,7 @@ class UserModel
                 'phone' => $userData['phone'],
                 'password' => $hashedPassword
             ]);
-            
+
             $result = $stmt->fetch(\PDO::FETCH_ASSOC);
             return (int)$result['user_id'];
         } catch (\PDOException $e) {
@@ -81,3 +81,4 @@ class UserModel
         return password_verify($password, $hash);
     }
 }
+

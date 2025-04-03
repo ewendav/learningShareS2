@@ -266,34 +266,97 @@ class PartageModel
         }
     }
 
-    /**
-     * Récupérer les partages par utilisateur demandeur
-     */
-    public function getByRequesterId($user_id)
+/**
+ * Récupérer les partages par utilisateur demandeur
+ * qui ne sont pas déja passé
+ */
+    public function getByRequesterIdNotExpired($user_id, bool $retourneJson = false)
     {
         try {
-            $stmt = $this->pdo->prepare("SELECT s.*, e.skill_requested_id, e.exchange_requester_id, e.exchange_accepter_id 
-                                  FROM SESSION s 
-                                  JOIN EXCHANGE e ON s.session_id = e.exchange_session_id 
-                                  WHERE e.exchange_requester_id = :user_id");
+            $currentDateTime = date('Y-m-d H:i:s');
+
+            $query = "
+    SELECT 
+        s.session_id,
+        s.start_time,
+        s.end_time,
+        s.date_session,
+        s.description,
+        s.rate_id,
+        taught_skill.skill_id AS skill_taught_id,
+        taught_skill.category_id AS skill_taught_category_id,
+        e.skill_requested_id,
+        requested_skill.category_id AS skill_requested_category_id,
+        e.exchange_requester_id,
+        e.exchange_accepter_id,
+        req_user.user_first_name AS requester_first_name,
+        req_user.user_last_name AS requester_last_name,
+        req_user.avatar_path AS requester_avatar,
+        acc_user.user_first_name AS accepter_first_name,
+        acc_user.user_last_name AS accepter_last_name,
+        acc_user.avatar_path AS accepter_avatar,
+        taught_skill.skill_name AS skill_taught_name,
+        requested_skill.skill_name AS skill_requested_name
+    FROM 
+        SESSION s 
+    JOIN 
+        EXCHANGE e ON s.session_id = e.exchange_session_id
+    JOIN 
+        APP_USER req_user ON e.exchange_requester_id = req_user.user_id
+    LEFT JOIN 
+        APP_USER acc_user ON e.exchange_accepter_id = acc_user.user_id
+    JOIN 
+        SKILL taught_skill ON s.skill_taught_id = taught_skill.skill_id
+    JOIN 
+        SKILL requested_skill ON e.skill_requested_id = requested_skill.skill_id
+    WHERE 
+        e.exchange_requester_id = :user_id
+        AND (s.date_session + s.end_time) > NOW()
+";
+
+            $stmt = $this->pdo->prepare($query);
             $stmt->bindParam(':user_id', $user_id);
             $stmt->execute();
-
             $partages = [];
 
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                $partages[] = new Partage(
-                    $row['session_id'],
-                    $row['start_time'],
-                    $row['end_time'],
-                    $row['date_session'],
-                    $row['description'],
-                    $row['rate_id'],
-                    $row['skill_taught_id'],
-                    $row['skill_requested_id'],
-                    $row['exchange_requester_id'],
-                    $row['exchange_accepter_id']
-                );
+                if ($retourneJson) {
+                    $partages[] = [
+                    'session_id' => $row['session_id'],
+                    'start_time' => $row['start_time'],
+                    'end_time' => $row['end_time'],
+                    'date_session' => $row['date_session'],
+                    'description' => $row['description'],
+                    'rate_id' => $row['rate_id'],
+                    'skill_taught_id' => $row['skill_taught_id'],
+                    'skill_taught_category_id' => $row['skill_taught_category_id'],
+                    'skill_requested_id' => $row['skill_requested_id'],
+                    'skill_requested_category_id' => $row['skill_requested_category_id'],
+                    'exchange_requester_id' => $row['exchange_requester_id'],
+                    'exchange_accepter_id' => $row['exchange_accepter_id'],
+                    'requester_first_name' => $row['requester_first_name'],
+                    'requester_last_name' => $row['requester_last_name'],
+                    'requester_avatar' => $row['requester_avatar'],
+                    'accepter_first_name' => $row['accepter_first_name'],
+                    'accepter_last_name' => $row['accepter_last_name'],
+                    'accepter_avatar' => $row['accepter_avatar'],
+                    'skill_taught_name' => $row['skill_taught_name'],
+                    'skill_requested_name' => $row['skill_requested_name']
+                    ];
+                } else {
+                    $partages[] = new Partage(
+                        $row['session_id'],
+                        $row['start_time'],
+                        $row['end_time'],
+                        $row['date_session'],
+                        $row['description'],
+                        $row['rate_id'],
+                        $row['skill_taught_id'],
+                        $row['skill_requested_id'],
+                        $row['exchange_requester_id'],
+                        $row['exchange_accepter_id']
+                    );
+                }
             }
             $this->logger->info("Récupération des partages par demandeur", ['user_id' => $user_id, 'partages_count' => count($partages)]);
             return $partages;
@@ -303,34 +366,97 @@ class PartageModel
         }
     }
 
-    /**
-     * Récupérer les partages par utilisateur accepteur
-     */
-    public function getByAccepterId($user_id)
+/**
+ * Récupérer les partages par utilisateur accepteur
+ * qui ne sont pas encore passées
+ */
+    public function getByAccepterIdNotExpired($user_id, bool $retourneJson = false)
     {
         try {
-            $stmt = $this->pdo->prepare("SELECT s.*, e.skill_requested_id, e.exchange_requester_id, e.exchange_accepter_id 
-                                  FROM SESSION s 
-                                  JOIN EXCHANGE e ON s.session_id = e.exchange_session_id 
-                                  WHERE e.exchange_accepter_id = :user_id");
+            $currentDateTime = date('Y-m-d H:i:s');
+
+            $query = "
+    SELECT 
+        s.session_id,
+        s.start_time,
+        s.end_time,
+        s.date_session,
+        s.description,
+        s.rate_id,
+        taught_skill.skill_id AS skill_taught_id,
+        taught_skill.category_id AS skill_taught_category_id,
+        e.skill_requested_id,
+        requested_skill.category_id AS skill_requested_category_id,
+        e.exchange_requester_id,
+        e.exchange_accepter_id,
+        req_user.user_first_name AS requester_first_name,
+        req_user.user_last_name AS requester_last_name,
+        req_user.avatar_path AS requester_avatar,
+        acc_user.user_first_name AS accepter_first_name,
+        acc_user.user_last_name AS accepter_last_name,
+        acc_user.avatar_path AS accepter_avatar,
+        taught_skill.skill_name AS skill_taught_name,
+        requested_skill.skill_name AS skill_requested_name
+    FROM 
+        SESSION s 
+    JOIN 
+        EXCHANGE e ON s.session_id = e.exchange_session_id
+    JOIN 
+        APP_USER req_user ON e.exchange_requester_id = req_user.user_id
+    LEFT JOIN 
+        APP_USER acc_user ON e.exchange_accepter_id = acc_user.user_id
+    JOIN 
+        SKILL taught_skill ON s.skill_taught_id = taught_skill.skill_id
+    JOIN 
+        SKILL requested_skill ON e.skill_requested_id = requested_skill.skill_id
+    WHERE 
+        e.exchange_accepter_id = :user_id
+        AND (s.date_session + s.end_time) > NOW()
+";
+
+            $stmt = $this->pdo->prepare($query);
             $stmt->bindParam(':user_id', $user_id);
             $stmt->execute();
-
             $partages = [];
 
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                $partages[] = new Partage(
-                    $row['session_id'],
-                    $row['start_time'],
-                    $row['end_time'],
-                    $row['date_session'],
-                    $row['description'],
-                    $row['rate_id'],
-                    $row['skill_taught_id'],
-                    $row['skill_requested_id'],
-                    $row['exchange_requester_id'],
-                    $row['exchange_accepter_id']
-                );
+                if ($retourneJson) {
+                    $partages[] = [
+                    'session_id' => $row['session_id'],
+                    'start_time' => $row['start_time'],
+                    'end_time' => $row['end_time'],
+                    'date_session' => $row['date_session'],
+                    'description' => $row['description'],
+                    'rate_id' => $row['rate_id'],
+                    'skill_taught_id' => $row['skill_taught_id'],
+                    'skill_taught_category_id' => $row['skill_taught_category_id'],
+                    'skill_requested_id' => $row['skill_requested_id'],
+                    'skill_requested_category_id' => $row['skill_requested_category_id'],
+                    'exchange_requester_id' => $row['exchange_requester_id'],
+                    'exchange_accepter_id' => $row['exchange_accepter_id'],
+                    'requester_first_name' => $row['requester_first_name'],
+                    'requester_last_name' => $row['requester_last_name'],
+                    'requester_avatar' => $row['requester_avatar'],
+                    'accepter_first_name' => $row['accepter_first_name'],
+                    'accepter_last_name' => $row['accepter_last_name'],
+                    'accepter_avatar' => $row['accepter_avatar'],
+                    'skill_taught_name' => $row['skill_taught_name'],
+                    'skill_requested_name' => $row['skill_requested_name']
+                    ];
+                } else {
+                    $partages[] = new Partage(
+                        $row['session_id'],
+                        $row['start_time'],
+                        $row['end_time'],
+                        $row['date_session'],
+                        $row['description'],
+                        $row['rate_id'],
+                        $row['skill_taught_id'],
+                        $row['skill_requested_id'],
+                        $row['exchange_requester_id'],
+                        $row['exchange_accepter_id']
+                    );
+                }
             }
             $this->logger->info("Récupération des partages par accepteur", ['user_id' => $user_id, 'partages_count' => count($partages)]);
             return $partages;

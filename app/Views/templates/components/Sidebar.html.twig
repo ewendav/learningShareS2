@@ -1,7 +1,7 @@
 <aside id="sidebar">
 
   
-  <div style="height:25%; gap:1rem;justify-content:start;" class="container flex-vertical">
+  <div style="height:30%; gap:1rem;justify-content:start;" class="container flex-vertical">
 
     <h4>{{traduction('aPropos')}}</h4>
 
@@ -23,7 +23,44 @@
     {% endif %}
 
   </div>
-  <div style="height:70%" class="container"></div>
+  <div style="height:65%" class="container">
+
+{% if userSessions is empty %}
+<p>pas de sessions a venir</p>
+{% else %}
+
+<!-- échanges -->
+
+
+        {% for session in userSessions['partage'] %}
+            {% include 'components/exchangeCard.html.twig' with {
+                'avatar_path': session.requester_avatar is not empty ? session.requester_avatar : '',
+                'userName': session.requester_first_name ~ ' ' ~ session.requester_last_name,
+                'categoryLearned': categories[session.skill_taught_category_id - 1] is defined ? categories[session.skill_taught_category_id - 1][1] : '',
+                'skillLearned': session.skill_taught_name is not empty ? session.skill_taught_name : '',
+                'categoryWanted': categories[session.skill_requested_category_id - 1] is defined ? categories[session.skill_requested_category_id - 1][1] : '',
+                'skillWanted': session.skill_requested_name is not empty ? session.skill_requested_name : ''
+            } %}
+        {% endfor %}
+
+
+        {% for session in userSessions['cours'] %}
+            {% include 'components/lessonCard.html.twig' with {
+                'avatar_path': session.host_avatar is not empty ? session.host_avatar : '',
+                'userName': session.host_first_name ~ ' ' ~ session.host_last_name,
+                'categoryLearned': categories[session.skill_taught_category_id - 1] is defined ? categories[session.skill_taught_category_id - 1][1] : '',
+                'skillLearned': session.skill_taught_name is not empty ? session.skill_taught_name : '',
+                'adresse': session.full_address is not empty ? session.full_address : '',
+                'date': session.date_session ~ ', ' ~ session.start_time|date('H:i')
+            } %}
+        {% endfor %}
+
+{% endif %}
+
+
+
+
+  </div>
 
 
 

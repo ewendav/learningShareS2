@@ -9,7 +9,7 @@ class AuthMiddleware
         session_start();
         return isset($_SESSION['user_id']);
     }
-    
+
     public static function requireAuth(): void
     {
         if (!self::isAuthenticated()) {
@@ -17,7 +17,7 @@ class AuthMiddleware
             exit;
         }
     }
-    
+
     public static function getUser(): ?array
     {
         if (self::isAuthenticated()) {
@@ -30,3 +30,4 @@ class AuthMiddleware
         return null;
     }
 }
+

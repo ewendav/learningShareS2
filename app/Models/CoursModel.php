@@ -256,41 +256,6 @@ class CoursModel
         }
     }
 
-    /**
-     * Récupérer les cours par hôte
-     */
-    public function getByHostId($host_id)
-    {
-        try {
-            $stmt = $this->pdo->prepare("SELECT s.*, l.location_id, l.lesson_host_id, l.max_attendees 
-                                  FROM SESSION s 
-                                  JOIN LESSON l ON s.session_id = l.lesson_session_id 
-                                  WHERE l.lesson_host_id = :host_id");
-            $stmt->bindParam(':host_id', $host_id);
-            $stmt->execute();
-
-            $cours = [];
-
-            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                $cours[] = new Cours(
-                    $row['session_id'],
-                    $row['start_time'],
-                    $row['end_time'],
-                    $row['date_session'],
-                    $row['description'],
-                    $row['rate_id'],
-                    $row['skill_taught_id'],
-                    $row['location_id'],
-                    $row['lesson_host_id'],
-                    $row['max_attendees']
-                );
-            }
-            return $cours;
-        } catch (PDOException $e) {
-            $this->logger->error("Erreur lors de la récupération des cours par hôte: " . $e->getMessage(), ['exception' => $e]);
-            return [];
-        }
-    }
 
     /**
      * Récupérer les participants à un cours
@@ -418,35 +383,75 @@ class CoursModel
         }
     }
 
-    /**
-     * Récupérer les cours auxquels un utilisateur participe
-     */
-    public function getByAttendeeId($user_id)
+/**
+ * Récupérer les cours auxquels un utilisateur participe
+ * qui ne sont pas déja passé
+ */
+    public function getByAttendeeIdNotExpired($user_id)
     {
         try {
-            $stmt = $this->pdo->prepare("SELECT s.*, l.location_id, l.lesson_host_id, l.max_attendees 
-                                  FROM SESSION s 
-                                  JOIN LESSON l ON s.session_id = l.lesson_session_id 
-                                  JOIN ATTEND a ON l.lesson_session_id = a.attend_lesson_id 
-                                  WHERE a.attend_user_id = :user_id");
+            $currentDateTime = date('Y-m-d H:i:s');
+
+            $stmt = $this->pdo->prepare("
+    SELECT
+        s.session_id,
+        s.start_time,
+        s.end_time,
+        s.date_session,
+        s.description,
+        s.rate_id,
+        l.location_id,
+        l.lesson_host_id,
+        l.max_attendees,
+        COUNT(a.attend_user_id) AS current_attendees,
+        req_user.user_first_name AS host_first_name,
+        req_user.user_last_name AS host_last_name,
+        req_user.avatar_path AS host_avatar,
+        taught_skill.skill_id AS skill_taught_id,
+        taught_skill.skill_name AS skill_taught_name,
+        CONCAT(loc.address, ', ', loc.zip_code, ', ', loc.city) AS full_address
+    FROM
+        SESSION s
+    JOIN
+        LESSON l ON s.session_id = l.lesson_session_id
+    LEFT JOIN
+        ATTEND a ON l.lesson_session_id = a.attend_lesson_id
+    JOIN
+        APP_USER req_user ON l.lesson_host_id = req_user.user_id
+    JOIN
+        SKILL taught_skill ON s.skill_taught_id = taught_skill.skill_id
+    JOIN
+        LOCATION loc ON l.location_id = loc.location_id
+    WHERE
+        a.attend_user_id = :user_id
+        AND (s.date_session + s.end_time) > NOW()
+    GROUP BY
+        s.session_id, s.start_time, s.end_time, s.date_session, s.description, s.rate_id, l.location_id, l.lesson_host_id, l.max_attendees, req_user.user_first_name, req_user.user_last_name, req_user.avatar_path, taught_skill.skill_id, taught_skill.skill_name, loc.address, loc.zip_code, loc.city
+");
             $stmt->bindParam(':user_id', $user_id);
             $stmt->execute();
 
             $cours = [];
 
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                $cours[] = new Cours(
-                    $row['session_id'],
-                    $row['start_time'],
-                    $row['end_time'],
-                    $row['date_session'],
-                    $row['description'],
-                    $row['rate_id'],
-                    $row['skill_taught_id'],
-                    $row['location_id'],
-                    $row['lesson_host_id'],
-                    $row['max_attendees']
-                );
+                $cours[] = [
+                    'session_id' => $row['session_id'],
+                    'start_time' => $row['start_time'],
+                    'end_time' => $row['end_time'],
+                    'date_session' => $row['date_session'],
+                    'description' => $row['description'],
+                    'rate_id' => $row['rate_id'],
+                    'location_id' => $row['location_id'],
+                    'lesson_host_id' => $row['lesson_host_id'],
+                    'max_attendees' => $row['max_attendees'],
+                    'current_attendees' => $row['current_attendees'],
+                    'host_first_name' => $row['host_first_name'],
+                    'host_last_name' => $row['host_last_name'],
+                    'host_avatar' => $row['host_avatar'],
+                    'skill_taught_id' => $row['skill_taught_id'],
+                    'skill_taught_name' => $row['skill_taught_name'],
+                    'full_address' => $row['full_address'],
+                ];
             }
             return $cours;
         } catch (PDOException $e) {
@@ -455,6 +460,77 @@ class CoursModel
         }
     }
 
+
+
+/**
+ * Récupérer les cours par hôte
+ * qui ne sont pas déja passé
+ */
+    public function getByHostIdNotExpired($host_id)
+    {
+        try {
+            $currentDateTime = date('Y-m-d H:i:s');
+
+            $stmt = $this->pdo->prepare("
+    SELECT
+        s.session_id,
+        s.start_time,
+        s.end_time,
+        s.date_session,
+        s.description,
+        s.rate_id,
+        l.location_id,
+        l.lesson_host_id,
+        l.max_attendees,
+        COUNT(a.attend_user_id) AS current_attendees,
+        taught_skill.skill_id AS skill_taught_id,
+        taught_skill.skill_name AS skill_taught_name,
+        CONCAT(loc.address, ', ', loc.zip_code, ', ', loc.city) AS full_address
+    FROM
+        SESSION s
+    JOIN
+        LESSON l ON s.session_id = l.lesson_session_id
+    LEFT JOIN
+        ATTEND a ON l.lesson_session_id = a.attend_lesson_id
+    JOIN
+        SKILL taught_skill ON s.skill_taught_id = taught_skill.skill_id
+    JOIN
+        LOCATION loc ON l.location_id = loc.location_id
+    WHERE
+        l.lesson_host_id = :host_id
+        AND (s.date_session + s.end_time) > NOW()
+    GROUP BY
+        s.session_id, s.start_time, s.end_time, s.date_session, s.description, s.rate_id, l.location_id, l.lesson_host_id, l.max_attendees, taught_skill.skill_id, taught_skill.skill_name, loc.address, loc.zip_code, loc.city
+");
+
+            $stmt->bindParam(':host_id', $host_id);
+            $stmt->execute();
+
+            $cours = [];
+
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                $cours[] = [
+                    'session_id' => $row['session_id'],
+                    'start_time' => $row['start_time'],
+                    'end_time' => $row['end_time'],
+                    'date_session' => $row['date_session'],
+                    'description' => $row['description'],
+                    'rate_id' => $row['rate_id'],
+                    'location_id' => $row['location_id'],
+                    'lesson_host_id' => $row['lesson_host_id'],
+                    'max_attendees' => $row['max_attendees'],
+                    'current_attendees' => $row['current_attendees'],
+                    'skill_taught_id' => $row['skill_taught_id'],
+                    'skill_taught_name' => $row['skill_taught_name'],
+                    'full_address' => $row['full_address'],
+                ];
+            }
+            return $cours;
+        } catch (PDOException $e) {
+            $this->logger->error("Erreur lors de la récupération des cours par hôte: " . $e->getMessage(), ['exception' => $e]);
+            return [];
+        }
+    }
     /**
      * Vérifier si un utilisateur est déjà inscrit à un cours
      */

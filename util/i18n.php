@@ -9,7 +9,7 @@ return [
         "categorie" => "Catégorie",
         "selectCategorie" => "Sélectionnez une catégorie",
         "competence" => "Compétence",
-        "selectCompetence" => "Sélectionnez une compétance",
+        "selectCompetence" => "Sélectionnez une compétence",
         "date" => "Date",
         "heureDebut" => "Heure de Début",
         "heureFin" => "Heure de Fin",
@@ -39,7 +39,7 @@ return [
         "password" => "Mot de passe",
         "enterPassword" => "Entrez votre mot de passe",
         "alreadyHaveAccount" => "Vous avez déjà un compte ?",
-"rechercherSkill" => "Rechercher une compétance",
+"rechercherSkill" => "Rechercher une compétence",
 "adresse" => "Adresse",
 "entrezAdresse" => "Entrez l'adresse",
 "codePostal" => "Code Postal",
@@ -58,6 +58,7 @@ return [
 
     "aPropos" => "A propos",
     "jetons" => "Jetons",
+    "logout" => "Déconnexion",
     ],
     "en" => [
         "cours" => "lesson",
@@ -115,5 +116,6 @@ return [
     "noData" => "No data avaialble",
     "aPropos" => "About",
     "jetons" => "Tokens",
+    "logout" => "Logout",
     ]
 ];

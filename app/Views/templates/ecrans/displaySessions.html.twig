@@ -7,7 +7,6 @@
 
 <section class="create-course-container">
 
-
   <div class="horizontal-display">
 
 <label class="toggle-switch-container">
@@ -35,13 +34,31 @@
 </form>
 
   <div style="display:flex;gap:1rem;">
-  <a href="/login">
+
+  <a href="/login"
+
+style="
+{% if user %}
+opacity:0;
+    {% endif %}
+"
+
+  >
           <button class="form-button" style="background-color:white; color:black;">{{traduction('login')}}</button>
   </a>
 
-  <a href="/register">
+  <a href="/register"
+
+
+style="
+{% if user %}
+opacity:0;
+    {% endif %}
+"
+  >
           <button class="form-button" style="background-color:black;" type="submit">{{traduction('register')}}</button>
   </a>
+
   </div>
 
   </div>

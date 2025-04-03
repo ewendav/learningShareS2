@@ -8,7 +8,11 @@ $container = Util\Container::getContainer();
 // recupération de l'outil twig du container de dependances
 $twig = $container->get(Twig\Environment::class);
 
+// permet d'acceder aux sessions a venir de l'user depuis n'imorte quel endroit de l'appli
+// notament pour la sidebar et la page de profil
 
+$sessionModel = new \Models\SessionModel($container->get(PDO::class), $container->get(Psr\Log\LoggerInterface::class));
+$twig->addGlobal('userSessions', $sessionModel->getAllAttendableUserSession());
 
 // création des routes
 $dispatcher = FastRoute\simpleDispatcher(
@@ -27,12 +31,11 @@ $dispatcher = FastRoute\simpleDispatcher(
         // page de consultation des cours et des échanges disponibles
         $r->addRoute('GET', '/sessions', [Controllers\SessionController::class, 'displaySessions']);
 
-
         // ROUTES POST
         // routes d'authentification
         $r->addRoute('POST', '/login', [Controllers\LoginController::class, 'login']);
         $r->addRoute('POST', '/register', [Controllers\LoginController::class, 'register']);
-        
+
         // creation d'un échange
 
         // routes pour créer un cours ou un partage

@@ -22,6 +22,32 @@ class SessionModel
     }
 
 
+    public function getAllAttendableUserSession()
+    {
+        $user = \Util\AuthMiddleware::getUser();
+
+        if ($user) {
+            $partageModel = new PartageModel($this->pdo, $this->logger);
+            $coursModel = new CoursModel($this->pdo, $this->logger);
+
+            $exhangesRequested = $partageModel->getByRequesterIdNotExpired($user['id'], true);
+            $exhangesAccepted = $partageModel->getByAccepterIdNotExpired($user['id'], true);
+            $coursHosted = $coursModel->getByHostIdNotExpired($user['id']);
+            $coursAttended = $coursModel->getByAttendeeIdNotExpired($user['id']);
+
+            $cours = array_merge($coursHosted, $coursAttended);
+            $partage = array_merge($exhangesRequested, $exhangesAccepted);
+
+            return [
+              "cours" => $cours,
+              "partage" => $partage,
+            ];
+        } else {
+            return [];
+        }
+    }
+
+
 
 
 
@@ -73,7 +99,7 @@ class SessionModel
 
             $this->logger->info("SessionModel::save - Exécution de la requête SQL");
             $result = $stmt->execute();
-            
+
             if (!$result) {
                 $errorInfo = $stmt->errorInfo();
                 error_log("SessionModel::save - Erreur SQL: " . $errorInfo[2]);
