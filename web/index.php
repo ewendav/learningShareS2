@@ -2,6 +2,9 @@
 
 require_once '../vendor/autoload.php';
 
+// Démarre la session au début du script pour toute l'application
+session_start();
+
 // recupère et instancie le conteneur
 // qui utilise l'injection de dépendance
 $container = Util\Container::getContainer();
@@ -13,6 +16,10 @@ $twig = $container->get(Twig\Environment::class);
 
 $sessionModel = new \Models\SessionModel($container->get(PDO::class), $container->get(Psr\Log\LoggerInterface::class));
 $twig->addGlobal('userSessions', $sessionModel->getAllAttendableUserSession());
+
+// Ajouter le modèle utilisateur pour accéder au solde de jetons
+$userModel = $container->get(\Models\UserModel::class);
+$twig->addGlobal('userModel', $userModel);
 
 // création des routes
 $dispatcher = FastRoute\simpleDispatcher(
@@ -41,6 +48,10 @@ $dispatcher = FastRoute\simpleDispatcher(
         // routes pour créer un cours ou un partage
         $r->addRoute('POST', '/createCours', [Controllers\CoursController::class, 'store']);
         $r->addRoute('POST', '/createPartage', [Controllers\PartageController::class, 'store']);
+        
+        // routes pour rejoindre un cours ou un partage
+        $r->addRoute('POST', '/rejoindreCours/{id}', [Controllers\CoursController::class, 'joinCours']);
+        $r->addRoute('POST', '/rejoindrePartage/{id}', [Controllers\PartageController::class, 'joinPartage']);
 
         // route de base non utilisées :
         $r->addRoute(['GET', 'POST'], '/web/users', 'getUsers');

@@ -32,7 +32,6 @@ class LoginController
 
     public static function login(): void
     {
-        session_start();
 
         $container = \Util\Container::getContainer();
         $userModel = $container->get(UserModel::class);
@@ -109,7 +108,6 @@ class LoginController
 
     public static function register(): void
     {
-        session_start();
 
         $container = \Util\Container::getContainer();
         $userModel = $container->get(UserModel::class);
@@ -170,7 +168,7 @@ class LoginController
 
     public static function logout(): void
     {
-        session_start();
+        // La session est déjà démarrée dans index.php
         session_destroy();
 
         header('Location: /login');

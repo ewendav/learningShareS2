@@ -89,7 +89,7 @@ let checked = document.querySelector('.toggle-switch-input').checked;
     </div>
 
     <!-- Champs cachés nécessaires -->
-    <input type="hidden" name="exchange_requester_id" value="1">
+    <input type="hidden" name="exchange_requester_id" value="{{ user.id }}">
     <input type="hidden" name="rate_id" value="1">
 
     <div style="margin-top: 1rem;" class="horizontal-display">
@@ -183,7 +183,7 @@ let checked = document.querySelector('.toggle-switch-input').checked;
       </div>
 
       <!-- Champs cachés nécessaires -->
-      <input type="hidden" name="lesson_host_id" value="1">
+      <input type="hidden" name="lesson_host_id" value="{{ user.id }}">
       <input type="hidden" name="rate_id" value="1">
 
       <div style="margin-top: 1rem;" class="horizontal-display">

@@ -11,7 +11,7 @@
       <p>{{ user.email }}</p>
       <div class="session-card" style="flex-direction:row; width:80%;justify-content:space-between;">
         <p style="font-weight:bold;">{{traduction('jetons')}} : </p>
-        <p>1000</p>
+        <p>{{ userModel.getBalance(user.id) }}</p>
       </div>
       <a href="/logout" class="form-button dark-grey-bg">{{traduction('logout')}}</a>
     </div>

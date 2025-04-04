@@ -32,22 +32,6 @@ class PartageController
         $this->partageModel = new PartageModel($pdo, $logger);
     }
 
-    /**
-     * Affiche la liste des partages
-     */
-    public function index()
-    {
-        $partages = $this->partageModel->getAll();
-
-        // En fonction de votre système de rendu de vue
-        // return view('partages/index', ['partages' => $partages]);
-
-        // Pour l'exemple, retourne simplement les données
-        return [
-            'status' => 'success',
-            'data' => $partages
-        ];
-    }
 
     /**
      * Affiche les partages d'un utilisateur (comme demandeur)
@@ -145,20 +129,13 @@ class PartageController
         // Sauvegarde dans la base de données
         if ($controller->partageModel->save($partage)) {
             // Redirection ou affichage d'un message de succès
-            echo $twig->render('ecrans/createSession.html.twig', [
-                'title' => 'Création d\'un échange',
-                'message' => 'Échange créé avec succès',
-                'success' => true,
-                'categories' => \Models\CategorieModel::getAll()
-            ]);
+            // Redirection vers les sessions pour préserver l'état de session
+            header('Location: /sessions?success=partage_cree');
+            exit;
         } else {
-            // Affichage d'un message d'erreur
-            echo $twig->render('ecrans/createSession.html.twig', [
-                'title' => 'Création d\'un échange',
-                'message' => 'Erreur lors de la création de l\'échange',
-                'success' => false,
-                'categories' => \Models\CategorieModel::getAll()
-            ]);
+            // Redirection avec message d'erreur
+            header('Location: /createSession?error=partage_error');
+            exit;
         }
     }
 
@@ -293,6 +270,103 @@ class PartageController
                 'status' => 'error',
                 'message' => 'Erreur lors de l\'acceptation du partage'
             ];
+        }
+    }
+    
+    /**
+     * Méthode pour rejoindre un partage depuis l'interface utilisateur
+     * Tarifs : L'utilisateur gagne 40 jetons, le créateur du partage gagne aussi 40 jetons
+     */
+    public static function joinPartage($args)
+    {
+        // Vérifier l'authentification
+        if (!\Util\AuthMiddleware::isAuthenticated()) {
+            header('Location: /login');
+            exit;
+        }
+        
+        $container = \Util\Container::getContainer();
+        $logger = $container->get(\Psr\Log\LoggerInterface::class);
+        $userModel = $container->get(\Models\UserModel::class);
+        
+        // Création du contrôleur
+        $controller = new self();
+        
+        $session_id = $args['id'];
+        $user_id = $_SESSION['user_id'];
+        
+        $logger->info("Tentative de rejoindre le partage", ['session_id' => $session_id, 'user_id' => $user_id]);
+        
+        $partage = $controller->partageModel->getById($session_id);
+        
+        if (!$partage) {
+            $logger->error("Partage non trouvé", ['session_id' => $session_id]);
+            header('Location: /sessions?error=exchange_not_found');
+            exit;
+        }
+        
+        // Vérifier que le partage n'a pas déjà été accepté
+        if ($partage->getExchangeAccepterId()) {
+            $logger->warning("Partage déjà accepté", ['session_id' => $session_id]);
+            header('Location: /sessions?error=exchange_already_accepted');
+            exit;
+        }
+        
+        // Récupérer l'ID du créateur du partage
+        $requesterId = $partage->getExchangeRequesterId();
+        
+        // Obtenir PDO une fois pour toutes les opérations
+        $pdo = $container->get(\PDO::class);
+        
+        try {
+            // Débuter une transaction pour s'assurer que toutes les opérations sont atomiques
+            $pdo->beginTransaction();
+            
+            // Définir l'utilisateur comme accepteur du partage
+            $partage->setExchangeAccepterId($user_id);
+            
+            if (!$controller->partageModel->save($partage)) {
+                throw new \Exception("Échec de l'enregistrement de l'acceptation du partage");
+            }
+            
+            // Ajouter 40 jetons à l'utilisateur qui rejoint le partage
+            if (!$userModel->updateBalance($user_id, 40)) {
+                throw new \Exception("Échec de l'ajout des jetons pour l'accepteur");
+            }
+            
+            // Ajouter 40 jetons au créateur du partage
+            if (!$userModel->updateBalance($requesterId, 40)) {
+                throw new \Exception("Échec de l'ajout des jetons pour le créateur");
+            }
+            
+            // Valider la transaction
+            $pdo->commit();
+            
+            $logger->info("Utilisateur a rejoint le partage avec succès", [
+                'session_id' => $session_id, 
+                'user_id' => $user_id,
+                'tokens_added_to_user' => 40,
+                'requester_id' => $requesterId,
+                'tokens_added_to_requester' => 40
+            ]);
+            
+            header('Location: /sessions?success=joined_exchange');
+            exit;
+            
+        } catch (\Exception $e) {
+            // En cas d'erreur, annuler toutes les modifications seulement si une transaction est active
+            if ($pdo->inTransaction()) {
+                $pdo->rollBack();
+            }
+            
+            $logger->error("Échec pour rejoindre le partage: " . $e->getMessage(), [
+                'session_id' => $session_id, 
+                'user_id' => $user_id,
+                'exception' => $e
+            ]);
+            
+            header('Location: /sessions?error=cannot_join_exchange');
+            exit;
         }
     }
 }
