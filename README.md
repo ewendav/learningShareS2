@@ -7,6 +7,27 @@ Certaines contraintes ne sont pas prises en compte dans le code actuel, notammen
 Ce type de gestion sera implémenté dans la base de données à l’aide de **triggers** (qui n’ont pas encore été définis, car ils seront abordés ultérieurement dans le cadre du cours Admin des BD).
 
 
+## 👤 Utilisateurs de test – Scénarios complets avec sessions
+
+| Prénom    | Nom       | Email (Login)         | Mot de passe | Sessions proposées | Sessions auxquelles il est inscrit |
+|-----------|-----------|------------------------|--------------|--------------------|-------------------------------------|
+| **Alice** | Dupont    | `user1@example.com`    | `password1`  | 🎓 **Cours Python (Session 1)** | Session 1 (Cours Python) |
+| **Bob**   | Martin    | `user2@example.com`    | `password2`  | 🔁 **Échange Guitare (Session 2)**<br>🔁 **Échange Piano (Session 4)** | Session 2 (Échange Guitare)<br> Session 4 (Échange Piano) |
+| **Charlie** | Durand  | `user3@example.com`    | `password3`  | 🔁 **Échange Algèbre (Session 3)** | Session 3 (Échange Algèbre) |
+| **David** | Lemoine   | `user4@example.com`    | `password4`  | *(aucune session proposée)* | Session 1 (Cours Python)<br> Session 2 (Échange Guitare)<br> Session 3 (Échange Algèbre) |
+| **Eva**   | Petit     | `user5@example.com`    | `password5`  | 🎓 **Cours Photographie numérique (Session 5)** | Session 6 (Cours Gestion de projet agile) |
+| **François** | Lemoine | `user6@example.com`  | `password6`  | 🎓 **Cours Gestion de projet agile (Session 6)** | Session 4 (Échange Piano)<br> Session 5 (Cours Photographie numérique) |
+
+---
+
+🧩 **Légende**  
+- 🎓 = Session de type **cours (lesson)**
+- 🔁 = Session de type **échange (exchange)**
+
+---
+
+Si tu veux, je peux aussi générer ce tableau au format CSV ou JSON, pour intégration dans un back ou des tests automatisés. Tu veux ?
+
 
 ## 📌 Politique de Logging dans l’Application
 ### 1. Ce qui est loggé ✅
