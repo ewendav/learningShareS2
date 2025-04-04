@@ -222,7 +222,6 @@ input.toggle-switch-input:checked + .toggle-switch-slider .slider {
 }
 
 .avatar {
-  background-color: black;
   width: 2rem;
   height: 2rem;
   border-radius: 100%;
@@ -273,8 +272,13 @@ input.toggle-switch-input:checked + .toggle-switch-slider .slider {
   text-align: center;
 }
 
-.login-container, .registration-container {
+.login-container,
+.registration-container {
   max-width: 500px;
   margin: 0 auto;
   padding: 20px;
+}
+
+.bottom-sidebar .form-button {
+  display: none;
 }

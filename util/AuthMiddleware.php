@@ -24,10 +24,10 @@ class AuthMiddleware
             return [
                 'id' => $_SESSION['user_id'],
                 'email' => $_SESSION['user_email'],
-                'name' => $_SESSION['user_name']
+                'name' => $_SESSION['user_name'],
+                'avatarPath' => $_SESSION['avatar_path']
             ];
         }
         return null;
     }
 }
-
