@@ -1,9 +1,9 @@
 -- Sélectionner la base de données où les données doivent être insérées
 
-USE l3_moeprojet;
+USE php;
 
 -- Insertion des catégories de compétences
-INSERT INTO CATEGORY (category_id, category_name)
+INSERT INTO category (category_id, category_name)
 VALUES
     (1, 'Programmation'),
     (2, 'Musique'),
@@ -18,17 +18,17 @@ VALUES
 
 -- Insertion des utilisateurs
 -- MDP des users : "pass"
-INSERT INTO APP_USER (user_id, mail, user_first_name, user_last_name, biography, phone, password, balance)
+INSERT INTO app_user (user_id, mail, user_first_name, user_last_name, biography, phone, password, balance)
 VALUES
-    (1, 'user1@example.com', 'Alice', 'Dupont', 'Développeuse Python passionnée.', '0101010101', $2y$10$PzrLrAzoR9garXQzFTyoxuYxHTNbUP3PKIHv2N6Oc4Cu85ZXqatZu, 100),
-    (2, 'user2@example.com', 'Bob', 'Martin', 'Musicien, expert guitare et piano.', '0202020202', $2y$10$PzrLrAzoR9garXQzFTyoxuYxHTNbUP3PKIHv2N6Oc4Cu85ZXqatZu, 100),
-    (3, 'user3@example.com', 'Charlie', 'Durand', 'Professeur de mathématiques, spécialiste de l algèbre et calcul.', '0303030303', $2y$10$PzrLrAzoR9garXQzFTyoxuYxHTNbUP3PKIHv2N6Oc4Cu85ZXqatZu, 100),
-    (4, 'user4@example.com', 'David', 'Lemoine', 'Étudiant en gestion de projet.', '0404040404', $2y$10$PzrLrAzoR9garXQzFTyoxuYxHTNbUP3PKIHv2N6Oc4Cu85ZXqatZu, 100),
-    (5, 'user5@example.com', 'Eva', 'Petit', 'Photographe amateur, passionnée par la cuisine.', '0505050505', $2y$10$PzrLrAzoR9garXQzFTyoxuYxHTNbUP3PKIHv2N6Oc4Cu85ZXqatZu, 100),
-    (6, 'user6@example.com', 'François', 'Lemoine', 'Apprenant de l espagnol et gestion de projet.', '0606060606', $2y$10$PzrLrAzoR9garXQzFTyoxuYxHTNbUP3PKIHv2N6Oc4Cu85ZXqatZu, 100);
+    (1, 'alice@example.com', 'Alice', 'Dupont', 'Développeuse Python passionnée.', '0101010101', '$2y$10$PzrLrAzoR9garXQzFTyoxuYxHTNbUP3PKIHv2N6Oc4Cu85ZXqatZu', 100),
+    (2, 'bob@example.com', 'Bob', 'Martin', 'Musicien, expert guitare et piano.', '0202020202', '$2y$10$PzrLrAzoR9garXQzFTyoxuYxHTNbUP3PKIHv2N6Oc4Cu85ZXqatZu', 100),
+    (3, 'charlie@example.com', 'Charlie', 'Durand', 'Professeur de mathématiques, spécialiste de l algèbre et calcul.', '0303030303', '$2y$10$PzrLrAzoR9garXQzFTyoxuYxHTNbUP3PKIHv2N6Oc4Cu85ZXqatZu', 100),
+    (4, 'david@example.com', 'David', 'Lemoine', 'Étudiant en gestion de projet.', '0404040404', '$2y$10$PzrLrAzoR9garXQzFTyoxuYxHTNbUP3PKIHv2N6Oc4Cu85ZXqatZu', 100),
+    (5, 'eva@example.com', 'Eva', 'Petit', 'Photographe amateur, passionnée par la cuisine.', '0505050505', '$2y$10$PzrLrAzoR9garXQzFTyoxuYxHTNbUP3PKIHv2N6Oc4Cu85ZXqatZu', 100),
+    (6, 'francois@example.com', 'François', 'Lemoine', 'Apprenant de l espagnol et gestion de projet.', '0606060606', '$2y$10$PzrLrAzoR9garXQzFTyoxuYxHTNbUP3PKIHv2N6Oc4Cu85ZXqatZu', 100);
 
 -- Insertion des compétences
-INSERT INTO SKILL (skill_id, skill_name, search_counter, category_id)
+INSERT INTO skill (skill_id, skill_name, search_counter, category_id)
 VALUES
     (1, 'Python', 0, 1),
     (2, 'JavaScript', 0, 1),
@@ -42,7 +42,7 @@ VALUES
     (10, 'Gestion de projet agile', 0, 9);
 
 -- Insertion des lieux (locations)
-INSERT INTO LOCATION (location_id, address, zip_code, city)
+INSERT INTO location (location_id, address, zip_code, city)
 VALUES
     (1, '10 Rue de Paris, 75001', '75001', 'Paris'), -- Lieu 1
     (2, '5 Avenue des Champs-Élysées, 75008', '75008', 'Paris'), -- Lieu 2
@@ -50,7 +50,7 @@ VALUES
     (4, '22 Boulevard Montmartre, 75002', '75002', 'Paris'); -- Lieu 4
 
 -- Insertion des sessions
-INSERT INTO SESSION (session_id, start_time, end_time, date_session, description, skill_taught_id)
+INSERT INTO session (session_id, start_time, end_time, date_session, description, skill_taught_id)
 VALUES
     (1, '09:00:00', '12:00:00', '2025-05-01', 'Cours de Python pour débutants', 1), -- Python (session 1)
     (2, '10:00:00', '12:00:00', '2025-05-02', 'Échange de compétences sur la guitare', 3), -- Guitare (session 2)
@@ -60,14 +60,14 @@ VALUES
     (6, '09:00:00', '12:00:00', '2025-05-06', 'Cours sur la gestion de projet agile', 10); -- Gestion de projet agile (session 6)
 
 -- Lier les sessions avec les leçons
-INSERT INTO LESSON (lesson_session_id, location_id, lesson_host_id, max_attendees)
+INSERT INTO lesson (lesson_session_id, location_id, lesson_host_id, max_attendees)
 VALUES
     (1, 4, 1, 5), -- Cours Python (Session 1)
     (5, 1, 5, 10), -- Cours Photographie numérique (Session 5)
     (6, 2, 6, 10); -- Cours Gestion de projet agile (Session 6)
 
 -- Lier les sessions avec les échanges
-INSERT INTO EXCHANGE (exchange_session_id, skill_requested_id, exchange_requester_id, exchange_accepter_id)
+INSERT INTO exchange (exchange_session_id, skill_requested_id, exchange_requester_id, exchange_accepter_id)
 VALUES
     (2, 3, 2, 4), -- Échange de compétences Guitare (Session 2)
     (3, 6, 3, 4), -- Échange de compétences Algèbre (Session 3)
@@ -77,31 +77,17 @@ VALUES
 -- Participation des utilisateurs aux leçons et échanges
 
 -- Session 1 (Cours Python)
-INSERT INTO ATTEND (attend_id, attend_lesson_id, attend_user_id)
+INSERT INTO attend (attend_id, attend_lesson_id, attend_user_id)
 VALUES
     (1, 1, 4); -- Utilisateur 4 participe à Cours Python (Session 1)
 
--- Session 2 (Échange Guitare)
-INSERT INTO ATTEND (attend_id, attend_lesson_id, attend_user_id)
-VALUES
-    (2, 2, 4); -- Utilisateur 4 participe à Échange Guitare (Session 2)
-
--- Session 3 (Échange Algèbre)
-INSERT INTO ATTEND (attend_id, attend_lesson_id, attend_user_id)
-VALUES
-    (3, 3, 3); -- Utilisateur 3 participe à Échange Algèbre (Session 3)
-
--- Session 4 (Échange Piano)
-INSERT INTO ATTEND (attend_id, attend_lesson_id, attend_user_id)
-VALUES
-    (4, 4, 6); -- Utilisateur 6 participe à Échange Piano (Session 4)
 
 -- Session 5 (Cours Photographie numérique)
-INSERT INTO ATTEND (attend_id, attend_lesson_id, attend_user_id)
+INSERT INTO attend (attend_id, attend_lesson_id, attend_user_id)
 VALUES
-    (5, 5, 6); -- Utilisateur 6 participe à Cours Photographie numérique (Session 5)
+    (2, 5, 6); -- Utilisateur 6 participe à Cours Photographie numérique (Session 5)
 
 -- Session 6 (Cours Gestion de projet agile)
-INSERT INTO ATTEND (attend_id, attend_lesson_id, attend_user_id)
+INSERT INTO attend (attend_id, attend_lesson_id, attend_user_id)
 VALUES
-    (6, 6, 5); -- Utilisateur 5 participe à Cours Gestion de projet agile (Session 6)
+    (3, 6, 5); -- Utilisateur 5 participe à Cours Gestion de projet agile (Session 6)

@@ -1,7 +1,7 @@
 -- Création de la table
 
-CREATE DATABASE IF NOT EXISTS l3_moeprojet;
-USE l3_moeprojet;
+CREATE DATABASE IF NOT EXISTS php;
+USE php;
 
 DROP TABLE IF EXISTS review;
 DROP TABLE IF EXISTS report;
@@ -18,12 +18,12 @@ DROP TABLE IF EXISTS skill;
 DROP TABLE IF EXISTS category;
 DROP TABLE IF EXISTS blacklist;
 
-CREATE TABLE CATEGORY(
+CREATE TABLE category (
                          category_id INT AUTO_INCREMENT PRIMARY KEY,
                          category_name VARCHAR(50) NOT NULL
 );
 
-CREATE TABLE SKILL (
+CREATE TABLE skill (
                        skill_id INT AUTO_INCREMENT PRIMARY KEY,
                        skill_name VARCHAR(50) NOT NULL,
                        search_counter INT DEFAULT 0,
@@ -33,13 +33,13 @@ CREATE TABLE SKILL (
 
 
 
-CREATE TABLE RATE(
+CREATE TABLE rate (
                      rate_id INT AUTO_INCREMENT PRIMARY KEY,
                      rate_name VARCHAR(50) NOT NULL,
                      rate_amount INTEGER NOT NULL
 );
 
-CREATE TABLE SESSION (
+CREATE TABLE session (
                          session_id INT AUTO_INCREMENT PRIMARY KEY,
                          start_time TIME NOT NULL ,
                          end_time TIME NOT NULL ,
@@ -49,7 +49,7 @@ CREATE TABLE SESSION (
                          skill_taught_id INTEGER REFERENCES SKILL(skill_id)
 );
 
-CREATE TABLE APP_USER (
+CREATE TABLE app_user (
                           user_id INT AUTO_INCREMENT PRIMARY KEY,
                           mail VARCHAR(50) NOT NULL,
                           user_first_name VARCHAR(50) NOT NULL,
@@ -61,12 +61,12 @@ CREATE TABLE APP_USER (
                           balance INT DEFAULT 100
 );
 
-CREATE TABLE ROLE(
+CREATE TABLE role (
                      role_id INT AUTO_INCREMENT PRIMARY KEY,
                      role_name VARCHAR(50) NOT NULL
 );
 
-CREATE TABLE USER_ROLE (
+CREATE TABLE user_role (
                            role_id INT,
                            user_id INT,
                            PRIMARY KEY (role_id, user_id),
@@ -75,41 +75,41 @@ CREATE TABLE USER_ROLE (
 );
 
 
-CREATE TABLE LOCATION (
+CREATE TABLE location (
                           location_id INT AUTO_INCREMENT PRIMARY KEY,
                           address VARCHAR(255) NOT NULL,
                           zip_code VARCHAR(50) NOT NULL,
                           city VARCHAR(100) NOT NULL
 );
 
-CREATE TABLE LESSON (
+CREATE TABLE lesson (
                         lesson_session_id INTEGER PRIMARY KEY REFERENCES SESSION(session_id),
                         location_id INTEGER REFERENCES LOCATION(location_id),
                         lesson_host_id INTEGER REFERENCES APP_USER(user_id),
                         max_attendees INTEGER NOT NULL
 );
 
-CREATE TABLE EXCHANGE (
+CREATE TABLE exchange (
                           exchange_session_id INTEGER PRIMARY KEY REFERENCES SESSION(session_id),
                           skill_requested_id INTEGER REFERENCES SKILL(skill_id),
                           exchange_requester_id INTEGER REFERENCES APP_USER(user_id),
                           exchange_accepter_id INTEGER REFERENCES APP_USER(user_id)
 );
 
-CREATE TABLE ATTEND (
+CREATE TABLE attend (
                         attend_id INTEGER PRIMARY KEY,
                         attend_lesson_id INTEGER REFERENCES LESSON(lesson_session_id),
                         attend_user_id INTEGER REFERENCES APP_USER(user_id)
 );
 
-CREATE TABLE REPORT (
+CREATE TABLE report (
                         report_id INT AUTO_INCREMENT PRIMARY KEY,
                         report_content VARCHAR(500) NOT NULL,
                         report_giver_id INTEGER REFERENCES APP_USER(user_id),
                         report_receiver_id INTEGER REFERENCES APP_USER(user_id)
 );
 
-CREATE TABLE REVIEW (
+CREATE TABLE review (
                         review_id INT AUTO_INCREMENT PRIMARY KEY,
                         review_content VARCHAR(500),
                         review_giver_id INTEGER REFERENCES APP_USER(user_id),
@@ -118,7 +118,7 @@ CREATE TABLE REVIEW (
                         rating INTEGER  NOT NULL
 );
 
-CREATE TABLE BLACKLIST(
+CREATE TABLE blacklist (
                           blacklist_id INT AUTO_INCREMENT PRIMARY KEY,
                           badword_array JSON
 );
