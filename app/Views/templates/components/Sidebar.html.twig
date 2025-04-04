@@ -16,6 +16,16 @@
         <p style="font-weight:bold;">{{traduction('jetons')}} : </p>
         <p>{{ userModel.getBalance(user.id) }}</p>
       </div>
+      <div style="width:80%;border:2px solid red;border-radius:5px;padding:3px;margin-top:-25px;font-size:0.8em;color:#666;font-weight:bold;">
+        <div style="display:flex;justify-content:space-between;margin-bottom:2px;">
+          <span>Prix cours : </span>
+          <span>25</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;">
+          <span>Gain échange : </span>
+          <span>40</span>
+        </div>
+      </div>
       <a href="/logout" class="form-button dark-grey-bg">{{traduction('logout')}}</a>
     </div>
     {% else %}
