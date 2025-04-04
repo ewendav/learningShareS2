@@ -49,19 +49,19 @@ class CoursModel
             $session_id = $cours->getSessionId();
 
             // Vérifier si ce cours existe déjà
-            $stmt = $this->pdo->prepare("SELECT * FROM LESSON WHERE lesson_session_id = :session_id");
+            $stmt = $this->pdo->prepare("SELECT * FROM lesson WHERE lesson_session_id = :session_id");
             $stmt->bindParam(':session_id', $session_id);
             $stmt->execute();
 
             if ($stmt->fetch()) {
                 // Mise à jour d'un cours existant
-                $stmt = $this->pdo->prepare("UPDATE LESSON SET location_id = :location_id, 
+                $stmt = $this->pdo->prepare("UPDATE lesson SET location_id = :location_id, 
                                        lesson_host_id = :lesson_host_id, 
                                        max_attendees = :max_attendees 
                                        WHERE lesson_session_id = :session_id");
             } else {
                 // Création d'un nouveau cours
-                $stmt = $this->pdo->prepare("INSERT INTO LESSON (lesson_session_id, location_id, 
+                $stmt = $this->pdo->prepare("INSERT INTO lesson (lesson_session_id, location_id, 
                                        lesson_host_id, max_attendees) 
                                        VALUES (:session_id, :location_id, 
                                        :lesson_host_id, :max_attendees)");
@@ -111,7 +111,7 @@ class CoursModel
             }
 
             // Récupérer les données du cours
-            $stmt = $this->pdo->prepare("SELECT * FROM LESSON WHERE lesson_session_id = :session_id");
+            $stmt = $this->pdo->prepare("SELECT * FROM lesson WHERE lesson_session_id = :session_id");
             $stmt->bindParam(':session_id', $session_id);
             $stmt->execute();
 
@@ -149,12 +149,12 @@ class CoursModel
             $session_id = $cours->getSessionId();
 
             // Supprimer d'abord toutes les participations à ce cours
-            $stmt = $this->pdo->prepare("DELETE FROM ATTEND WHERE attend_lesson_id = :session_id");
+            $stmt = $this->pdo->prepare("DELETE FROM attend WHERE attend_lesson_id = :session_id");
             $stmt->bindParam(':session_id', $session_id);
             $stmt->execute();
 
             // Supprimer le cours
-            $stmt = $this->pdo->prepare("DELETE FROM LESSON WHERE lesson_session_id = :session_id");
+            $stmt = $this->pdo->prepare("DELETE FROM lesson WHERE lesson_session_id = :session_id");
             $stmt->bindParam(':session_id', $session_id);
             $stmt->execute();
 
@@ -202,24 +202,24 @@ class CoursModel
                 taught_skill.skill_name AS skill_taught_name,
                 CONCAT(loc.address, ', ', loc.zip_code, ', ', loc.city) AS full_address
             FROM
-                LESSON l
+                lesson l
             JOIN
-                SESSION s ON l.lesson_session_id = s.session_id
+                session s ON l.lesson_session_id = s.session_id
             JOIN
-                APP_USER req_user ON l.lesson_host_id = req_user.user_id
+                app_user req_user ON l.lesson_host_id = req_user.user_id
             LEFT JOIN
-                ATTEND a ON l.lesson_session_id = a.attend_lesson_id
+                attend a ON l.lesson_session_id = a.attend_lesson_id
             JOIN
-                SKILL taught_skill ON s.skill_taught_id = taught_skill.skill_id
+                skill taught_skill ON s.skill_taught_id = taught_skill.skill_id
             JOIN
-                LOCATION loc ON l.location_id = loc.location_id
+                location loc ON l.location_id = loc.location_id
             WHERE
-                (s.date_session + s.end_time) > NOW()
+CONCAT(s.date_session, ' ', s.end_time) > NOW()
         ";
 
 
             if (!empty($skillName)) {
-                $query .= " AND taught_skill.skill_name ILIKE :skillName";
+                $query .= " AND taught_skill.skill_name LIKE :skillName";
             }
 
             $query .= "
@@ -275,8 +275,8 @@ class CoursModel
     public function getAttendees($cours_id)
     {
         try {
-            $stmt = $this->pdo->prepare("SELECT u.* FROM APP_USER u 
-                                  JOIN ATTEND a ON u.user_id = a.attend_user_id 
+            $stmt = $this->pdo->prepare("SELECT u.* FROM app_user u 
+                                  JOIN attend a ON u.user_id = a.attend_user_id 
                                   WHERE a.attend_lesson_id = :cours_id");
             $stmt->bindParam(':cours_id', $cours_id);
             $stmt->execute();
@@ -317,7 +317,7 @@ class CoursModel
             }
 
             // Vérifier si l'utilisateur n'est pas déjà inscrit
-            $stmt = $this->pdo->prepare("SELECT * FROM ATTEND WHERE attend_lesson_id = :cours_id AND attend_user_id = :user_id");
+            $stmt = $this->pdo->prepare("SELECT * FROM attend WHERE attend_lesson_id = :cours_id AND attend_user_id = :user_id");
             $stmt->bindParam(':cours_id', $cours_id);
             $stmt->bindParam(':user_id', $user_id);
             $stmt->execute();
@@ -328,14 +328,14 @@ class CoursModel
             }
 
             // Générer un nouvel ID de participation
-            $stmt = $this->pdo->query("SELECT MAX(attend_id) as max_id FROM ATTEND");
+            $stmt = $this->pdo->query("SELECT MAX(attend_id) as max_id FROM attend");
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             $new_attend_id = ($row['max_id'] ?? 0) + 1;
 
             $this->logger->info("Ajout d'un participant au cours", ['cours_id' => $cours_id, 'user_id' => $user_id, 'attend_id' => $new_attend_id]);
 
             // Inscrire l'utilisateur au cours
-            $stmt = $this->pdo->prepare("INSERT INTO ATTEND (attend_id, attend_lesson_id, attend_user_id) 
+            $stmt = $this->pdo->prepare("INSERT INTO attend (attend_id, attend_lesson_id, attend_user_id) 
                                   VALUES (:attend_id, :cours_id, :user_id)");
             $stmt->bindParam(':attend_id', $new_attend_id);
             $stmt->bindParam(':cours_id', $cours_id);
@@ -361,7 +361,7 @@ class CoursModel
     public function removeAttendee($cours_id, $user_id)
     {
         try {
-            $stmt = $this->pdo->prepare("DELETE FROM ATTEND WHERE attend_lesson_id = :cours_id AND attend_user_id = :user_id");
+            $stmt = $this->pdo->prepare("DELETE FROM attend WHERE attend_lesson_id = :cours_id AND attend_user_id = :user_id");
             $stmt->bindParam(':cours_id', $cours_id);
             $stmt->bindParam(':user_id', $user_id);
             return $stmt->execute();
@@ -377,7 +377,7 @@ class CoursModel
     public function countAttendees($cours_id)
     {
         try {
-            $stmt = $this->pdo->prepare("SELECT COUNT(*) as count FROM ATTEND WHERE attend_lesson_id = :cours_id");
+            $stmt = $this->pdo->prepare("SELECT COUNT(*) as count FROM attend WHERE attend_lesson_id = :cours_id");
             $stmt->bindParam(':cours_id', $cours_id);
             $stmt->execute();
 
@@ -436,20 +436,20 @@ class CoursModel
         taught_skill.skill_name AS skill_taught_name,
         CONCAT(loc.address, ', ', loc.zip_code, ', ', loc.city) AS full_address
     FROM
-        SESSION s
+        session s
     JOIN
-        LESSON l ON s.session_id = l.lesson_session_id
+        lesson l ON s.session_id = l.lesson_session_id
     LEFT JOIN
-        ATTEND a ON l.lesson_session_id = a.attend_lesson_id
+        attend a ON l.lesson_session_id = a.attend_lesson_id
     JOIN
-        APP_USER req_user ON l.lesson_host_id = req_user.user_id
+        app_user req_user ON l.lesson_host_id = req_user.user_id
     JOIN
-        SKILL taught_skill ON s.skill_taught_id = taught_skill.skill_id
+        skill taught_skill ON s.skill_taught_id = taught_skill.skill_id
     JOIN
-        LOCATION loc ON l.location_id = loc.location_id
+        location loc ON l.location_id = loc.location_id
     WHERE
         a.attend_user_id = :user_id
-        AND (s.date_session + s.end_time) > NOW()
+        AND CONCAT(s.date_session, ' ', s.end_time) > NOW()
     GROUP BY
         s.session_id, s.start_time, s.end_time, s.date_session, s.description, s.rate_id, l.location_id, l.lesson_host_id, l.max_attendees, req_user.user_first_name, req_user.user_last_name, req_user.avatar_path, taught_skill.skill_id, taught_skill.skill_name, loc.address, loc.zip_code, loc.city
 ");
@@ -512,18 +512,18 @@ class CoursModel
         taught_skill.skill_name AS skill_taught_name,
         CONCAT(loc.address, ', ', loc.zip_code, ', ', loc.city) AS full_address
     FROM
-        SESSION s
+        session s
     JOIN
-        LESSON l ON s.session_id = l.lesson_session_id
+        lesson l ON s.session_id = l.lesson_session_id
     LEFT JOIN
-        ATTEND a ON l.lesson_session_id = a.attend_lesson_id
+        attend a ON l.lesson_session_id = a.attend_lesson_id
     JOIN
-        SKILL taught_skill ON s.skill_taught_id = taught_skill.skill_id
+        skill taught_skill ON s.skill_taught_id = taught_skill.skill_id
     JOIN
-        LOCATION loc ON l.location_id = loc.location_id
+        location loc ON l.location_id = loc.location_id
     WHERE
         l.lesson_host_id = :host_id
-        AND (s.date_session + s.end_time) > NOW()
+        AND CONCAT(s.date_session, ' ', s.end_time) > NOW()
     GROUP BY
         s.session_id, s.start_time, s.end_time, s.date_session, s.description, s.rate_id, l.location_id, l.lesson_host_id, l.max_attendees, taught_skill.skill_id, taught_skill.skill_name, loc.address, loc.zip_code, loc.city
 ");
@@ -562,7 +562,7 @@ class CoursModel
     public function isUserRegistered($cours_id, $user_id)
     {
         try {
-            $stmt = $this->pdo->prepare("SELECT * FROM ATTEND WHERE attend_lesson_id = :cours_id AND attend_user_id = :user_id");
+            $stmt = $this->pdo->prepare("SELECT * FROM attend WHERE attend_lesson_id = :cours_id AND attend_user_id = :user_id");
             $stmt->bindParam(':cours_id', $cours_id);
             $stmt->bindParam(':user_id', $user_id);
             $stmt->execute();

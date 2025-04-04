@@ -29,7 +29,7 @@ class CategorieModel
         try {
             $logger->info("Début de récupération des catégories");
 
-            $stmt = $pdo->query("SELECT * FROM CATEGORY");
+            $stmt = $pdo->query("SELECT * FROM category");
             $categories = [];
 
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {

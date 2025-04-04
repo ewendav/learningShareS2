@@ -50,12 +50,11 @@ class UserModel
         $hashedPassword = password_hash($userData['password'], PASSWORD_DEFAULT);
 
         try {
-            // Utiliser la syntaxe non bytea pour la compatibilité
+            // Utiliser la syntaxe compatible avec MySQL (sans RETURNING)
             $stmt = $this->pdo->prepare(
                 'INSERT INTO app_user 
                 (mail, user_first_name, user_last_name, biography, avatar_path, phone, password) 
-                VALUES (:mail, :firstName, :lastName, :biography, :avatarPath, :phone, :password)
-                RETURNING user_id'
+                VALUES (:mail, :firstName, :lastName, :biography, :avatarPath, :phone, :password)'
             );
 
             $stmt->execute([
@@ -68,8 +67,8 @@ class UserModel
                 'password' => $hashedPassword
             ]);
 
-            $result = $stmt->fetch(\PDO::FETCH_ASSOC);
-            return (int)$result['user_id'];
+            // Utiliser lastInsertId() pour récupérer l'ID généré
+            return (int)$this->pdo->lastInsertId();
         } catch (\PDOException $e) {
             error_log('Erreur lors de la création utilisateur: ' . $e->getMessage());
             throw $e;
