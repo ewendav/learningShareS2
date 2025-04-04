@@ -23,7 +23,7 @@ class ConnexionBDD
 
         $db_co = match ($sgbd) {
             'pgsql' => "pgsql:host=$host;port=$port;dbname=$dbname",
-            'mysql' => "mysql:host=$host;port=$port;dbname=$dbname",
+            'mysql' => "mysql:host=$host;port=$port;dbname=$dbname;charset=utf8mb4",
             default => throw new PDOException("SGBD non supporté : $sgbd")
         };
 

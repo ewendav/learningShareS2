@@ -50,20 +50,20 @@ class PartageModel
             $session_id = $partage->getSessionId();
 
             // Vérifier si ce partage existe déjà
-            $stmt = $this->pdo->prepare("SELECT * FROM EXCHANGE WHERE exchange_session_id = :session_id");
+            $stmt = $this->pdo->prepare("SELECT * FROM exchange WHERE exchange_session_id = :session_id");
             $stmt->bindParam(':session_id', $session_id);
             $stmt->execute();
 
             if ($stmt->fetch()) {
                 // Mise à jour d'un partage existant
-                $stmt = $this->pdo->prepare("UPDATE EXCHANGE SET skill_requested_id = :skill_requested_id, 
+                $stmt = $this->pdo->prepare("UPDATE exchange SET skill_requested_id = :skill_requested_id, 
                                        exchange_requester_id = :exchange_requester_id, 
                                        exchange_accepter_id = :exchange_accepter_id 
                                        WHERE exchange_session_id = :session_id");
                 $this->logger->info("Mise à jour du partage existant", ['session_id' => $session_id]);
             } else {
                 // Création d'un nouveau partage
-                $stmt = $this->pdo->prepare("INSERT INTO EXCHANGE (exchange_session_id, skill_requested_id, 
+                $stmt = $this->pdo->prepare("INSERT INTO exchange (exchange_session_id, skill_requested_id, 
                                        exchange_requester_id, exchange_accepter_id) 
                                        VALUES (:session_id, :skill_requested_id, 
                                        :exchange_requester_id, :exchange_accepter_id)");
@@ -114,7 +114,7 @@ class PartageModel
             }
 
             // Récupérer les données du partage
-            $stmt = $this->pdo->prepare("SELECT * FROM EXCHANGE WHERE exchange_session_id = :session_id");
+            $stmt = $this->pdo->prepare("SELECT * FROM exchange WHERE exchange_session_id = :session_id");
             $stmt->bindParam(':session_id', $session_id);
             $stmt->execute();
 
@@ -152,7 +152,7 @@ class PartageModel
             $sessionID = $partage->getSessionId();
 
             // Supprimer le partage
-            $stmt = $this->pdo->prepare("DELETE FROM EXCHANGE WHERE exchange_session_id = :session_id");
+            $stmt = $this->pdo->prepare("DELETE FROM exchange WHERE exchange_session_id = :session_id");
             $stmt->bindParam(':session_id', $sessionID);
             $stmt->execute();
 
@@ -181,6 +181,7 @@ class PartageModel
     public function getDemandeDePartage(bool $retourneJson = false, string $skillName = "")
     {
         try {
+            $userId = isset($_SESSION["user_id"]) ? $_SESSION["user_id"] : 0;
             $query = "
         SELECT 
             s.session_id,
@@ -204,27 +205,32 @@ class PartageModel
             taught_skill.skill_name AS skill_taught_name,
             requested_skill.skill_name AS skill_requested_name
         FROM 
-            SESSION s 
+            session s 
         JOIN 
-            EXCHANGE e ON s.session_id = e.exchange_session_id
+            exchange e ON s.session_id = e.exchange_session_id
         JOIN 
-            APP_USER req_user ON e.exchange_requester_id = req_user.user_id
+            app_user req_user ON e.exchange_requester_id = req_user.user_id
         LEFT JOIN 
-            APP_USER acc_user ON e.exchange_accepter_id = acc_user.user_id
+            app_user acc_user ON e.exchange_accepter_id = acc_user.user_id
         JOIN 
-            SKILL taught_skill ON s.skill_taught_id = taught_skill.skill_id
+            skill taught_skill ON s.skill_taught_id = taught_skill.skill_id
         JOIN 
-            SKILL requested_skill ON e.skill_requested_id = requested_skill.skill_id
+            skill requested_skill ON e.skill_requested_id = requested_skill.skill_id
         WHERE 
             e.exchange_accepter_id IS NULL
+            AND e.exchange_requester_id != :user_id
+            AND CONCAT(s.date_session, ' ', s.end_time) > NOW()
         ";
 
             if (!empty($skillName)) {
-                $query .= " AND taught_skill.skill_name ILIKE :skillName";
+                $query .= " AND taught_skill.skill_name LIKE :skillName";
             }
 
             $stmt = $this->pdo->prepare($query);
-
+            
+            // Lier l'ID utilisateur
+            $stmt->bindParam(':user_id', $userId);
+            
             if (!empty($skillName)) {
                 $stmt->bindValue(':skillName', '%' . $skillName . '%');
             }
@@ -311,20 +317,20 @@ class PartageModel
         taught_skill.skill_name AS skill_taught_name,
         requested_skill.skill_name AS skill_requested_name
     FROM 
-        SESSION s 
+        session s 
     JOIN 
-        EXCHANGE e ON s.session_id = e.exchange_session_id
+        exchange e ON s.session_id = e.exchange_session_id
     JOIN 
-        APP_USER req_user ON e.exchange_requester_id = req_user.user_id
+        app_user req_user ON e.exchange_requester_id = req_user.user_id
     LEFT JOIN 
-        APP_USER acc_user ON e.exchange_accepter_id = acc_user.user_id
+        app_user acc_user ON e.exchange_accepter_id = acc_user.user_id
     JOIN 
-        SKILL taught_skill ON s.skill_taught_id = taught_skill.skill_id
+        skill taught_skill ON s.skill_taught_id = taught_skill.skill_id
     JOIN 
-        SKILL requested_skill ON e.skill_requested_id = requested_skill.skill_id
+        skill requested_skill ON e.skill_requested_id = requested_skill.skill_id
     WHERE 
         e.exchange_requester_id = :user_id
-        AND (s.date_session + s.end_time) > NOW()
+        AND CONCAT(s.date_session, ' ', s.end_time) > NOW()
 ";
 
             $stmt = $this->pdo->prepare($query);
@@ -411,20 +417,20 @@ class PartageModel
         taught_skill.skill_name AS skill_taught_name,
         requested_skill.skill_name AS skill_requested_name
     FROM 
-        SESSION s 
+        session s 
     JOIN 
-        EXCHANGE e ON s.session_id = e.exchange_session_id
+        exchange e ON s.session_id = e.exchange_session_id
     JOIN 
-        APP_USER req_user ON e.exchange_requester_id = req_user.user_id
+        app_user req_user ON e.exchange_requester_id = req_user.user_id
     LEFT JOIN 
-        APP_USER acc_user ON e.exchange_accepter_id = acc_user.user_id
+        app_user acc_user ON e.exchange_accepter_id = acc_user.user_id
     JOIN 
-        SKILL taught_skill ON s.skill_taught_id = taught_skill.skill_id
+        skill taught_skill ON s.skill_taught_id = taught_skill.skill_id
     JOIN 
-        SKILL requested_skill ON e.skill_requested_id = requested_skill.skill_id
+        skill requested_skill ON e.skill_requested_id = requested_skill.skill_id
     WHERE 
         e.exchange_accepter_id = :user_id
-        AND (s.date_session + s.end_time) > NOW()
+        AND CONCAT(s.date_session, ' ', s.end_time) > NOW()
 ";
 
             $stmt = $this->pdo->prepare($query);

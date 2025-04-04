@@ -117,6 +117,7 @@ class CoursController
         $container = \Util\Container::getContainer();
         $twig = $container->get(\Twig\Environment::class);
         $logger = $container->get(LoggerInterface::class);
+        $pdo = $container->get(PDO::class);
 
         // Création du contrôleur
         $controller = new self();
@@ -143,16 +144,38 @@ class CoursController
             header('Location: /createSession?error=location_error');
             exit;
         }
+        
+        // Gestion du skill (nouvelle partie)
+        $skillModel = new \Models\SkillModel($pdo, $logger);
+        $categoryId = $request['skill_taught_id'];
+        $competence = $request['description']; // Récupération du nom de compétence
+        
+        // Création ou récupération du skill
+        $skillId = $skillModel->create($competence, $categoryId);
+        
+        if (!$skillId) {
+            $logger->error("Échec de la création de la compétence", [
+                'competence' => $competence, 
+                'category_id' => $categoryId
+            ]);
+            header('Location: /createSession?error=skill_error');
+            exit;
+        }
+        
+        $logger->info("Compétence créée ou récupérée avec succès", [
+            'skill_id' => $skillId, 
+            'skill_name' => $competence
+        ]);
 
-        // Création de l'objet Cours avec la nouvelle location
+        // Création de l'objet Cours avec la nouvelle location et le skill
         $cours = new Cours(
             null,
             $request['start_time'],
             $request['end_time'],
             $request['date_session'],
-            $request['description'],
+            "", // Description vide, car on utilise maintenant la table skill
             $request['rate_id'],
-            $request['skill_taught_id'],
+            $skillId, // Utilisation du skill_id créé ou récupéré
             $locationId,
             $request['lesson_host_id'],
             (int)$request['max_attendees']
@@ -219,9 +242,34 @@ class CoursController
         $cours->setStartTime($request['start_time']);
         $cours->setEndTime($request['end_time']);
         $cours->setDateSession($request['date_session']);
-        $cours->setDescription($request['description']);
+        
+        // Gestion du skill
+        $skillModel = new \Models\SkillModel($this->pdo, $this->logger);
+        $categoryId = $request['skill_taught_id'];
+        $competence = $request['description']; // Récupération du nom de compétence
+        
+        // Création ou récupération du skill
+        $skillId = $skillModel->create($competence, $categoryId);
+        
+        if (!$skillId) {
+            $this->logger->error("Échec de la création/mise à jour de la compétence", [
+                'competence' => $competence, 
+                'category_id' => $categoryId
+            ]);
+            return [
+                'status' => 'error',
+                'message' => 'Erreur lors de la mise à jour de la compétence'
+            ];
+        }
+        
+        $this->logger->info("Compétence créée ou mise à jour avec succès", [
+            'skill_id' => $skillId, 
+            'skill_name' => $competence
+        ]);
+        
+        $cours->setDescription(""); // Description vide, car on utilise maintenant la table skill
         $cours->setRateId($request['rate_id']);
-        $cours->setSkillTaughtId($request['skill_taught_id']);
+        $cours->setSkillTaughtId($skillId); // Utilisation du skill_id créé ou récupéré
 
         // Gérer la mise à jour de la localisation
         if (isset($request['address']) && isset($request['zip_code']) && isset($request['city'])) {

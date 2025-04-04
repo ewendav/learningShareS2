@@ -30,7 +30,7 @@ class LocationModel {
     public function create($address, $zipCode, $city) {
         try {
             // Vérifier si cette localisation existe déjà
-            $stmt = $this->pdo->prepare("SELECT location_id FROM LOCATION 
+            $stmt = $this->pdo->prepare("SELECT location_id FROM location 
                                         WHERE address = :address 
                                         AND zip_code = :zip_code 
                                         AND city = :city");
@@ -48,7 +48,7 @@ class LocationModel {
             }
             
             // Insérer la nouvelle localisation
-            $stmt = $this->pdo->prepare("INSERT INTO LOCATION (address, zip_code, city) 
+            $stmt = $this->pdo->prepare("INSERT INTO location (address, zip_code, city) 
                                         VALUES (:address, :zip_code, :city)");
             $stmt->bindParam(':address', $address);
             $stmt->bindParam(':zip_code', $zipCode);
@@ -74,7 +74,7 @@ class LocationModel {
      */
     public function getById($locationId) {
         try {
-            $stmt = $this->pdo->prepare("SELECT * FROM LOCATION WHERE location_id = :location_id");
+            $stmt = $this->pdo->prepare("SELECT * FROM location WHERE location_id = :location_id");
             $stmt->bindParam(':location_id', $locationId);
             $stmt->execute();
 
@@ -94,7 +94,7 @@ class LocationModel {
      */
     public function getAll() {
         try {
-            $stmt = $this->pdo->query("SELECT * FROM LOCATION ORDER BY city, zip_code");
+            $stmt = $this->pdo->query("SELECT * FROM location ORDER BY city, zip_code");
             $this->logger->info("Récupération de toutes les localisations", ['locations_count' => count($stmt->fetchAll(PDO::FETCH_ASSOC))]);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
@@ -111,7 +111,7 @@ class LocationModel {
      */
     public function delete($locationId) {
         try {
-            $stmt = $this->pdo->prepare("DELETE FROM LOCATION WHERE location_id = :location_id");
+            $stmt = $this->pdo->prepare("DELETE FROM location WHERE location_id = :location_id");
             $stmt->bindParam(':location_id', $locationId);
 
             $result = $stmt->execute();

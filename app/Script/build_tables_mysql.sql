@@ -1,7 +1,7 @@
 -- Création de la table
 
-CREATE DATABASE IF NOT EXISTS php;
-USE php;
+CREATE DATABASE IF NOT EXISTS learning_share;
+USE learning_share;
 
 DROP TABLE IF EXISTS review;
 DROP TABLE IF EXISTS report;
@@ -28,7 +28,7 @@ CREATE TABLE skill (
                        skill_name VARCHAR(50) NOT NULL,
                        search_counter INT DEFAULT 0,
                        category_id INT,
-                       CONSTRAINT fk_skill_category FOREIGN KEY (category_id) REFERENCES CATEGORY(category_id)
+                       CONSTRAINT fk_skill_category FOREIGN KEY (category_id) REFERENCES category(category_id)
 );
 
 
@@ -45,8 +45,8 @@ CREATE TABLE session (
                          end_time TIME NOT NULL ,
                          date_session DATE NOT NULL,
                          description VARCHAR(255),
-                         rate_id INTEGER REFERENCES RATE(rate_id),
-                         skill_taught_id INTEGER REFERENCES SKILL(skill_id)
+                         rate_id INTEGER REFERENCES rate(rate_id),
+                         skill_taught_id INTEGER REFERENCES skill(skill_id)
 );
 
 CREATE TABLE app_user (
@@ -70,8 +70,8 @@ CREATE TABLE user_role (
                            role_id INT,
                            user_id INT,
                            PRIMARY KEY (role_id, user_id),
-                           CONSTRAINT fk_userrole_role FOREIGN KEY (role_id) REFERENCES ROLE(role_id),
-                           CONSTRAINT fk_userrole_user FOREIGN KEY (user_id) REFERENCES APP_USER(user_id)
+                           CONSTRAINT fk_userrole_role FOREIGN KEY (role_id) REFERENCES role(role_id),
+                           CONSTRAINT fk_userrole_user FOREIGN KEY (user_id) REFERENCES app_user(user_id)
 );
 
 
@@ -83,38 +83,38 @@ CREATE TABLE location (
 );
 
 CREATE TABLE lesson (
-                        lesson_session_id INTEGER PRIMARY KEY REFERENCES SESSION(session_id),
-                        location_id INTEGER REFERENCES LOCATION(location_id),
-                        lesson_host_id INTEGER REFERENCES APP_USER(user_id),
+                        lesson_session_id INTEGER PRIMARY KEY REFERENCES session(session_id),
+                        location_id INTEGER REFERENCES location(location_id),
+                        lesson_host_id INTEGER REFERENCES app_user(user_id),
                         max_attendees INTEGER NOT NULL
 );
 
 CREATE TABLE exchange (
-                          exchange_session_id INTEGER PRIMARY KEY REFERENCES SESSION(session_id),
-                          skill_requested_id INTEGER REFERENCES SKILL(skill_id),
-                          exchange_requester_id INTEGER REFERENCES APP_USER(user_id),
-                          exchange_accepter_id INTEGER REFERENCES APP_USER(user_id)
+                          exchange_session_id INTEGER PRIMARY KEY REFERENCES session(session_id),
+                          skill_requested_id INTEGER REFERENCES skill(skill_id),
+                          exchange_requester_id INTEGER REFERENCES app_user(user_id),
+                          exchange_accepter_id INTEGER REFERENCES app_user(user_id)
 );
 
 CREATE TABLE attend (
                         attend_id INTEGER PRIMARY KEY,
-                        attend_lesson_id INTEGER REFERENCES LESSON(lesson_session_id),
-                        attend_user_id INTEGER REFERENCES APP_USER(user_id)
+                        attend_lesson_id INTEGER REFERENCES lesson(lesson_session_id),
+                        attend_user_id INTEGER REFERENCES app_user(user_id)
 );
 
 CREATE TABLE report (
                         report_id INT AUTO_INCREMENT PRIMARY KEY,
                         report_content VARCHAR(500) NOT NULL,
-                        report_giver_id INTEGER REFERENCES APP_USER(user_id),
-                        report_receiver_id INTEGER REFERENCES APP_USER(user_id)
+                        report_giver_id INTEGER REFERENCES app_user(user_id),
+                        report_receiver_id INTEGER REFERENCES app_user(user_id)
 );
 
 CREATE TABLE review (
                         review_id INT AUTO_INCREMENT PRIMARY KEY,
                         review_content VARCHAR(500),
-                        review_giver_id INTEGER REFERENCES APP_USER(user_id),
-                        review_receiver_id INTEGER REFERENCES APP_USER(user_id),
-                        review_session_id INTEGER REFERENCES SESSION(session_id),
+                        review_giver_id INTEGER REFERENCES app_user(user_id),
+                        review_receiver_id INTEGER REFERENCES app_user(user_id),
+                        review_session_id INTEGER REFERENCES session(session_id),
                         rating INTEGER  NOT NULL
 );
 
