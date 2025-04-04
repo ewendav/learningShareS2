@@ -29,7 +29,7 @@ class PartageModel
     public function save(Partage $partage)
     {
         $startedTransaction = false;
-        
+
         try {
             // Vérifier si une transaction est déjà en cours
             if (!$this->pdo->inTransaction()) {
@@ -86,7 +86,7 @@ class PartageModel
             if ($startedTransaction) {
                 $this->pdo->commit();
             }
-            
+
             $this->logger->info("Partage sauvegardé avec succès", ['session_id' => $session_id]);
             return true;
         } catch (PDOException $e) {

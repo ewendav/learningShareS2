@@ -15,7 +15,16 @@ use Models\UserModel;
 
 class Container
 {
-    protected static $container = null;
+    private static $container;
+
+
+    private function __construct()
+    {
+    }
+
+    private function __clone(): void
+    {
+    }
 
     public static function setContainer(): void
     {
@@ -89,15 +98,15 @@ class Container
             ]
         );
 
-        self::$container = $containerBuilder->build();
+        static::$container = $containerBuilder->build();
     }
 
     public static function getContainer(): \DI\Container
     {
-        if (self::$container === null) {
-            self::setContainer();
+        if (static::$container === null) {
+            static::setContainer();
         }
-        return self::$container;
+        return static::$container;
     }
 }
 
