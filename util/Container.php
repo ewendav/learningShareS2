@@ -42,7 +42,7 @@ class Container
 
                 // ajout du pdo
                 PDO::class => function () {
-                    $sgbd = $_ENV['DB_SGBD'] ?? 'mysql';
+                    $sgbd = $_ENV['sgbd'] ?? 'mysql';
                     $host = $_ENV['host'] ?? '';
                     $port = $_ENV['port'] ?? '';
                     $dbname = $_ENV['dbname'] ?? '';
