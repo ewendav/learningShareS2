@@ -21,6 +21,10 @@ $twig->addGlobal('userSessions', $sessionModel->getAllAttendableUserSession());
 $userModel = $container->get(\Models\UserModel::class);
 $twig->addGlobal('userModel', $userModel);
 
+// Ajouter les catégories indexées comme variable globale
+$categoriesIndexed = \Models\CategorieModel::getAllIndexedById();
+$twig->addGlobal('categoriesIndexed', $categoriesIndexed);
+
 // création des routes
 $dispatcher = FastRoute\simpleDispatcher(
     function (FastRoute\RouteCollector $r) use ($twig, $container) {

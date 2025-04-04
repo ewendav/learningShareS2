@@ -12,7 +12,16 @@ class TwigExtensions extends AbstractExtension
         return [
             new TwigFunction('asset', [$this, 'asset']),
             new TwigFunction('traduction', [$this, 'traduction']),
+            new TwigFunction('getCategoriesIndexed', [$this, 'getCategoriesIndexed']),
         ];
+    }
+    
+    /**
+     * Récupère les catégories indexées par ID
+     */
+    public function getCategoriesIndexed()
+    {
+        return \Models\CategorieModel::getAllIndexedById();
     }
 
     public function asset($path)

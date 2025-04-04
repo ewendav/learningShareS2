@@ -77,7 +77,7 @@ class SessionController
                 'title' => 'Consulter les cours et les sessions',
                 'getParams' => $_GET,
                 'sessions' => $sessions,
-                'categories' => \Models\CategorieModel::getAll(),
+                'categories' => \Models\CategorieModel::getAllIndexedById(), // Utiliser la nouvelle méthode
                 'user' => \Util\AuthMiddleware::getUser(),
                 'success' => $success ? ($success == 'joined_course' ? 'Vous avez rejoint le cours avec succès et payé 25 jetons' : 
                                         ($success == 'joined_exchange' ? 'Vous avez rejoint l\'échange avec succès et gagné 40 jetons' : 

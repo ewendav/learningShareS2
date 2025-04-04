@@ -59,8 +59,15 @@
   <div class="horizontal-display">
     
     <div class="vertical-display horizontal-sidebar">
-
-      <p>{{traduction('categorie')}} : {{ categoryLearned }}</p>
+      
+      {% if skill_taught_category_id is defined and skill_taught_category_id is not empty %}
+        {% set catId = skill_taught_category_id|number_format(0, '', '') %}
+        <p>{{traduction('categorie')}} : {{ categoriesIndexed[catId][1]|default('') }}</p>
+      {% elseif categoryLearned is not empty %}
+        <p>{{traduction('categorie')}} : {{ categoryLearned }}</p>
+      {% else %}
+        <p>{{traduction('categorie')}} : Non spécifiée</p>
+      {% endif %}
 
       <p>{{traduction('competence')}} : {{ skillLearned }}</p>
 
