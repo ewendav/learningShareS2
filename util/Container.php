@@ -42,12 +42,13 @@ class Container
 
                 // ajout du pdo
                 PDO::class => function () {
-                    $sgbd = $_ENV['DB_SGBD'] ?? 'pgsql';
-                    $host = $_ENV['DB_HOST'] ?? '';
-                    $port = $_ENV['DB_PORT'] ?? '';
-                    $dbname = $_ENV['DB_NAME'] ?? '';
-                    $user = $_ENV['DB_USER'] ?? '';
-                    $pass = $_ENV['DB_PASS'] ?? '';
+                    $sgbd = $_ENV['DB_SGBD'] ?? 'mysql';
+                    $host = $_ENV['host'] ?? '';
+                    $port = $_ENV['port'] ?? '';
+                    $dbname = $_ENV['dbname'] ?? '';
+                    $user = $_ENV['user'] ?? '';
+                    $pass = $_ENV['mdp'] ?? '';
+                    $charset = $_ENV['charset'] ?? 'utf8';
 
                     // Vérifier si les variables sont définies
                     if (empty($host) || empty($port) || empty($dbname) || empty($user)) {
@@ -56,7 +57,7 @@ class Container
 
                     $dsn = match ($sgbd) {
                         'pgsql' => "pgsql:host=$host;port=$port;dbname=$dbname",
-                        'mysql' => "mysql:host=$host;port=$port;dbname=$dbname;charset=utf8mb4",
+                        'mysql' => "mysql:host=$host;port=$port;dbname=$dbname;charset=$charset",
                         default => throw new Exception("Unsupported SGBD: $sgbd"),
                     };
 
