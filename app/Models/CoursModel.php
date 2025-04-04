@@ -29,7 +29,7 @@ class CoursModel
     public function save(Cours $cours)
     {
         $startedTransaction = false;
-        
+
         try {
             // Vérifier si une transaction est déjà en cours
             if (!$this->pdo->inTransaction()) {
@@ -84,7 +84,7 @@ class CoursModel
             if ($startedTransaction) {
                 $this->pdo->commit();
             }
-            
+
             $this->logger->info("Cours sauvegardé avec succès", ['session_id' => $session_id]);
             return true;
         } catch (PDOException $e) {
@@ -341,13 +341,13 @@ class CoursModel
             $stmt->bindParam(':cours_id', $cours_id);
             $stmt->bindParam(':user_id', $user_id);
             $result = $stmt->execute();
-            
+
             if ($result) {
                 $this->logger->info("Participant ajouté avec succès", ['cours_id' => $cours_id, 'user_id' => $user_id]);
             } else {
                 $this->logger->error("Échec de l'ajout du participant", ['cours_id' => $cours_id, 'user_id' => $user_id]);
             }
-            
+
             return $result;
         } catch (PDOException $e) {
             $this->logger->error("Erreur lors de l'ajout d'un participant: " . $e->getMessage(), ['exception' => $e]);

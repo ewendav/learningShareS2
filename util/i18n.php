@@ -56,7 +56,12 @@ return [
     "aPropos" => "A propos",
     "jetons" => "Jetons",
     "logout" => "Déconnexion",
+    "vousEnseignez" => "Vous enseignez",
+    "vousApprenez" => "Vous apprenez",
+
+    "vousPartagez" => "Vous partagez",
 ],
+
 "en" => [
     "cours" => "Lesson",
     "echange" => "Exchange",
@@ -112,5 +117,8 @@ return [
     "jetons" => "Tokens",
     "logout" => "Logout",
     "sessionAvenir" => "Upcoming sessions",
+  "vousEnseignez" => "You teach",
+    "vousApprenez" => "You learn",
+    "vousPartagez" => "You share",
 ]
 ];

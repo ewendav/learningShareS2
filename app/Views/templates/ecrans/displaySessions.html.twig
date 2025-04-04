@@ -90,7 +90,10 @@ opacity:0;
                 'adresse': session.full_address is not empty ? session.full_address : '',
                 'date': session.date_session ~ ', ' ~ session.start_time|date('H:i'),
                 'session_id': session.lesson_session_id is defined ? session.lesson_session_id : session.session_id,
-                'user': user
+                'user': user,
+                'startTime': session.start_time,
+                'endTime': session.end_time,
+                'dateDebut': session.date_session,
             } %}
         {% endfor %}
     {% endif %}
@@ -111,9 +114,13 @@ opacity:0;
                 'categoryWanted': categories[session.skill_requested_category_id - 1] is defined ? categories[session.skill_requested_category_id - 1][1] : '',
                 'skillWanted': session.skill_requested_name is not empty ? session.skill_requested_name : '',
                 'session_id': session.lesson_session_id is defined ? session.lesson_session_id : session.session_id,
-                'user': user
+                'user': user,
+                'startTime': session.start_time,
+                'endTime': session.end_time,
+                'dateDebut': session.date_session,
             } %}
         {% endfor %}
+
     {% endif %}
 </div>
 

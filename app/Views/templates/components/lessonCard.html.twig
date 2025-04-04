@@ -1,7 +1,40 @@
 <div class="session-card lesson-card">
 
-  <div class="horizontal-display header-session-card">
+    {% if sidebar %}
+
     
+  <div class="horizontal-display header-session-card"
+  style="justify-content:space-between;"
+  >
+    <div class="flex" style="gap:.5rem;" >
+          <img
+      {% if not user.avatarPath %}
+        style="display:none;"
+      {% endif %}
+          src="{{ user.avatarPath }}" class="avatar" >
+      <p>{{userName}}</p>
+    </div>
+
+
+      {% if ownLesson %}
+
+      <h3 class="lesson-title"> {{ traduction('vousEnseignez') }}
+      </h3>
+
+      {% else %}
+
+      <h3 class="lesson-title"> {{ traduction('vousApprenez') }}
+
+      </h3>
+
+      {% endif %}
+
+      </div>
+
+    {% else %}
+
+
+  <div class="horizontal-display header-session-card">
     <div class="flex" style="gap:.5rem;" >
           <img
       {% if not user.avatarPath %}
@@ -9,18 +42,19 @@
       {% endif %}
           src="{{ user.avatarPath }}" class="avatar" >
       <p>{{userName}}</p>
-
     </div>
 
-    <h3 class="lesson-title">{{ traduction('lesson') }}</h3>
+      <h3 class="lesson-title">{{ traduction('lesson') }}</h3>
+      <div class="flex" style="gap:.5rem; opacity : 0;" >
+        <img src="{{ avatarPath }}" class="avatar" >
+        <p>{{userName}}</p>
+      </div>
 
-    <div class="flex" style="gap:.5rem; opacity : 0;" >
-      <img src="{{ avatarPath }}" class="avatar" >
-      <p>{{userName}}</p>
+      </div>
 
-    </div>
+    {% endif %}
 
-  </div>
+
 
   <div class="horizontal-display">
     
@@ -40,13 +74,21 @@
       
       <p>{{traduction('lieu')}} : {{ adresse }}</p>
 
-      <p>{{traduction('date')}} : {{ date }}</p>
+      <p>{{traduction('date')}} : {{ date }}, {{endTime|date('H:i')}} </p>
 
     </div>
 
   </div>
 
 
+{% if sidebar %}
+      <span class="date-info">
+      {{dateDebut}}
+      <br>
+{{ startTime|date('H:i') }} - {{ endTime|date('H:i') }}
+      </span>
+
+{% endif %}
         {% if user %}
         <form action="/rejoindreCours/{{ session_id }}" method="POST">
             <button class="form-button green-bg" style="width:100%" type="submit">{{traduction('rejoindreCours')}}</button>
@@ -56,5 +98,7 @@
             <button style="width:100%" class="form-button green-bg" type="button">{{traduction('rejoindreCours')}}</button>
         </a>
         {% endif %}
+
+
 
 </div>

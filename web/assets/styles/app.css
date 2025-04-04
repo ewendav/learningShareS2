@@ -290,3 +290,33 @@ input.toggle-switch-input:checked + .toggle-switch-slider .slider {
 .bottom-sidebar .lesson-card .horizontal-sidebar {
   align-items: start;
 }
+
+.bottom-sidebar .exchange-container {
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.bottom-sidebar .exchange-container .vertical-display {
+  align-items: start;
+}
+
+.bottom-sidebar .echange-logo {
+  transform: rotate(90deg);
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.bottom-sidebar .lesson-title {
+  font-size: 0.9em;
+  text-align: end;
+}
+
+.bottom-sidebar .user-name {
+  font-size: 0.8em;
+}
+
+.date-info {
+  font-size: 0.8em;
+  text-align: center;
+  font-weight: bold;
+}
