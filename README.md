@@ -1,6 +1,21 @@
 # learningShareS2
 
-## Contexte techinque du projet
+## Présentation fonctionnelle du projet
+
+> LearningShare est une application web dont le concept repose sur l'échange de compétences entre utilisateurs Ces derniers peuvent échanger leurs savoirs en utilisant un système de jetons intégré à la plateforme La version 1 s'adressera à la population de Nantes Métropole
+
+### La philosophie du projet 
+Le but de l’application est l’échange de compétences sans but lucratif. LearningShare met en avant une approche basée sur l’entraide. La plateforme fonctionne sur deux principes :  
+-	Les échanges de compétences ou partage : Un utilisateur propose un échange de compétences, il enseigne une compétence et en apprend une autre en retour. Deux utilisateurs échangent mutuellement une compétence.
+-	Les cours : Un utilisateur propose un cours à une date fixe et une adresse. Les utilisateurs peuvent s’y inscrire et participer.
+> *Ces deux principes sont englobés sous le terme d'une session*
+
+### Un système de jetons comme unité d’échange
+C’est un point essentiel du fonctionnement de la plateforme. Chaque utilisateur reçoit 100 jetons lors de la création de son compte. Les utilisateurs peuvent gagner des jetons en réalisant des cours ou en faisant des échanges de compétences. Ils les dépensent en assistant à des cours.
+-	Gains de jetons : +20 jetons par cours donné et +40 jetons par participation à un échange.
+-	Dépense de jetons : -25 jetons pour assister à un cours.
+
+## Présentation technique du projet
 
 Ce projet repose principalement sur une architecture MVC (Modèle-Vue-Contrôleur) pour gérer les différentes entités du système (sessions, partages, utilisateurs, etc.). 
 Certaines contraintes ne sont pas prises en compte dans le code actuel, notamment la gestion des conflits de participation à un cours pour un utilisateur déjà impliqué dans une autre session à ce moment-là. 
@@ -25,7 +40,7 @@ Ce type de gestion sera implémenté dans la base de données à l’aide de **t
 
 - Création complète de la base de données (tables, clés, relations, contraintes via les travaux du semestre 1)  ***script SQL fourni***.
 - Insertion d’un jeu de **données construites via l'aide de l'ia générative** pour assurer la cohérence des relations (ex : utilisateurs, compétences, sessions, échanges, lieux...).
-- Possibilité de réinitialisation propre à tout moment.
+- Possibilité de réinitialisation propre à tout moment. (à faire)
 
 ### ⚙️ Configuration via .env
 
@@ -41,18 +56,17 @@ mdp=php
 sgbd=mysql
 charset=utf8
 ```
-*- Le système permet de choisir entre **MySQL ou PostgreSQL** à l’aide de la variable `sgbd`.*
+*- Le système nous permet de choisir entre **MySQL ou PostgreSQL** à l’aide de la variable `sgbd`.*
 
 ## 🔐 Authentification (bonus)
 
-- Middleware `AuthMiddleware` développé maison pour protéger certaines routes.
+- Middleware `AuthMiddleware` développé maison.
 - Authentification basée sur :
   - **Sessions PHP**
-  - **Mots de passe hachés en bcrypt** (`password`)
-- Utilisateur connecté = instancié automatiquement via le container (injection)
+  - **Mots de passe hachés en bcrypt**
 - Accès conditionnel en fonction de l’état de session
 
-## 🌍 Internationalisation (bonus)
+## 🌍 Internationalisation (en +)
 
 - Mise en place d’un système i18n via un service dans `Util\I18n`
 - Traductions automatiques dynamiques à partir des préférences
