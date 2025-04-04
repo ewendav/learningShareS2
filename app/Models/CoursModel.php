@@ -183,7 +183,7 @@ class CoursModel
     {
         try {
             $currentDateTime = date('Y-m-d H:i:s');
-            $userId = $_SESSION['user_id'];
+            $userId = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 0;
 
             $query = "
             SELECT
@@ -215,7 +215,13 @@ class CoursModel
             JOIN
                 location loc ON l.location_id = loc.location_id
             WHERE
-CONCAT(s.date_session, ' ', s.end_time) > NOW() AND l.lesson_host_id != $userId
+                CONCAT(s.date_session, ' ', s.end_time) > NOW() 
+                AND l.lesson_host_id != :user_id
+                AND NOT EXISTS (
+                    SELECT 1 FROM attend 
+                    WHERE attend_lesson_id = l.lesson_session_id 
+                    AND attend_user_id = :user_id
+                )
         ";
 
 
@@ -231,8 +237,10 @@ CONCAT(s.date_session, ' ', s.end_time) > NOW() AND l.lesson_host_id != $userId
         ";
             // Prepare the statement
             $stmt = $this->pdo->prepare($query);
-
-
+            
+            // Lier l'ID utilisateur
+            $stmt->bindParam(':user_id', $userId);
+            
             if (!empty($skillName)) {
                 $stmt->bindValue(':skillName', '%' . $skillName . '%');
             }

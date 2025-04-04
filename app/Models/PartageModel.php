@@ -181,6 +181,7 @@ class PartageModel
     public function getDemandeDePartage(bool $retourneJson = false, string $skillName = "")
     {
         try {
+            $userId = isset($_SESSION["user_id"]) ? $_SESSION["user_id"] : 0;
             $query = "
         SELECT 
             s.session_id,
@@ -217,6 +218,8 @@ class PartageModel
             skill requested_skill ON e.skill_requested_id = requested_skill.skill_id
         WHERE 
             e.exchange_accepter_id IS NULL
+            AND e.exchange_requester_id != :user_id
+            AND CONCAT(s.date_session, ' ', s.end_time) > NOW()
         ";
 
             if (!empty($skillName)) {
@@ -224,7 +227,10 @@ class PartageModel
             }
 
             $stmt = $this->pdo->prepare($query);
-
+            
+            // Lier l'ID utilisateur
+            $stmt->bindParam(':user_id', $userId);
+            
             if (!empty($skillName)) {
                 $stmt->bindValue(':skillName', '%' . $skillName . '%');
             }
