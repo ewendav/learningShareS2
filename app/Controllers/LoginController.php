@@ -73,6 +73,7 @@ class LoginController
                 // Authentification réussie
                 $_SESSION['user_id'] = $user['user_id'];
                 $_SESSION['user_email'] = $user['mail'];
+                $_SESSION['avatar_path'] = $user['avatarPath'];
                 $_SESSION['user_name'] = $user['user_first_name'] . ' ' . $user['user_last_name'];
 
                 // Rediriger vers la page principale

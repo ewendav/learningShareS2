@@ -3,7 +3,12 @@
   <div class="horizontal-display header-session-card">
     
     <div class="flex" style="gap:.5rem;" >
-      <img src="{{ avatarPath }}" class="avatar" >
+          <img
+
+      {% if not user.avatarPath %}
+        style="opacity:0;"
+      {% endif %}
+          src="{{ user.avatarPath }}" class="avatar" >
       <p>{{userName}}</p>
 
     </div>

@@ -63,7 +63,7 @@ class UserModel
                 'firstName' => $userData['firstName'],
                 'lastName' => $userData['lastName'],
                 'biography' => $userData['biography'] ?? '',
-                'avatarPath' => $userData['avatarPath'] ?? '',
+                'avatarPath' => $userData['avatar_path'] ?? '',
                 'phone' => $userData['phone'],
                 'password' => $hashedPassword
             ]);
@@ -80,7 +80,7 @@ class UserModel
     {
         return password_verify($password, $hash);
     }
-    
+
     /**
      * Récupérer le solde de jetons d'un utilisateur
      */
@@ -90,18 +90,18 @@ class UserModel
             $stmt = $this->pdo->prepare('SELECT balance FROM app_user WHERE user_id = :userId');
             $stmt->execute(['userId' => $userId]);
             $result = $stmt->fetch(\PDO::FETCH_ASSOC);
-            
+
             if ($result) {
                 return (int)$result['balance'];
             }
-            
+
             return 0;
         } catch (\PDOException $e) {
             error_log('Erreur lors de la récupération du solde: ' . $e->getMessage());
             throw $e;
         }
     }
-    
+
     /**
      * Mettre à jour le solde de jetons d'un utilisateur
      */
@@ -113,21 +113,21 @@ class UserModel
             if ($currentBalance + $amount < 0) {
                 return false;
             }
-            
+
             // Ne pas gérer la transaction ici, elle sera gérée par l'appelant
             $stmt = $this->pdo->prepare('UPDATE app_user SET balance = balance + :amount WHERE user_id = :userId');
             $stmt->execute([
                 'amount' => $amount,
                 'userId' => $userId
             ]);
-            
+
             return true;
         } catch (\PDOException $e) {
             error_log('Erreur lors de la mise à jour du solde: ' . $e->getMessage());
             throw $e;
         }
     }
-    
+
     /**
      * Vérifier si un utilisateur a suffisamment de jetons
      */
@@ -136,7 +136,7 @@ class UserModel
         $balance = $this->getBalance($userId);
         return $balance >= $requiredAmount;
     }
-    
+
     /**
      * Récupérer un utilisateur par son ID
      */
@@ -152,4 +152,3 @@ class UserModel
         }
     }
 }
-

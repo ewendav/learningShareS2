@@ -203,6 +203,7 @@ input.toggle-switch-input:checked + .toggle-switch-slider .slider {
   border: none;
   outline: none;
   cursor: pointer;
+  width: 100%;
 }
 
 .search-icon-input {
@@ -281,4 +282,12 @@ input.toggle-switch-input:checked + .toggle-switch-slider .slider {
 
 .bottom-sidebar .form-button {
   display: none;
+}
+
+.bottom-sidebar .lesson-card .location-part {
+  display: none;
+}
+
+.bottom-sidebar .lesson-card .location-part {
+  align-items: start;
 }
