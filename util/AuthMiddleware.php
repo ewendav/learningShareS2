@@ -25,7 +25,7 @@ class AuthMiddleware
                 'id' => $_SESSION['user_id'],
                 'email' => $_SESSION['user_email'],
                 'name' => $_SESSION['user_name'],
-                'avatarPath' => $_SESSION['avatar_path']
+                'avatarPath' => $_SESSION['avatar_path'] ?? ''
             ];
         }
         return null;

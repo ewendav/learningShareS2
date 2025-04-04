@@ -288,6 +288,6 @@ input.toggle-switch-input:checked + .toggle-switch-slider .slider {
   display: none;
 }
 
-.bottom-sidebar .lesson-card .location-part {
+.bottom-sidebar .lesson-card .horizontal-sidebar {
   align-items: start;
 }
