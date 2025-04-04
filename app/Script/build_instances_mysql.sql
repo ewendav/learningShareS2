@@ -1,6 +1,6 @@
 -- Sélectionner la base de données où les données doivent être insérées
 
-USE learning_share;
+USE php;
 
 -- Insertion des catégories de compétences
 INSERT INTO category (category_id, category_name)
@@ -44,17 +44,17 @@ VALUES
 -- Insertion des lieux (locations)
 INSERT INTO location (location_id, address, zip_code, city)
 VALUES
-    (1, '10 Rue de Paris, 75001', '75001', 'Paris'), -- Lieu 1
-    (2, '5 Avenue des Champs-Élysées, 75008', '75008', 'Paris'), -- Lieu 2
-    (3, '3 Rue de la République, 69001', '69001', 'Lyon'), -- Lieu 3
-    (4, '22 Boulevard Montmartre, 75002', '75002', 'Paris'); -- Lieu 4
+    (1, '10 Rue de Paris', '44100', 'Nantes'), -- Lieu 1
+    (2, 'Cité des Congrès - 5 Rue de Valmy', '44000', 'Nantes'), -- Lieu 2
+    (3, '50 Rue Julien Douillard', '44400', 'Rezé'), -- Lieu 3
+    (4, '1 Rue Floréal', '44300', 'Nantes'); -- Lieu 4
 
 -- Insertion des sessions
 INSERT INTO session (session_id, start_time, end_time, date_session, description, skill_taught_id)
 VALUES
     (1, '09:00:00', '12:00:00', '2025-05-01', 'Cours de Python pour débutants', 1), -- Python (session 1)
     (2, '10:00:00', '12:00:00', '2025-05-02', 'Échange de compétences sur la guitare', 3), -- Guitare (session 2)
-    (3, '14:00:00', '16:00:00', '2025-05-03', 'Cours dalgèbre', 6), -- Algèbre (session 3)
+    (3, '14:00:00', '16:00:00', '2025-05-03', 'Echange dalgèbre', 6), -- Algèbre (session 3)
     (4, '09:00:00', '11:00:00', '2025-05-04', 'Échange de compétences sur le piano', 4), -- Piano (session 4)
     (5, '13:00:00', '15:00:00', '2025-05-05', 'Cours de photographie numérique', 8), -- Photographie numérique (session 5)
     (6, '09:00:00', '12:00:00', '2025-05-06', 'Cours sur la gestion de projet agile', 10); -- Gestion de projet agile (session 6)
@@ -69,9 +69,9 @@ VALUES
 -- Lier les sessions avec les échanges
 INSERT INTO exchange (exchange_session_id, skill_requested_id, exchange_requester_id, exchange_accepter_id)
 VALUES
-    (2, 3, 2, 4), -- Échange de compétences Guitare (Session 2)
-    (3, 6, 3, 4), -- Échange de compétences Algèbre (Session 3)
-    (4, 4, 2, 6); -- Échange de compétences Piano (Session 4)
+    (2, 6, 2, 4), -- Échange de compétences Guitare (Session 2)
+    (3, 2, 3, NULL), -- Échange de compétences Algèbre (Session 3)
+    (4, 9, 2, 6); -- Échange de compétences Piano (Session 4)
 
 
 -- Participation des utilisateurs aux leçons et échanges

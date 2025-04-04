@@ -1,7 +1,7 @@
 -- Création de la table
 
-CREATE DATABASE IF NOT EXISTS learning_share;
-USE learning_share;
+CREATE DATABASE IF NOT EXISTS php;
+USE php;
 
 DROP TABLE IF EXISTS review;
 DROP TABLE IF EXISTS report;
