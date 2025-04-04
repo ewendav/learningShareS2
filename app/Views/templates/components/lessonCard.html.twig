@@ -49,11 +49,11 @@
 
         {% if user %}
         <form action="/rejoindreCours/{{ session_id }}" method="POST">
-            <button class="form-button green-bg" type="submit">{{traduction('rejoindreCours')}}</button>
+            <button class="form-button green-bg" style="width:100%" type="submit">{{traduction('rejoindreCours')}}</button>
         </form>
         {% else %}
         <a href="/login">
-            <button class="form-button green-bg" type="button">{{traduction('rejoindreCours')}}</button>
+            <button style="width:100%" class="form-button green-bg" type="button">{{traduction('rejoindreCours')}}</button>
         </a>
         {% endif %}
 
