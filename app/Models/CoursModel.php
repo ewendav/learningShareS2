@@ -183,6 +183,7 @@ class CoursModel
     {
         try {
             $currentDateTime = date('Y-m-d H:i:s');
+            $userId = $_SESSION['user_id'];
 
             $query = "
             SELECT
@@ -214,7 +215,7 @@ class CoursModel
             JOIN
                 location loc ON l.location_id = loc.location_id
             WHERE
-CONCAT(s.date_session, ' ', s.end_time) > NOW()
+CONCAT(s.date_session, ' ', s.end_time) > NOW() AND l.lesson_host_id != $userId
         ";
 
 
@@ -267,7 +268,6 @@ CONCAT(s.date_session, ' ', s.end_time) > NOW()
             return [];
         }
     }
-
 
     /**
      * Récupérer les participants à un cours
