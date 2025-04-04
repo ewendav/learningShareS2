@@ -2,7 +2,11 @@
 
 ## Contexte du projet
 
-Ce projet repose principalement sur une architecture MVC (Modèle-Vue-Contrôleur) pour gérer les différentes entités du système (sessions, partages, utilisateurs, etc.). Cependant, certaines contraintes ne sont pas prises en compte dans le code actuel, notamment la gestion des conflits de participation à un cours pour un utilisateur déjà impliqué dans une autre session à ce moment-là. Ce type de gestion sera implémenté dans la base de données à l’aide de **triggers** (qui n’ont pas encore été définis, car ils seront abordés ultérieurement dans le cadre du cours Admin des BD).
+Ce projet repose principalement sur une architecture MVC (Modèle-Vue-Contrôleur) pour gérer les différentes entités du système (sessions, partages, utilisateurs, etc.). 
+Certaines contraintes ne sont pas prises en compte dans le code actuel, notamment la gestion des conflits de participation à un cours pour un utilisateur déjà impliqué dans une autre session à ce moment-là. 
+Ce type de gestion sera implémenté dans la base de données à l’aide de **triggers** (qui n’ont pas encore été définis, car ils seront abordés ultérieurement dans le cadre du cours Admin des BD).
+
+
 
 ## 📌 Politique de Logging dans l’Application
 ### 1. Ce qui est loggé ✅
