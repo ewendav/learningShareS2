@@ -11,12 +11,12 @@ Ce type de gestion sera implémenté dans la base de données à l’aide de **t
 
 | Prénom    | Nom       | Email (Login)         | Mot de passe | Sessions proposées | Sessions auxquelles il s'est inscrit |
 |-----------|-----------|------------------------|--------------|--------------------|-------------------------------------|
-| **Alice** | Dupont    | `user1@example.com`    | `pass`  | 🎓 **Cours Python (Session 1)** | *(aucune)* |
-| **Bob**   | Martin    | `user2@example.com`    | `pass`  | 🔁 **Échange Guitare (Session 2)**<br>🔁 **Échange Piano (Session 4)** | *(aucune)* |
-| **Charlie** | Durand  | `user3@example.com`    | `pass`  | 🔁 **Échange Algèbre (Session 3)** | *(aucune)* |
-| **David** | Lemoine   | `user4@example.com`    | `pass`  | *(aucune session proposée)* | Session 1 (Cours Python)<br> Session 2 (Échange Guitare)<br> Session 3 (Échange Algèbre) |
-| **Eva**   | Petit     | `user5@example.com`    | `pass`  | 🎓 **Cours Photographie numérique (Session 5)** | Session 6 (Cours Gestion de projet agile) |
-| **François** | Lemoine | `user6@example.com`  | `pass`  | 🎓 **Cours Gestion de projet agile (Session 6)** | Session 4 (Échange Piano)<br> Session 5 (Cours Photographie numérique) |
+| **Alice** | Dupont    | `alice@example.com`    | `pass`  | 🎓 **Cours Python (Session 1)** | *(aucune)* |
+| **Bob**   | Martin    | `bob@example.com`    | `pass`  | 🔁 **Échange Guitare (Session 2)**<br>🔁 **Échange Piano (Session 4)** | *(aucune)* |
+| **Charlie** | Durand  | `charlie@example.com`    | `pass`  | 🔁 **Échange Algèbre (Session 3)** | *(aucune)* |
+| **David** | Lemoine   | `david@example.com`    | `pass`  | *(aucune session proposée)* | Session 1 (Cours Python)<br> Session 2 (Échange Guitare)<br> Session 3 (Échange Algèbre) |
+| **Eva**   | Petit     | `eva@example.com`    | `pass`  | 🎓 **Cours Photographie numérique (Session 5)** | Session 6 (Cours Gestion de projet agile) |
+| **François** | Lemoine | `francois@example.com`  | `pass`  | 🎓 **Cours Gestion de projet agile (Session 6)** | Session 4 (Échange Piano)<br> Session 5 (Cours Photographie numérique) |
 
 ---
 
