@@ -1,6 +1,6 @@
 -- Sélectionner la base de données où les données doivent être insérées
 
-USE php;
+USE learning_share;
 
 -- Insertion des catégories de compétences
 INSERT INTO category (category_id, category_name)

@@ -64,7 +64,7 @@ class SessionModel
                 $this->logger->info("SessionModel::save - Mise à jour de la session existante ID=" . $sessionID);
                 // Mise à jour d'une session existante
                 $stmt = $this->pdo->prepare(
-                    "UPDATE SESSION SET start_time = :start_time, end_time = :end_time, 
+                    "UPDATE session SET start_time = :start_time, end_time = :end_time, 
                                       date_session = :date_session, description = :description, rate_id = :rate_id, 
                                       skill_taught_id = :skill_taught_id WHERE session_id = :session_id"
                 );
@@ -73,7 +73,7 @@ class SessionModel
                 $this->logger->info("SessionModel::save - Création d'une nouvelle session");
                 // Création d'une nouvelle session
                 $stmt = $this->pdo->prepare(
-                    "INSERT INTO SESSION (start_time, end_time, date_session, description, 
+                    "INSERT INTO session (start_time, end_time, date_session, description, 
                                       rate_id, skill_taught_id) VALUES (:start_time, :end_time, :date_session, 
                                       :description, :rate_id, :skill_taught_id)"
                 );
@@ -127,7 +127,7 @@ class SessionModel
     public function getById($session_id)
     {
         try {
-            $stmt = $this->pdo->prepare("SELECT * FROM SESSION WHERE session_id = :session_id");
+            $stmt = $this->pdo->prepare("SELECT * FROM session WHERE session_id = :session_id");
             $stmt->bindParam(':session_id', $session_id);
             $stmt->execute();
 
@@ -157,7 +157,7 @@ class SessionModel
     {
         try {
             $sessionID = $session->getSessionId();
-            $stmt = $this->pdo->prepare("DELETE FROM SESSION WHERE session_id = :session_id");
+            $stmt = $this->pdo->prepare("DELETE FROM session WHERE session_id = :session_id");
             $stmt->bindParam(':session_id', $sessionID);
 
             $result = $stmt->execute();
@@ -181,7 +181,7 @@ class SessionModel
     public function getAll()
     {
         try {
-            $stmt = $this->pdo->query("SELECT * FROM SESSION");
+            $stmt = $this->pdo->query("SELECT * FROM session");
             $sessions = [];
 
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
