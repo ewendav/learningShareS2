@@ -68,9 +68,9 @@ charset=utf8
 
 ## 🌍 Internationalisation (en +)
 
-- Mise en place d’un système i18n via un service dans `Util\I18n`
-- Traductions automatiques dynamiques à partir des préférences
-- Support de l'anglais
+- Mise en place d’un système i18n via un service fait maison dans `Util\I18n`
+- Traductions automatiques dynamiques via une fonction twig custom à partir des préférences du navigateur
+- Support de l'anglais et du français
 
 ### 📦 Dépendances installées
 
@@ -80,8 +80,9 @@ Voici les principaux packages utilisés via Composer :
 - `vlucas/phpdotenv` – Gestion du fichier `.env` pour le container de dépendances
 - `nikic/fast-route` – Routage rapide au sein de l'application
 - `twig/twig` – Moteur de templates les vues
-- `monolog/monolog` – (si utilisé) pour les logs
+- `monolog/monolog` – pour les logs
 - `squizlabs/php_codesniffer` – Vérification des normes PSR 1 et 12(2 étant déprécié et remplacer par la 12)
+- `phpcbf` - formate les fichiers PHP afin qu'ils respectent les normes PSR 
 
 ## 🚀 Utiliser ou Lancer le projet en local
 
