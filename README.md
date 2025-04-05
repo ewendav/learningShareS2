@@ -114,14 +114,14 @@ Voici les principaux packages utilisés via Composer :
    composer install
    ```
 
-3. Copier le fichier `.env.example` :
+3. Renomer le fichier `.env.example` :
    ```bash
-   cp .env.example .env
+   mv .env.example .env
    ```
 
 4. Adapter les infos de connexion dans `.env` si besoin.
 
-5. Importer le script SQL `build_tables_mysql.sql` pour créer la base et `build_instances_mysql.sql` pour insérer les instances de données dans votre SGBD MySQL.
+5. Lancer le script SQL `build_tables_mysql.sql` pour créer la base et `build_instances_mysql.sql` pour insérer les instances de données dans votre SGBD MySQL.
 
 6. Lancer un serveur local (a exécuter depuis le dossier web/) :
    ```bash
