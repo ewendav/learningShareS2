@@ -68,9 +68,9 @@ charset=utf8
 
 ## 🌍 Internationalisation (en +)
 
-- Mise en place d’un système i18n via un service dans `Util\I18n`
-- Traductions automatiques dynamiques à partir des préférences
-- Support de l'anglais
+- Mise en place d’un système i18n via un service fait maison dans `Util\I18n`
+- Traductions automatiques dynamiques via une fonction twig custom à partir des préférences du navigateur
+- Support de l'anglais et du français
 
 ### 📦 Dépendances installées
 
@@ -80,8 +80,9 @@ Voici les principaux packages utilisés via Composer :
 - `vlucas/phpdotenv` – Gestion du fichier `.env` pour le container de dépendances
 - `nikic/fast-route` – Routage rapide au sein de l'application
 - `twig/twig` – Moteur de templates les vues
-- `monolog/monolog` – (si utilisé) pour les logs
+- `monolog/monolog` – pour les logs
 - `squizlabs/php_codesniffer` – Vérification des normes PSR 1 et 12(2 étant déprécié et remplacer par la 12)
+- `phpcbf` - formate les fichiers PHP afin qu'ils respectent les normes PSR 
 
 ## 🚀 Utiliser ou Lancer le projet en local
 
@@ -113,16 +114,16 @@ Voici les principaux packages utilisés via Composer :
    composer install
    ```
 
-3. Copier le fichier `.env.example` :
+3. Renomer le fichier `.env.example` :
    ```bash
-   cp .env.example .env
+   mv .env.example .env
    ```
 
 4. Adapter les infos de connexion dans `.env` si besoin.
 
-5. Importer le script SQL `build_tables_mysql.sql` pour créer la base et `build_instances_mysql.sql` pour insérer les instances de données dans votre SGBD MySQL.
+5. Lancer le script SQL `build_tables_mysql.sql` pour créer la base et `build_instances_mysql.sql` pour insérer les instances de données dans votre SGBD MySQL.
 
-6. Lancer un serveur local :
+6. Lancer un serveur local (a exécuter depuis le dossier web/) :
    ```bash
    php -S localhost:8000 -t web
    ```
