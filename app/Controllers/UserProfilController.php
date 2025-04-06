@@ -54,7 +54,8 @@ class UserProfilController
         $sessions = [];
         if ($type === 'cours') {
             $sessions = $coursModel->getByHostIdNotExpired($userId);
-        } elseif ($type === 'echanges') {
+        } elseif ($type === 'echange' || $type === 'echanges') {
+            // Accepter 'echange' et 'echanges' pour compatibilité
             $sessions = $partageModel->getByRequesterIdNotExpired($userId, true);
         }
 
@@ -63,7 +64,7 @@ class UserProfilController
             'title'             => 'Profil de ' . htmlspecialchars($userData['user_first_name'] ?? ''),
             'userData'          => $userData,
             'sessions'          => $sessions,
-            'categories'        => \Models\CategorieModel::getAllIndexedById(), // Utiliser la nouvelle méthode
+            'categoriesIndexed' => \Models\CategorieModel::getAllIndexedById(), // Utiliser la nouvelle méthode
             'getParams'         => ['type' => $type],
             'user'              => \Util\AuthMiddleware::getUser(),
         ]);
