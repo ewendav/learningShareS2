@@ -62,7 +62,7 @@ class UserModel
                 'firstName' => $userData['firstName'],
                 'lastName' => $userData['lastName'],
                 'biography' => $userData['biography'] ?? '',
-                'avatarPath' => $userData['avatar_path'] ?? '',
+                'avatarPath' => $userData['avatarPath'] ?? '',
                 'phone' => $userData['phone'],
                 'password' => $hashedPassword
             ]);

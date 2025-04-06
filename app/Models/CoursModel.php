@@ -177,7 +177,7 @@ class CoursModel
 
 /**
  * Récupérer toutes les leçons qui ont encore de la place pour des participants et dont la date de fin n'est pas expirée
- * ajoute un nom de comp&tance dans la query si il est présent
+ * ajoute un nom de compétence dans la query s'il est présent
  */
     public function getLessonDispo(bool $retourneJson = false, string $skillName = "")
     {
@@ -301,7 +301,6 @@ class CoursModel
             return $attendees;
         } catch (PDOException $e) {
             $this->logger->error("Erreur lors de la récupération des participants: " . $e->getMessage(), ['exception' => $e]);
-            return [];
             return [];
         }
     }

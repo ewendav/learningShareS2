@@ -73,7 +73,7 @@ class LoginController
                 // Authentification réussie
                 $_SESSION['user_id'] = $user['user_id'];
                 $_SESSION['user_email'] = $user['mail'];
-                $_SESSION['avatar_path'] = $user['avatarPath'];
+                $_SESSION['avatar_path'] = $user['avatar_path'];
                 $_SESSION['user_name'] = $user['user_first_name'] . ' ' . $user['user_last_name'];
 
                 // Rediriger vers la page principale
@@ -144,6 +144,7 @@ class LoginController
             $avatarPath = '/assets/avatars/' . $uniqueFilename;
 
             move_uploaded_file($tempFile, $targetDir . $uniqueFilename);
+            error_log("Avatar path set to: " . $avatarPath);
         }
 
         // Créer le nouvel utilisateur
@@ -156,11 +157,14 @@ class LoginController
             'avatarPath' => $avatarPath,
             'password' => $password
         ]);
+        
+        error_log("User created with ID: " . $userId . " and avatar path: " . $avatarPath);
 
         // Connecter automatiquement l'utilisateur
         $_SESSION['user_id'] = $userId;
         $_SESSION['user_email'] = $email;
         $_SESSION['user_name'] = $firstName . ' ' . $lastName;
+        $_SESSION['avatar_path'] = $avatarPath;
 
         // Rediriger vers la page principale
         header('Location: /sessions');

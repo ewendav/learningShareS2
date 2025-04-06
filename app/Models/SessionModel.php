@@ -142,7 +142,7 @@ class SessionModel
                     $row['skill_taught_id']
                 );
             }
-            $this->logger->info("Session récuprée ID =" . $session_id);
+            $this->logger->info("Session récupérée ID =" . $session_id);
             return null;
         } catch (PDOException $e) {
             $this->logger->error("Erreur lors de la récupération de la session: " . $e->getMessage());

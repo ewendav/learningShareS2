@@ -18,7 +18,6 @@ class SessionController
      */
     public function __construct()
     {
-        // a terme le contneu du controler sera surement supprimé pour avoir tout les méhtodes ens tatic
         $container = \Util\Container::getContainer();
         $this->twig = $container->get(\Twig\Environment::class);
 
@@ -94,7 +93,7 @@ class SessionController
 
     /**
      * Affiche les détails d'une session
-    *  /
+     */
     public function show($session_id)
     {
         $session = $this->sessionModel->getById($session_id);

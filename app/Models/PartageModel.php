@@ -176,7 +176,7 @@ class PartageModel
     }
 
     /**
-     * Récupérer tous les partages qui nont pas été acepté
+     * Récupérer tous les partages qui n'ont pas été acceptés
      */
     public function getDemandeDePartage(bool $retourneJson = false, string $skillName = "")
     {
@@ -389,7 +389,7 @@ class PartageModel
 
 /**
  * Récupérer les partages par utilisateur accepteur
- * qui ne sont pas encore passées
+ * qui ne sont pas encore passés
  */
     public function getByAccepterIdNotExpired($user_id, bool $retourneJson = false)
     {
