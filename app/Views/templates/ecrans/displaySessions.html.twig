@@ -85,6 +85,7 @@ opacity:0;
             {% include 'components/lessonCard.html.twig' with {
                 'avatar_path': session.host_avatar is not empty ? session.host_avatar : '',
                 'userName': session.host_first_name ~ ' ' ~ session.host_last_name,
+                'userId' : session.host_user_id,
                 'categoryLearned': categoriesIndexed[session.skill_taught_category_id] is defined ? categoriesIndexed[session.skill_taught_category_id][1] : '',
                 'skillLearned': session.skill_taught_name is not empty ? session.skill_taught_name : '',
                 'skill_taught_category_id': session.skill_taught_category_id,
@@ -110,6 +111,7 @@ opacity:0;
             {% include 'components/exchangeCard.html.twig' with {
                 'avatar_path': session.requester_avatar is not empty ? session.requester_avatar : '',
                 'userName': session.requester_first_name ~ ' ' ~ session.requester_last_name,
+                'userId' : session.requester_user_id,
                 'categoryLearned': categoriesIndexed[session.skill_taught_category_id] is defined ? categoriesIndexed[session.skill_taught_category_id][1] : '',
                 'skillLearned': session.skill_taught_name is not empty ? session.skill_taught_name : '',
                 'categoryWanted': categoriesIndexed[session.skill_requested_category_id] is defined ? categoriesIndexed[session.skill_requested_category_id][1] : '',

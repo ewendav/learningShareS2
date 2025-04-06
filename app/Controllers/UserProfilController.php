@@ -63,7 +63,7 @@ class UserProfilController
             'title'             => 'Profil de ' . htmlspecialchars($userData['user_first_name'] ?? ''),
             'userData'          => $userData,
             'sessions'          => $sessions,
-            'categoriesIndexed' => $categorieModel->getAllIndexedById(),
+            'categories'        => \Models\CategorieModel::getAllIndexedById(), // Utiliser la nouvelle méthode
             'getParams'         => ['type' => $type],
             'user'              => \Util\AuthMiddleware::getUser(),
         ]);

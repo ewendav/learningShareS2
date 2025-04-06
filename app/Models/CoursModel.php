@@ -200,6 +200,7 @@ class CoursModel
                 req_user.user_first_name AS host_first_name,
                 req_user.user_last_name AS host_last_name,
                 req_user.avatar_path AS host_avatar,
+                req_user.user_id AS host_user_id,
                 taught_skill.skill_name AS skill_taught_name,
                 CONCAT(loc.address, ', ', loc.zip_code, ', ', loc.city) AS full_address
             FROM
@@ -262,6 +263,7 @@ class CoursModel
                     'host_first_name' => $row['host_first_name'],
                     'host_last_name' => $row['host_last_name'],
                     'host_avatar' => $row['host_avatar'],
+                    'host_user_id' => $row['host_user_id'],
                     'skill_taught_id' => $row['skill_taught_id'],
                     'skill_taught_category_id' => $row['skill_taught_category_id'],
                     'skill_taught_name' => $row['skill_taught_name'],

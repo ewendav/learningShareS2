@@ -12,7 +12,7 @@
         style="display:none;"
       {% endif %}
           src="{{ user.avatarPath }}" class="avatar" >
-      <p>{{userName}}</p>
+      <p><a href="/profile?user_id={{ userId }}">{{userName}}</a></p>
     </div>
 
 
@@ -41,13 +41,13 @@
         style="opacity:0;"
       {% endif %}
           src="{{ user.avatarPath }}" class="avatar" >
-      <p>{{userName}}</p>
+      <p><a href="/profile?user_id={{ userId }}">{{userName}}</a></p>
     </div>
 
       <h3 class="lesson-title">{{ traduction('lesson') }}</h3>
       <div class="flex" style="gap:.5rem; opacity : 0;" >
         <img src="{{ avatarPath }}" class="avatar" >
-        <p>{{userName}}</p>
+      <p><a href="/profile?user_id={{ userId }}">{{userName}}</a></p>
       </div>
 
       </div>
