@@ -41,6 +41,8 @@ $dispatcher = FastRoute\simpleDispatcher(
         $r->addRoute('GET', '/logout', [Controllers\LoginController::class, 'logout']);
         // page de consultation des cours et des échanges disponibles
         $r->addRoute('GET', '/sessions', [Controllers\SessionController::class, 'displaySessions']);
+        // page de consultation des cours et des échanges disponibles
+        $r->addRoute('GET', '/profile', [Controllers\UserProfilController::class, 'displayProfil']);
 
         // ROUTES POST
         // routes d'authentification

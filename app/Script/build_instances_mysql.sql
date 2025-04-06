@@ -18,14 +18,14 @@ VALUES
 
 -- Insertion des utilisateurs
 -- MDP des users : "pass"
-INSERT INTO app_user (user_id, mail, user_first_name, user_last_name, biography, phone, password, balance)
+INSERT INTO app_user (user_id, mail, user_first_name, user_last_name, biography, phone, password, balance, avatar_path)
 VALUES
-    (1, 'alice@example.com', 'Alice', 'Dupont', 'Développeuse Python passionnée.', '0101010101', '$2y$10$PzrLrAzoR9garXQzFTyoxuYxHTNbUP3PKIHv2N6Oc4Cu85ZXqatZu', 100),
-    (2, 'bob@example.com', 'Bob', 'Martin', 'Musicien, expert guitare et piano.', '0202020202', '$2y$10$PzrLrAzoR9garXQzFTyoxuYxHTNbUP3PKIHv2N6Oc4Cu85ZXqatZu', 100),
-    (3, 'charlie@example.com', 'Charlie', 'Durand', 'Professeur de mathématiques, spécialiste de l algèbre et calcul.', '0303030303', '$2y$10$PzrLrAzoR9garXQzFTyoxuYxHTNbUP3PKIHv2N6Oc4Cu85ZXqatZu', 100),
-    (4, 'david@example.com', 'David', 'Lemoine', 'Étudiant en gestion de projet.', '0404040404', '$2y$10$PzrLrAzoR9garXQzFTyoxuYxHTNbUP3PKIHv2N6Oc4Cu85ZXqatZu', 100),
-    (5, 'eva@example.com', 'Eva', 'Petit', 'Photographe amateur, passionnée par la cuisine.', '0505050505', '$2y$10$PzrLrAzoR9garXQzFTyoxuYxHTNbUP3PKIHv2N6Oc4Cu85ZXqatZu', 100),
-    (6, 'francois@example.com', 'François', 'Lemoine', 'Apprenant de l espagnol et gestion de projet.', '0606060606', '$2y$10$PzrLrAzoR9garXQzFTyoxuYxHTNbUP3PKIHv2N6Oc4Cu85ZXqatZu', 100);
+    (1, 'alice@example.com', 'Alice', 'Dupont', 'Développeuse Python passionnée.', '0101010101', '$2y$10$PzrLrAzoR9garXQzFTyoxuYxHTNbUP3PKIHv2N6Oc4Cu85ZXqatZu', 100, '/assets/avatars/avatar-default.png'),
+    (2, 'bob@example.com', 'Bob', 'Martin', 'Musicien, expert guitare et piano.', '0202020202', '$2y$10$PzrLrAzoR9garXQzFTyoxuYxHTNbUP3PKIHv2N6Oc4Cu85ZXqatZu', 100, '/assets/avatars/avatar-default.png'),
+    (3, 'charlie@example.com', 'Charlie', 'Durand', 'Professeur de mathématiques, spécialiste de l algèbre et calcul.', '0303030303', '$2y$10$PzrLrAzoR9garXQzFTyoxuYxHTNbUP3PKIHv2N6Oc4Cu85ZXqatZu', 100, '/assets/avatars/avatar-default.png'),
+    (4, 'david@example.com', 'David', 'Lemoine', 'Étudiant en gestion de projet.', '0404040404', '$2y$10$PzrLrAzoR9garXQzFTyoxuYxHTNbUP3PKIHv2N6Oc4Cu85ZXqatZu', 100, '/assets/avatars/avatar-default.png'),
+    (5, 'eva@example.com', 'Eva', 'Petit', 'Photographe amateur, passionnée par la cuisine.', '0505050505', '$2y$10$PzrLrAzoR9garXQzFTyoxuYxHTNbUP3PKIHv2N6Oc4Cu85ZXqatZu', 100, '/assets/avatars/avatar-default.png'),
+    (6, 'francois@example.com', 'François', 'Lemoine', 'Apprenant de l espagnol et gestion de projet.', '0606060606', '$2y$10$PzrLrAzoR9garXQzFTyoxuYxHTNbUP3PKIHv2N6Oc4Cu85ZXqatZu', 100, '/assets/avatars/avatar-default.png');
 
 -- Insertion des compétences
 INSERT INTO skill (skill_id, skill_name, search_counter, category_id)

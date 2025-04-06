@@ -60,6 +60,10 @@ return [
     "vousApprenez" => "Vous apprenez",
 
     "vousPartagez" => "Vous partagez",
+    "maBiographie" => "Ma biographie",
+    "pasDeBio" => "L'utilisateur n'a pas de biographie",
+    "jeVeuxEchanger" => "Je veux echanger",
+    "jeVousApprends" => "Je vous apprends",
 ],
 
 "en" => [
@@ -120,5 +124,9 @@ return [
   "vousEnseignez" => "You teach",
     "vousApprenez" => "You learn",
     "vousPartagez" => "You share",
+    "maBiographie" => "My biography",
+    "pasDeBio" => "The user has no biography",
+    "jeVeuxEchanger" => "I want to exchange",
+    "jeVousApprends" => "I'm teaching you",
 ]
 ];

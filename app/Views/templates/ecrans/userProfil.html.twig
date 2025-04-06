@@ -1,0 +1,80 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ userData.first_name }}{% endblock %}
+
+{% block body %}
+    <section class="user-profile-container">
+
+        {# ----------------- ZONE 1 : INFOS UTILISATEUR ------------------ #}
+        <div class="user-profile-header" style="display: flex; align-items: center; gap: 1.5rem; padding: 2rem; background: #F8F8F8; border-radius: 12px; margin-bottom: 2rem;">
+            <img src="{{ userData.avatar_path is not empty ? userData.avatar_path : '/default-avatar.png' }}" alt="Avatar" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover;">
+
+            <div>
+                <h2 style="margin: 0;">{{ userData.user_first_name }} {{ userData.user_last_name }}</h2>
+                <p style="margin: 0.5rem 0; font-weight: bold;">{{ traduction('maBiographie') }}</p>
+                <p style="max-width: 500px;">{{ userData.biography is not empty ? userData.biography : traduction('pasDeBio') }}</p>
+            </div>
+        </div>
+
+        {# ----------------- ZONE 2 : SESSIONS ------------------ #}
+        <div class="user-profile-sessions">
+
+            {# Slider pour cours / échanges #}
+            <label class="toggle-switch-container" style="margin-bottom: 2rem;">
+                <input class="toggle-switch-input" type="checkbox"
+                        {% if getParams.type == 'cours' %} checked {% endif %}
+                       onClick="
+                               window.location.href = '/profile?user_id={{ userData.user_id }}&type=' + (this.checked ? 'cours' : 'echange');
+                               ">
+                <span class="toggle-switch-slider">
+        <p>{{ traduction('jeVeuxEchanger') }}</p>
+        <p>{{ traduction('jeVousApprends') }}</p>
+        <span class="slider-container">
+          <span class="slider"></span>
+        </span>
+      </span>
+            </label>
+
+            {# Liste des sessions #}
+            {% if sessions is empty %}
+                <p>{{ traduction('noData') }}</p>
+            {% else %}
+                {% if getParams.type == "cours" %}
+                    {% for session in sessions %}
+                        {% include 'components/lessonCard.html.twig' with {
+                            'avatar_path': session.host_avatar is not empty ? session.host_avatar : '',
+                            'userName': session.host_first_name ~ ' ' ~ session.host_last_name,
+                            'categoryLearned': categoriesIndexed[session.skill_taught_category_id] is defined ? categoriesIndexed[session.skill_taught_category_id][1] : '',
+                            'skillLearned': session.skill_taught_name is not empty ? session.skill_taught_name : '',
+                            'adresse': session.full_address is not empty ? session.full_address : '',
+                            'date': session.date_session ~ ', ' ~ session.start_time|date('H:i'),
+                            'session_id': session.lesson_session_id is defined ? session.lesson_session_id : session.session_id,
+                            'user': user,
+                            'startTime': session.start_time,
+                            'endTime': session.end_time,
+                            'dateDebut': session.date_session,
+                        } %}
+                    {% endfor %}
+                {% else %}
+                    {% for session in sessions %}
+                        {% include 'components/exchangeCard.html.twig' with {
+                            'avatar_path': session.requester_avatar is not empty ? session.requester_avatar : '',
+                            'userName': session.requester_first_name ~ ' ' ~ session.requester_last_name,
+                            'categoryLearned': categoriesIndexed[session.skill_taught_category_id] is defined ? categoriesIndexed[session.skill_taught_category_id][1] : '',
+                            'skillLearned': session.skill_taught_name is not empty ? session.skill_taught_name : '',
+                            'categoryWanted': categoriesIndexed[session.skill_requested_category_id] is defined ? categoriesIndexed[session.skill_requested_category_id][1] : '',
+                            'skillWanted': session.skill_requested_name is not empty ? session.skill_requested_name : '',
+                            'skill_taught_category_id': session.skill_taught_category_id,
+                            'skill_requested_category_id': session.skill_requested_category_id,
+                            'session_id': session.lesson_session_id is defined ? session.lesson_session_id : session.session_id,
+                            'user': user,
+                            'startTime': session.start_time,
+                            'endTime': session.end_time,
+                            'dateDebut': session.date_session,
+                        } %}
+                    {% endfor %}
+                {% endif %}
+            {% endif %}
+        </div>
+    </section>
+{% endblock %}
