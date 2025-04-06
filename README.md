@@ -101,7 +101,11 @@ Voici les principaux packages utilisés via Composer :
 - 🎓 = Session de type **cours (lesson)**
 - 🔁 = Session de type **échange (exchange)**
 
-### Etapes de mise en place
+### Utiliser en ligne
+
+https://learningshare.gabin-prive.byraven.fr/
+
+### Etapes de mise en place en local
 
 1. Cloner le dépôt ou récupérer les repertoire de l'application:
    ```bash
