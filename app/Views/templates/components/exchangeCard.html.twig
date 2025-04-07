@@ -126,9 +126,13 @@
       </span>
 
         {% if user %}
-        <form action="/rejoindrePartage/{{ session_id }}" method="POST">
-            <button style="width:100%" class="form-button green-bg" type="submit">{{traduction('rejoindrePartage')}}</button>
-        </form>
+
+          {% if user.id is not userId %}
+          <form action="/rejoindrePartage/{{ session_id }}" method="POST">
+              <button style="width:100%" class="form-button green-bg" type="submit">{{traduction('rejoindrePartage')}}</button>
+          </form>
+          {% endif %}
+
         {% else %}
         <a href="/login">
             <button style="width:100%" class="form-button green-bg" type="button">{{traduction('rejoindrePartage')}}</button>

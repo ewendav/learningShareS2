@@ -13,7 +13,6 @@ DROP TABLE IF EXISTS user_role;
 DROP TABLE IF EXISTS role;
 DROP TABLE IF EXISTS app_user;
 DROP TABLE IF EXISTS session;
-DROP TABLE IF EXISTS rate;
 DROP TABLE IF EXISTS skill;
 DROP TABLE IF EXISTS category;
 DROP TABLE IF EXISTS blacklist;
@@ -33,11 +32,6 @@ CREATE TABLE skill (
 
 
 
-CREATE TABLE rate (
-                     rate_id INT AUTO_INCREMENT PRIMARY KEY,
-                     rate_name VARCHAR(50) NOT NULL,
-                     rate_amount INTEGER NOT NULL
-);
 
 CREATE TABLE session (
                          session_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -45,7 +39,6 @@ CREATE TABLE session (
                          end_time TIME NOT NULL ,
                          date_session DATE NOT NULL,
                          description VARCHAR(255),
-                         rate_id INTEGER REFERENCES rate(rate_id),
                          skill_taught_id INTEGER REFERENCES skill(skill_id)
 );
 

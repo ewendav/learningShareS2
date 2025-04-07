@@ -38,7 +38,7 @@ CREATE TABLE SESSION (
 	end_time TIME NOT NULL CHECK(end_time > start_time),
   date_session DATE NOT NULL,
   description VARCHAR(255),
-	rate_id INTEGER REFERENCES RATE(rate_id),
+	rate_id INTEGER,
 	skill_taught_id INTEGER REFERENCES SKILL(skill_id)
 );
 
