@@ -127,7 +127,7 @@
 
         {% if user %}
 
-          {% if user.id is not userId %}
+          {% if user.id != userId %}
           <form action="/rejoindrePartage/{{ session_id }}" method="POST">
               <button style="width:100%" class="form-button green-bg" type="submit">{{traduction('rejoindrePartage')}}</button>
           </form>
