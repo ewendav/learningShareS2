@@ -44,7 +44,7 @@
                         {% include 'components/lessonCard.html.twig' with {
                             'avatar_path': session.host_avatar is not empty ? session.host_avatar : '',
                             'userName': session.host_first_name ~ ' ' ~ session.host_last_name,
-                            'categoryLearned': categoriesIndexed[session.skill_taught_category_id] is defined ? categoriesIndexed[session.skill_taught_category_id][1] : '',
+                            'categoryLearned': categoriesIndexed[session.skill_taught_category_id] is defined ? categoriesIndexed[session.skill_taught_category_id]['name'] : '',
                             'skillLearned': session.skill_taught_name is not empty ? session.skill_taught_name : '',
                             'adresse': session.full_address is not empty ? session.full_address : '',
                             'date': session.date_session ~ ', ' ~ session.start_time|date('H:i'),
@@ -60,9 +60,9 @@
                         {% include 'components/exchangeCard.html.twig' with {
                             'avatar_path': session.requester_avatar is not empty ? session.requester_avatar : '',
                             'userName': session.requester_first_name ~ ' ' ~ session.requester_last_name,
-                            'categoryLearned': categoriesIndexed[session.skill_taught_category_id] is defined ? categoriesIndexed[session.skill_taught_category_id][1] : '',
+                            'categoryLearned': categoriesIndexed[session.skill_taught_category_id] is defined ? categoriesIndexed[session.skill_taught_category_id]['name'] : '',
                             'skillLearned': session.skill_taught_name is not empty ? session.skill_taught_name : '',
-                            'categoryWanted': categoriesIndexed[session.skill_requested_category_id] is defined ? categoriesIndexed[session.skill_requested_category_id][1] : '',
+                            'categoryWanted': categoriesIndexed[session.skill_requested_category_id] is defined ? categoriesIndexed[session.skill_requested_category_id]['name'] : '',
                             'skillWanted': session.skill_requested_name is not empty ? session.skill_requested_name : '',
                             'skill_taught_category_id': session.skill_taught_category_id,
                             'skill_requested_category_id': session.skill_requested_category_id,

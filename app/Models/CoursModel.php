@@ -250,26 +250,25 @@ class CoursModel
             $lessons = [];
 
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                if ($retourneJson) {
-                    $lessons[] = [
-                    'lesson_session_id' => $row['lesson_session_id'],
-                    'start_time' => $row['start_time'],
-                    'end_time' => $row['end_time'],
-                    'date_session' => $row['date_session'],
-                    'description' => $row['description'],
-                    'rate_id' => $row['rate_id'],
-                    'max_attendees' => $row['max_attendees'],
-                    'current_attendees' => $row['current_attendees'],
-                    'host_first_name' => $row['host_first_name'],
-                    'host_last_name' => $row['host_last_name'],
-                    'host_avatar' => $row['host_avatar'],
-                    'host_user_id' => $row['host_user_id'],
-                    'skill_taught_id' => $row['skill_taught_id'],
-                    'skill_taught_category_id' => $row['skill_taught_category_id'],
-                    'skill_taught_name' => $row['skill_taught_name'],
-                    'full_address' => $row['full_address'],
-                    ];
-                }
+                $lessons[] = [
+                'lesson_session_id' => $row['lesson_session_id'],
+                'start_time' => $row['start_time'],
+                'end_time' => $row['end_time'],
+                'date_session' => $row['date_session'],
+                'description' => $row['description'],
+                'rate_id' => $row['rate_id'],
+                'max_attendees' => $row['max_attendees'],
+                'current_attendees' => $row['current_attendees'],
+                'host_first_name' => $row['host_first_name'],
+                'host_last_name' => $row['host_last_name'],
+                'host_avatar' => $row['host_avatar'],
+                'host_user_id' => $row['host_user_id'],
+                'skill_taught_id' => $row['skill_taught_id'],
+                'skill_taught_category_id' => $row['skill_taught_category_id'],
+                'skill_taught_name' => $row['skill_taught_name'],
+                'full_address' => $row['full_address'],
+                ];
+                // Le paramètre retourneJson n'a plus d'effet, on retourne toujours le même format
             }
             $this->logger->info("Récupération de toutes les leçons disponibles", ['lessons_count' => count($lessons)]);
             return $lessons;
