@@ -30,7 +30,7 @@ class SessionController
     {
         // Vérifier l'authentification
         \Util\AuthMiddleware::requireAuth();
-        
+
         // Récupérer les paramètres d'erreur de l'URL
         $error = isset($_GET['error']) ? $_GET['error'] : null;
 
@@ -54,7 +54,7 @@ class SessionController
     {
         $container = \Util\Container::getContainer();
         $twig = $container->get(\Twig\Environment::class);
-        
+
         // Récupération des messages
         $success = isset($_GET['success']) ? $_GET['success'] : null;
         $error = isset($_GET['error']) ? $_GET['error'] : null;
@@ -78,8 +78,8 @@ class SessionController
                 'sessions' => $sessions,
                 'categories' => \Models\CategorieModel::getAllIndexedById(), // Utiliser la nouvelle méthode
                 'user' => \Util\AuthMiddleware::getUser(),
-                'success' => $success ? ($success == 'joined_course' ? 'Vous avez rejoint le cours avec succès et payé 25 jetons' : 
-                                        ($success == 'joined_exchange' ? 'Vous avez rejoint l\'échange avec succès et gagné 40 jetons' : 
+                'success' => $success ? ($success == 'joined_course' ? 'Vous avez rejoint le cours avec succès et payé 25 jetons' :
+                                        ($success == 'joined_exchange' ? 'Vous avez rejoint l\'échange avec succès et gagné 40 jetons' :
                                         'Création réussie')) : null,
                 'error' => $error ? ($error == 'not_enough_tokens' ? 'Vous n\'avez pas assez de jetons pour rejoindre ce cours' :
                                     ($error == 'exchange_already_accepted' ? 'Ce partage a déjà été accepté par quelqu\'un d\'autre' :

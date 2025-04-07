@@ -157,7 +157,7 @@ class LoginController
             'avatarPath' => $avatarPath,
             'password' => $password
         ]);
-        
+
         error_log("User created with ID: " . $userId . " and avatar path: " . $avatarPath);
 
         // Connecter automatiquement l'utilisateur

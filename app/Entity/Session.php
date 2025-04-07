@@ -2,7 +2,8 @@
 
 namespace Entity;
 
-class Session {
+class Session
+{
     private $session_id;
     private $start_time;
     private $end_time;
@@ -14,8 +15,15 @@ class Session {
     /**
      * Constructeur
      */
-    public function __construct($session_id = null, $start_time = null, $end_time = null, $date_session = null,
-                                $description = null, $rate_id = null, $skill_taught_id = null) {
+    public function __construct(
+        $session_id = null,
+        $start_time = null,
+        $end_time = null,
+        $date_session = null,
+        $description = null,
+        $rate_id = null,
+        $skill_taught_id = null
+    ) {
         $this->session_id = $session_id;
         $this->start_time = $start_time;
         $this->end_time = $end_time;
@@ -28,69 +36,84 @@ class Session {
     /**
      * Getters
      */
-    public function getSessionId() {
+    public function getSessionId()
+    {
         return $this->session_id;
     }
 
-    public function getStartTime() {
+    public function getStartTime()
+    {
         return $this->start_time;
     }
 
-    public function getEndTime() {
+    public function getEndTime()
+    {
         return $this->end_time;
     }
 
-    public function getDateSession() {
+    public function getDateSession()
+    {
         return $this->date_session;
     }
 
-    public function getDescription() {
+    public function getDescription()
+    {
         return $this->description;
     }
 
-    public function getRateId() {
+    public function getRateId()
+    {
         return $this->rate_id;
     }
 
-    public function getSkillTaughtId() {
+    public function getSkillTaughtId()
+    {
         return $this->skill_taught_id;
     }
 
     /**
      * Setters
      */
-    public function setSessionId($session_id) {
+    public function setSessionId($session_id)
+    {
         $this->session_id = $session_id;
     }
 
-    public function setStartTime($start_time) {
+    public function setStartTime($start_time)
+    {
         $this->start_time = $start_time;
     }
 
-    public function setEndTime($end_time) {
+    public function setEndTime($end_time)
+    {
         $this->end_time = $end_time;
     }
 
-    public function setDateSession($date_session) {
+    public function setDateSession($date_session)
+    {
         $this->date_session = $date_session;
     }
 
-    public function setDescription($description) {
+    public function setDescription($description)
+    {
         $this->description = $description;
     }
 
-    public function setRateId($rate_id) {
+    public function setRateId($rate_id)
+    {
         $this->rate_id = $rate_id;
     }
 
-    public function setSkillTaughtId($skill_taught_id) {
+    public function setSkillTaughtId($skill_taught_id)
+    {
         $this->skill_taught_id = $skill_taught_id;
-}
+    }
 
 /**
  * Sauvegarde une session dans la base de données
  */
-    public function save($pdo) {
+    public function save($pdo)
+    {
         try {
             if ($this->session_id) {
                 // Mise à jour d'une session existante
@@ -127,7 +150,8 @@ class Session {
     /**
      * Récupérer une session par son ID
      */
-    public static function getById($pdo, $session_id) {
+    public static function getById($pdo, $session_id)
+    {
         try {
             $stmt = $pdo->prepare("SELECT * FROM SESSION WHERE session_id = :session_id");
             $stmt->bindParam(':session_id', $session_id);
@@ -154,7 +178,8 @@ class Session {
     /**
      * Supprimer une session
      */
-    public function delete($pdo) {
+    public function delete($pdo)
+    {
         try {
             $stmt = $pdo->prepare("DELETE FROM SESSION WHERE session_id = :session_id");
             $stmt->bindParam(':session_id', $this->session_id);
@@ -168,7 +193,8 @@ class Session {
     /**
      * Récupérer toutes les sessions
      */
-    public static function getAll($pdo) {
+    public static function getAll($pdo)
+    {
         try {
             $stmt = $pdo->query("SELECT * FROM SESSION");
             $sessions = [];

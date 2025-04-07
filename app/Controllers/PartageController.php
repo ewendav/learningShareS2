@@ -113,42 +113,42 @@ class PartageController
         $request = $_POST;
 
         // Validation des données (à implémenter)
-        
+
         // Gestion du skill enseigné
         $skillModel = new \Models\SkillModel($pdo, $logger);
         $taughtCategoryId = $request['skill_taught_id'];
         $taughtCompetence = $request['description']; // Récupération du nom de compétence enseignée
-        
+
         // Création ou récupération du skill enseigné
         $skillTaughtId = $skillModel->create($taughtCompetence, $taughtCategoryId);
-        
+
         if (!$skillTaughtId) {
             $logger->error("Échec de la création de la compétence enseignée", [
-                'competence' => $taughtCompetence, 
+                'competence' => $taughtCompetence,
                 'category_id' => $taughtCategoryId
             ]);
             header('Location: /createSession?error=skill_taught_error');
             exit;
         }
-        
+
         // Gestion du skill demandé
         $requestedCategoryId = $request['skill_requested_id'];
         $requestedCompetence = $request['competence_requested']; // Récupération du nom de compétence demandée
-        
+
         // Création ou récupération du skill demandé
         $skillRequestedId = $skillModel->create($requestedCompetence, $requestedCategoryId);
-        
+
         if (!$skillRequestedId) {
             $logger->error("Échec de la création de la compétence demandée", [
-                'competence' => $requestedCompetence, 
+                'competence' => $requestedCompetence,
                 'category_id' => $requestedCategoryId
             ]);
             header('Location: /createSession?error=skill_requested_error');
             exit;
         }
-        
+
         $logger->info("Compétences créées ou récupérées avec succès", [
-            'skill_taught_id' => $skillTaughtId, 
+            'skill_taught_id' => $skillTaughtId,
             'skill_taught_name' => $taughtCompetence,
             'skill_requested_id' => $skillRequestedId,
             'skill_requested_name' => $requestedCompetence
@@ -222,18 +222,18 @@ class PartageController
         $partage->setStartTime($request['start_time']);
         $partage->setEndTime($request['end_time']);
         $partage->setDateSession($request['date_session']);
-        
+
         // Gestion du skill enseigné
         $skillModel = new \Models\SkillModel($this->pdo, $this->logger);
         $taughtCategoryId = $request['skill_taught_id'];
         $taughtCompetence = $request['description']; // Récupération du nom de compétence enseignée
-        
+
         // Création ou récupération du skill enseigné
         $skillTaughtId = $skillModel->create($taughtCompetence, $taughtCategoryId);
-        
+
         if (!$skillTaughtId) {
             $this->logger->error("Échec de la création/mise à jour de la compétence enseignée", [
-                'competence' => $taughtCompetence, 
+                'competence' => $taughtCompetence,
                 'category_id' => $taughtCategoryId
             ]);
             return [
@@ -241,17 +241,17 @@ class PartageController
                 'message' => 'Erreur lors de la mise à jour de la compétence enseignée'
             ];
         }
-        
+
         // Gestion du skill demandé
         $requestedCategoryId = $request['skill_requested_id'];
         $requestedCompetence = $request['competence_requested']; // Récupération du nom de compétence demandée
-        
+
         // Création ou récupération du skill demandé
         $skillRequestedId = $skillModel->create($requestedCompetence, $requestedCategoryId);
-        
+
         if (!$skillRequestedId) {
             $this->logger->error("Échec de la création/mise à jour de la compétence demandée", [
-                'competence' => $requestedCompetence, 
+                'competence' => $requestedCompetence,
                 'category_id' => $requestedCategoryId
             ]);
             return [
@@ -259,14 +259,14 @@ class PartageController
                 'message' => 'Erreur lors de la mise à jour de la compétence demandée'
             ];
         }
-        
+
         $this->logger->info("Compétences créées ou mises à jour avec succès", [
-            'skill_taught_id' => $skillTaughtId, 
+            'skill_taught_id' => $skillTaughtId,
             'skill_taught_name' => $taughtCompetence,
             'skill_requested_id' => $skillRequestedId,
             'skill_requested_name' => $requestedCompetence
         ]);
-        
+
         $partage->setDescription(""); // Description vide, car on utilise maintenant la table skill
         $partage->setRateId($request['rate_id']);
         $partage->setSkillTaughtId($skillTaughtId);

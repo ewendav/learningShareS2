@@ -238,10 +238,10 @@ class CoursModel
         ";
             // Prepare the statement
             $stmt = $this->pdo->prepare($query);
-            
+
             // Lier l'ID utilisateur
             $stmt->bindParam(':user_id', $userId);
-            
+
             if (!empty($skillName)) {
                 $stmt->bindValue(':skillName', '%' . $skillName . '%');
             }

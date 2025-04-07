@@ -45,7 +45,7 @@ class CategorieModel
             return [];
         }
     }
-    
+
     /**
      * Récupère toutes les catégories en format associatif indexé par ID
      * pour faciliter l'accès via les templates
@@ -70,7 +70,7 @@ class CategorieModel
                     'name' => $row['category_name']
                 ];
             }
-            
+
             $logger->info("Récupération des catégories indexées réussie", ['count' => count($categories)]);
             return $categories;
         } catch (PDOException $e) {
@@ -78,7 +78,7 @@ class CategorieModel
             return [];
         }
     }
-    
+
     /**
      * Récupère une catégorie par son ID
      */
@@ -92,14 +92,14 @@ class CategorieModel
             $stmt = $pdo->prepare("SELECT * FROM category WHERE category_id = :categoryId");
             $stmt->bindParam(':categoryId', $categoryId);
             $stmt->execute();
-            
+
             if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 return [
                     'category_id' => $row['category_id'],
                     'category_name' => $row['category_name']
                 ];
             }
-            
+
             return null;
         } catch (PDOException $e) {
             $logger->error("Erreur lors de la récupération de la catégorie par ID: " . $e->getMessage());

@@ -15,7 +15,7 @@ class TwigExtensions extends AbstractExtension
             new TwigFunction('getCategoriesIndexed', [$this, 'getCategoriesIndexed']),
         ];
     }
-    
+
     /**
      * Récupère les catégories indexées par ID
      */
