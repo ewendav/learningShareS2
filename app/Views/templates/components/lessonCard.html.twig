@@ -98,13 +98,9 @@
 {% endif %}
         {% if user %}
 
-          {% if user.id != userId %}
             <form action="/rejoindreCours/{{ session_id }}" method="POST">
                 <button class="form-button green-bg" style="width:100%" type="submit">{{traduction('rejoindreCours')}}</button>
             </form>
-            {{userId}}
-            {{user.id}}
-          {% endif %}
 
         {% else %}
         <a href="/login">
