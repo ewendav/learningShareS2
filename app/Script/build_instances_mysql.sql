@@ -16,6 +16,7 @@ VALUES
     (9, 'Gestion de projet'),
     (10, 'Cuisine');
 
+
 -- Insertion des utilisateurs
 -- MDP des users : "pass"
 INSERT INTO app_user (user_id, mail, user_first_name, user_last_name, biography, phone, password, balance, avatar_path)
